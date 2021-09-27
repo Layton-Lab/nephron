@@ -1,0 +1,269 @@
+#
+#  physical dimension
+#
+sex	male
+diameter_male	 0.005    # luminal diameter for male
+diameter_female  0.00238
+length_male		1.2   # tubule length for male
+length_female   0.425
+total 200           # total amount of cells
+#
+#  luminal pressure
+#
+pressure 5.9756
+#
+pH 6.09525801 7.09862 7.28980 7.28980 7.09862 7.323
+#  surface areas
+area_Lumen_Cell	0.6
+area_Lumen_ICA	0.6
+area_Lumen_ICB	0.6
+area_Lumen_LIS	0.001
+area_Cell_LIS	5.4
+area_Cell_Bath	0.6
+area_ICA_LIS	5.4
+area_ICA_Bath	0.6
+area_ICB_LIS	5.4
+area_ICB_Bath	0.6
+#
+#  compartment areas (reference)
+volref_Cell 8.0
+volref_ICA	8.0
+volref_ICB	8.0
+volref_LIS	0.8
+#
+#  compartment areas (actual)
+vol_Lumen	0.8193e-4
+vol_Cell	2.05129
+vol_LIS	0.0
+#
+#  water permeability (in cm/s)
+#
+Pf_Lumen_Cell_male	41.354432e-3
+Pf_Lumen_Cell_female	82.708864e-3 #41.354432e-3*2 (Increase)
+Pf_Lumen_ICA	0.0
+Pf_Lumen_ICB	0.0
+Pf_Lumen_LIS_male	1.985
+Pf_Lumen_LIS_female	1.985
+Pf_Cell_LIS_male	8.2709e-3
+Pf_Cell_LIS_female	8.2709e-3 
+Pf_ICA_LIS	0.0
+Pf_ICB_LIS	0.0
+Pf_Cell_Bath_male	8.2709e-3
+Pf_Cell_Bath_female	16.5418e-3 #8.2709e-3*2 (Increase)
+Pf_ICA_Bath	0.0
+Pf_ICB_Bath	0.0
+Pf_LIS_Bath_male	33.08355
+Pf_LIS_Bath_female	33.08355
+#
+#  reflection coefficients, default set to 1
+#
+sig_Na_LIS_Bath	0.0
+sig_K_LIS_Bath	0.0
+sig_Cl_LIS_Bath	0.0
+sig_HCO3_LIS_Bath	0.0
+sig_H2CO3_LIS_Bath	0.0
+sig_CO2_LIS_Bath	0.0
+sig_HPO4_LIS_Bath	0.0
+sig_H2PO4_LIS_Bath	0.0
+sig_urea_LIS_Bath	0.0
+sig_NH3_LIS_Bath	0.0
+sig_NH4_LIS_Bath	0.0
+sig_H_LIS_Bath	0.0
+sig_HCO2_LIS_Bath	0.0
+sig_H2CO2_LIS_Bath	0.0
+sig_glucose_LIS_Bath	0.0
+#
+#  solute permeabilities, apical interface (in 1e-5cm/s)
+#  default permeability = 0
+#
+perm_Na_Lumen_Cell_male	1.0
+perm_Na_Lumen_Cell_female 2.0 #1.0*2 (Decrease)
+perm_K_Lumen_Cell_male	1.0
+perm_K_Lumen_Cell_female	1.2 #1.0*1.2 (Increase)
+perm_Cl_Lumen_Cell	2.0e-4
+perm_HCO3_Lumen_Cell	2.0e-4
+perm_H2CO3_Lumen_Cell	130.0
+perm_CO2_Lumen_Cell	2.3077e3
+perm_HPO4_Lumen_Cell	2.0e-4
+perm_H2PO4_Lumen_Cell	2.0e-4
+perm_urea_Lumen_Cell_male	3.0		# If modify the percentage where permeability increasing, modify 'membrane solute permeabilities' in set_params.py
+perm_urea_Lumen_Cell_female	3.0		# If modify the percentage where permeability increasing, modify 'membrane solute permeabilities' in set_params.py
+perm_NH3_Lumen_Cell	400.0
+perm_NH4_Lumen_Cell	0.2
+perm_H_Lumen_Cell	2.0e-4
+perm_HCO2_Lumen_Cell	0.0
+perm_H2CO2_Lumen_Cell	0.0
+perm_glucose_Lumen_Cell	0.0
+#
+#  solute permeabilities, Cell-LIS interface (in 1e-5cm/s)
+#  default permeability = 0
+#
+perm_Na_Cell_LIS	2.0e-4
+perm_K_Cell_LIS	1.5
+perm_Cl_Cell_LIS	0.05
+perm_HCO3_Cell_LIS	0.025
+perm_H2CO3_Cell_LIS	130.0
+perm_CO2_Cell_LIS	2.3077e3
+perm_HPO4_Cell_LIS	0.002
+perm_H2PO4_Cell_LIS	0.002
+perm_urea_Cell_LIS	15.0
+perm_NH3_Cell_LIS	400.0
+perm_NH4_Cell_LIS	0.3
+perm_H_Cell_LIS	2.0e-4
+perm_HCO2_Cell_LIS	1.0e-3
+perm_H2CO2_Cell_LIS	1.0e-3
+perm_glucose_Cell_LIS	1.0e-3
+#
+#  solute permeabilities, Lumen-LIS interface (in 1e-5cm/s)
+#  default permeability = 0
+#
+perm_Na_Lumen_LIS_male	0.9e3
+perm_Na_Lumen_LIS_female 0.99e3 #0.9e3*1.1 (Decrease)
+perm_K_Lumen_LIS_male	0.7e3
+perm_K_Lumen_LIS_female	0.7e3
+perm_Cl_Lumen_LIS_male	1.6e3
+perm_Cl_Lumen_LIS_female 1.76e3 #1.6e3*1.1 (Decrease)
+perm_HCO3_Lumen_LIS	0.4e3
+perm_H2CO3_Lumen_LIS	1.2e3
+perm_CO2_Lumen_LIS	1.2e3
+perm_HPO4_Lumen_LIS	0.2e3
+perm_H2PO4_Lumen_LIS	0.2e3
+perm_urea_Lumen_LIS_male	0.8e3
+perm_urea_Lumen_LIS_female	0.8e3
+perm_NH3_Lumen_LIS	1.0e3
+perm_NH4_Lumen_LIS	0.7e3
+perm_H_Lumen_LIS	6.0e3
+perm_HCO2_Lumen_LIS	100.0 # Raised in Human
+perm_H2CO2_Lumen_LIS	100.0 # Raised in Human
+perm_glucose_Lumen_LIS	10.0
+#
+#  solute permeabilities, LIS-Bath interface (in 1e-5cm/s)
+#  default permeability = 0
+#
+perm_Na_LIS_Bath	3000.0
+perm_K_LIS_Bath		4000.0
+perm_Cl_LIS_Bath	4000.0
+perm_HCO3_LIS_Bath	2000.0
+perm_H2CO3_LIS_Bath	3000.0
+perm_CO2_LIS_Bath	3000.0
+perm_HPO4_LIS_Bath	2000.0
+perm_H2PO4_LIS_Bath	2000.0
+perm_urea_LIS_Bath	2000.0
+perm_NH3_LIS_Bath	2500.0
+perm_NH4_LIS_Bath	4000.0
+perm_H_LIS_Bath		20000.0
+perm_HCO2_LIS_Bath	500.0
+perm_H2CO2_LIS_Bath	500.0
+perm_glucose_LIS_Bath	500.0
+#
+#  solute concentrations
+#  solute   <luminal conc>  <cell conc>  <LIS conc>  <bath conc> [optional: <IC A conc>  <IC B conc>]
+#
+#conc_Na	71.21168725	99.14477	99.14477	144.0
+#conc_K	100.34023884	239.07296	239.07296	4.9
+#conc_Cl	76.98008151	42.75253	42.75253	117.64814076
+#conc_HCO3	2.08205421	13.19093	13.19093	24.82997438
+conc_Na	71.0	99.14477	99.14477	144.0
+conc_K	100.0	239.07296	239.07296	4.9
+conc_Cl	76.0	42.75253	42.75253	117.64814076
+conc_HCO3	2.0	13.19093	13.19093	24.82997438
+conc_H2CO3	0.6212e-2	0.0039053	0.0039053	0.0043851
+conc_CO2	1.4877	1.4811	1.4811	1.5
+conc_HPO4	13.351	14.166	14.166	3.0002
+conc_H2PO4	67.649	7.1226	7.1226	0.89981
+conc_urea	293.83	45.423	45.423	8.0
+conc_NH3	0.27832e-1	0.090945	0.090945	0.01277
+conc_NH4	31.57	10.237	10.237	0.01478
+conc_H	0.80305e-3	0.79686e-4	0.79686e-4	0.47534e-4
+conc_HCO2	27.663	1.1178	1.1178	0.99973
+conc_H2CO2	0.10849	0.0027194	0.0027194	0.27345e-3
+conc_glucose	0.25006	0.0088958	0.0088958	5.0
+#
+# Rates used in HCO3/H2CO3 reaction, default is set to 0
+# I do not knnow if dkd and dkh for ICA and ICB are needed.  
+dkd_Lumen 49.6
+dkd_Cell 4960.0
+dkd_ICA 4960.0
+dkd_ICB 4960.0
+dkd_LIS 49.6
+dkh_Lumen 0.1450
+dkh_Cell 14.50
+dkh_ICA 14.50
+dkh_ICB 14.50
+dkh_LIS 0.1450
+#
+#
+# Reference Impermeant Concentrations
+#
+cimpref_Lumen	0.0
+cimpref_Cell	50.0
+cimpref_ICA	50.0
+cimpref_ICB	50.0
+cimpref_LIS	0.0
+cimpref_Bath	0.0
+#
+# Impermeant Properties
+#
+zimp_Cell -1.0
+zimp_ICA -1.0
+zimp_ICB -1.0
+#
+# Reference Buffer Concentrations
+#
+cbuftot_Cell 32.0
+cbuftot_ICA 32.0
+cbuftot_ICB 32.0
+#
+#  membrane potential
+#
+ep_Lumen	-17.75024
+ep_Cell	-72.55604
+ep_LIS	-72.55504
+ep_Bath -0.001
+#
+#  coupled transporters, specify permeability and coefficients
+#
+coupled_Cell_LIS_Na_H_male	6.0e-9	1	-1
+coupled_Cell_LIS_Na_H_female	6.0e-9	1	-1
+coupled_Cell_Bath_Na_H_male	6.0e-9	1	-1
+coupled_Cell_Bath_Na_H_female	6.0e-9	1	-1
+coupled_Cell_LIS_Na_HPO4_male 2.0e-9	2	1
+coupled_Cell_LIS_Na_HPO4_female	2.0e-9	2	1
+coupled_Cell_Bath_Na_HPO4_male 2.0e-9	2	1
+coupled_Cell_Bath_Na_HPO4_female	2.0e-9	2	1
+coupled_Cell_LIS_K_Cl_male	250.0e-9	1	1
+coupled_Cell_LIS_K_Cl_female	300.0e-9	1	1
+#250.0e-9*1.2(Increase)
+coupled_Cell_Bath_K_Cl_male	250.0e-9	1	1
+coupled_Cell_Bath_K_Cl_female	300.0e-9	1	1
+#250.0e-9*1.2 (Increase)
+coupled_Cell_LIS_Cl_HCO3 20.0e-9	1	-1
+coupled_Cell_Bath_Cl_HCO3 20.0e-9	1	-1
+coupled_Lumen_Cell_Na_Cl_male	600.0e-9	1	1
+coupled_Lumen_Cell_Na_Cl_female	600.0e-9	1	1
+coupled_Cell_LIS_Na_K_Cl_male	4.0e-9	1	1  2
+coupled_Cell_LIS_Na_K_Cl_female	2.4e-9	1	1  2
+#4.0e-9*0.6 (Decrease)
+coupled_Cell_Bath_Na_K_Cl_male	4.0e-9	1	1  2
+coupled_Cell_Bath_Na_K_Cl_female	2.4e-9	1	1  2
+#4.0e-9*0.6 (Decrease)
+#
+#  specific transporters, specify activity
+#
+#transport_Cell_LIS_NKCC1_male	4.0e-9 # NKCC1 is not in Fortran code.
+#transport_Cell_LIS_NKCC1_female	2.4e-9
+#transport_Cell_Bath_NKCC1_male	4.0e-9
+#transport_Cell_Bath_NKCC1_female	2.4e-9
+transport_Cell_LIS_NaKATPase_male	4000.0e-9 #2000.0e-9*2 Raised in Human
+transport_Cell_LIS_NaKATPase_female	4400.0e-9
+#4000.0e-9*1.1 (Increase)
+transport_Cell_Bath_NaKATPase_male	4000.0e-9 #2000.0e-9*2 Raised in Human
+transport_Cell_Bath_NaKATPase_female	4400.0e-9
+#4000.0e-9*1.1 (Increase)
+transport_Lumen_Cell_HKATPase_male	200.0e-9
+transport_Lumen_Cell_HKATPase_female	220.0e-9
+#200.0e-9*1.1 (Increase)
+#	Na		K		Cl		HCO3	H2CO3		CO2		HPO4	H2PO4	urea	NH3		NH4		H	HCO2	H2CO2	glucose
+cm 	140.0	4.0		100.0	25.0	4.41e-3		1.45	1.45	0.0		5.0		1.0		0.0		0.0	1.0		0.0		5.0
+oi	299.0	8.0		279.94	25.0	4.41e-3		1.45	1.45	0.0		60.0	3.9		0.0		0.0	1.0		0.0		8.33
+pap	239.0	15.0	229.92	25.0	4.41e-3		1.45	1.45	0.0		200.0	8.95	0.0		0.0	1.0		0.0		8.5

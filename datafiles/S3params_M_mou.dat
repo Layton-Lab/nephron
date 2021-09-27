@@ -1,0 +1,218 @@
+#
+#  physical dimension
+#
+sex	male
+diameter_male	 0.00250    # luminal diameter for male
+diameter_female	 0.002125    # luminal diameter for female
+length_male		0.4   # tubule length for male
+length_female	0.935   # tubule length for female
+total 200           # total amount of PT cells
+#
+#  luminal pressure
+#
+pressure 10.8
+#
+#  surface areas
+area_Lumen_Cell	18.0
+area_Lumen_LIS	0.001
+area_Cell_LIS	18.0
+area_Cell_Bath	0.5d0
+area_LIS_Bath	1.0d0
+#
+#  compartment areas (reference)
+volref_Lumen	0.005
+volref_Cell    10.0
+volref_LIS	0.7
+#
+#  compartment areas (actual)
+vol_Lumen_male      0.00511
+vol_Lumen_female	0.004088
+vol_Cell	 7.74582
+vol_LIS		-1.53296
+#
+#  water permeability (in cm/s)
+#
+Pf_Lumen_Cell_male	0.011111111
+Pf_Lumen_Cell_female	0.011111111
+Pf_Lumen_LIS	220
+Pf_Cell_Bath_male	 0.011111111
+Pf_Cell_Bath_female	 0.011111111
+Pf_Cell_LIS_male	 0.011111111
+Pf_Cell_LIS_female	 0.011111111
+Pf_LIS_Bath	330.0
+#
+#  reflection coefficients, default set to 1
+#
+sig_Na_Lumen_LIS	0.75
+sig_K_Lumen_LIS		0.6
+sig_Cl_Lumen_LIS	0.3
+sig_HCO3_Lumen_LIS	0.9
+sig_H2CO3_Lumen_LIS	0.9
+sig_CO2_Lumen_LIS	0.9
+sig_HPO4_Lumen_LIS	0.9
+sig_H2PO4_Lumen_LIS	0.9
+sig_urea_Lumen_LIS	0.7
+sig_NH3_Lumen_LIS	0.3
+sig_NH4_Lumen_LIS	0.6
+sig_H_Lumen_LIS		0.2
+sig_HCO2_Lumen_LIS	0.3
+sig_H2CO2_Lumen_LIS	0.7
+sig_glucose_Lumen_LIS	1.0
+#
+#  solute permeabilities, apical interface (in 1e-5cm/s)
+#  default permeability = 0
+#
+perm_Na_Lumen_Cell	0.0
+perm_K_Lumen_Cell	0.025
+perm_Cl_Lumen_Cell	0.0
+perm_HCO3_Lumen_Cell	0.001
+perm_H2CO3_Lumen_Cell	65
+perm_CO2_Lumen_Cell	0.12e4
+perm_HPO4_Lumen_Cell	0.00094444
+perm_H2PO4_Lumen_Cell	0.0
+perm_urea_Lumen_Cell	0.105
+perm_NH3_Lumen_Cell	85
+perm_NH4_Lumen_Cell	0.0215
+# perm_H_Lumen_Cell	0.02944e4
+perm_H_Lumen_Cell	850
+perm_HCO2_Lumen_Cell	0.0
+perm_H2CO2_Lumen_Cell	0.05e5
+perm_glucose_Lumen_Cell	0.0
+#
+#  solute permeabilities, basolateral interface (in 1e-5cm/s)
+#  default permeability = 0
+#
+perm_Na_Cell_Bath	0.0
+perm_K_Cell_Bath	0.2
+perm_Cl_Cell_Bath	0.01
+perm_HCO3_Cell_Bath	0.0
+perm_H2CO3_Cell_Bath	65
+perm_CO2_Cell_Bath	0.12e4
+perm_HPO4_Cell_Bath	0.00225
+perm_H2PO4_Cell_Bath	0.033
+perm_urea_Cell_Bath	0.10
+perm_NH3_Cell_Bath	100.0
+perm_NH4_Cell_Bath	0.06
+perm_H_Cell_Bath	850.0
+perm_HCO2_Cell_Bath	0.019
+perm_H2CO2_Cell_Bath	6.0e3
+perm_glucose_Cell_Bath	0.0
+#
+#  solute permeabilities, lumen-LIS interface (in 1e-5cm/s)
+#  default permeability = 0
+#
+perm_Na_Lumen_LIS_male	26.0e3
+perm_Na_Lumen_LIS_female	26.0e3
+perm_K_Lumen_LIS	29.0e3
+perm_Cl_Lumen_LIS_male	20.0e3
+perm_Cl_Lumen_LIS_female	20.0e3
+perm_HCO3_Lumen_LIS	8.0e3
+perm_H2CO3_Lumen_LIS	8.0e3
+perm_CO2_Lumen_LIS	8.0e3
+perm_HPO4_Lumen_LIS	4.0e3
+perm_H2PO4_Lumen_LIS	4.0e3
+perm_urea_Lumen_LIS	8.0e3
+perm_NH3_Lumen_LIS	50.0e3
+perm_NH4_Lumen_LIS	50.0e3
+perm_H_Lumen_LIS	600.0e3
+perm_HCO2_Lumen_LIS	14.0e3
+perm_H2CO2_Lumen_LIS	28.0e3
+perm_glucose_Lumen_LIS	0.31e3
+#
+#  solute permeabilities, LIS-Bath interface (in 1e-5cm/s)
+#  default permeability = 0
+#
+perm_Na_LIS_Bath	5.0e3
+perm_K_LIS_Bath		7.0e3
+perm_Cl_LIS_Bath	6.0e3
+perm_HCO3_LIS_Bath	5.0e3
+perm_H2CO3_LIS_Bath	5.0e3
+perm_CO2_LIS_Bath	5.0e3
+perm_HPO4_LIS_Bath	4.0e3
+perm_H2PO4_LIS_Bath	4.0e3
+perm_urea_LIS_Bath	8.0e3
+perm_NH3_LIS_Bath	20.0e3
+perm_NH4_LIS_Bath	20.0e3
+perm_H_LIS_Bath		300.0e4
+perm_HCO2_LIS_Bath	5.0e3
+perm_H2CO2_LIS_Bath	9.0e3
+perm_glucose_LIS_Bath	3.0e3
+#
+#  solute concentrations
+#  solute   <luminal conc>  <cell conc>  <LIS conc>  <bath conc> [optional: <IC A conc>  <IC B conc>]
+#
+conc_Na	144.0	14.4611806444	144.058247943	144.0
+conc_K	4.9	153.516466918	4.92044820074	4.9
+conc_Cl	117.0	13.8500122967	117.797564885	117.648140761
+conc_HCO3	25.0	24.110746684	24.3444350889	24.8299743783
+conc_H2CO3	0.00441	0.00439881417233	0.0043966903784	0.00438506738
+conc_CO2	1.5	1.50495440825	1.50411054093	1.5
+conc_HPO4	3.001932773	10.1951965542	2.9672096409	3.0001932773
+conc_H2PO4	0.89980672	3.15878857527	0.910069193031	0.9
+conc_urea	5.0	5.71429630422	5.03457581284	5.0
+conc_NH3	0.0146750463	0.0128597772523	0.0148844444758	0.01467504634
+conc_NH4	1.01489361	0.891986746598	1.02201862927	1.01489361078
+conc_H	4.75335226E-05	4.91049140737E-05	4.8610062762E-05	4.753352E-05
+conc_HCO2	0.99977	0.59594353151	1.01427493486	1.0
+conc_H2CO2	0.000273452076	 0.000168395339061 	 0.000283714723953 	0.00027345208
+conc_glucose	5.0	4.96317185232	4.9045100702	5.0
+#
+# Rates used in HCO3/H2CO3 reaction, default is set to 0
+#
+dkd_Lumen 496.0e1
+dkd_Cell 496.0e1
+dkd_LIS 496.0e1
+dkh_Lumen 1.450e1
+dkh_Cell 1.450e1
+dkh_LIS 1.450e1
+#
+# reference impermeat concentrations
+#
+cimpref_Lumen	0
+cimpref_Cell	60
+cimpref_LIS	0
+cimpref_Bath	2
+#
+# Impermeant Properties
+#
+zimp_Cell -1.0
+#
+# Reference Buffer Concentrations
+#
+cbuftot_Cell 60.0
+#
+#  membrane potential
+#
+ep_Lumen      -0.66196
+ep_Cell	      -57.88364
+ep_LIS	      -0.12856
+#
+#  coupled transporters, specify permeability and coefficients
+#
+coupled_Lumen_Cell_Na_H2PO4_male	1.25e-9	1	1
+coupled_Lumen_Cell_Na_H2PO4_female	1.25e-9	1	1
+# coupled_Lumen_Cell_Cl_HCO3	2.0e-9	1	-1
+coupled_Lumen_Cell_Cl_HCO2	10.0e-9	1	-1
+coupled_Cell_Bath_K_Cl		0.0e-9	1	1
+coupled_Cell_LIS_K_Cl	5.0e-9	1	1
+coupled_Cell_Bath_Na_HCO3	5.0e-9	1	3
+coupled_Cell_LIS_Na_HCO3	5.0e-9	1	3
+coupled_Cell_Bath_Na_HCO3_Cl	35.0e-9	1	2	-1
+coupled_Cell_LIS_Na_HCO3_Cl	35.0e-9	1	2	-1
+#
+#  specific transporters, specify activity
+#
+transport_Lumen_Cell_SGLT1	0.00833333333e-5
+#transport_Lumen_Cell_SGLT2	1.3e-9
+transport_Cell_Bath_GLUT1	0.3e-5
+transport_Cell_LIS_GLUT1	0.3e-5
+#transport_Cell_Bath_GLUT2	0.1625e-5
+transport_Lumen_Cell_NHE3_male	2.7777777e-08
+transport_Lumen_Cell_NHE3_female	2.777777e-08
+transport_Cell_Bath_NaKATPase	300e-9
+transport_Cell_LIS_NaKATPase	300e-9
+transport_Lumen_Cell_HATPase	 50e-9
+#	Na		K		Cl		HCO3	H2CO3		CO2		HPO4	H2PO4	urea	NH3		NH4		H	HCO2	H2CO2	glucose
+cm 	144.0	4.9		116.17	25.0	4.41e-3		1.5		3.9		0.0		8.0		1.0		0.0		0.0	1.0		0.0		5.0
+oi	299.0	10.0	279.94	25.0	4.41e-3		1.5		3.9		0.0		60.0	3.9		0.0		0.0	1.0		0.0		8.33
+pap	349.0	20.0	344.92	25.0	4.41e-3		1.5		3.9		0.0		200.0	8.95	0.0		0.0	1.0		0.0		8.5

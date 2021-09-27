@@ -1,0 +1,369 @@
+#
+#  physical dimension
+#
+sex	female
+diameter_male	 0.0024    # luminal diameter for male
+diameter_female  0.0024
+length_male		0.4   # tubule length for male
+length_female   0.4
+total 200           # total amount of cells
+#
+#  luminal pressure
+#
+pressure 5.8809
+#
+pH 6.28864 7.55435 7.36094 7.42868 7.21746 7.323
+#  surface areas
+area_Lumen_Cell	1.2
+area_Lumen_ICA	0.58
+area_Lumen_ICB	0.17
+area_Lumen_LIS	0.001
+area_Cell_LIS	6.9
+area_Cell_Bath	1.2
+area_ICA_LIS	1.25
+area_ICA_Bath	0.58
+area_ICB_LIS	1.5
+area_ICB_Bath	0.17
+#
+#  compartment areas (reference)
+volref_Cell    6.0
+volref_ICA	2.7
+volref_ICB	1.8
+volref_LIS	0.2
+#
+#  compartment areas (actual)
+vol_Lumen	0.0006397
+vol_Cell	5.6372
+vol_ICA	4.9616
+vol_ICB	4.58241
+vol_LIS	-0.35506
+#
+#  water permeability (in cm/s)
+#
+Pf_Lumen_Cell_male	0.036
+Pf_Lumen_Cell_female	0.054  #0.036*1.5 (Increase)
+Pf_Lumen_ICA_male	0.22e-3
+Pf_Lumen_ICA_female	0.33e-3 #0.22e-3*1.5 (Increase)
+Pf_Lumen_ICB_male	0.22e-3
+Pf_Lumen_ICB_female	0.33e-3  #0.22e-3*1.5 (Increase)
+Pf_Lumen_LIS_male	1.1
+Pf_Lumen_LIS_female	1.1
+Pf_Cell_LIS	0.44
+Pf_ICA_LIS	5.5e-3
+Pf_ICB_LIS	5.5e-3
+Pf_Cell_Bath_male	0.44
+Pf_Cell_Bath_female	0.66 #0.44*1.5 (Increase) 
+Pf_ICA_Bath_male	5.5e-3
+Pf_ICA_Bath_female	8.25e-3 #5.5e-3*1.5 (Increase)
+Pf_ICB_Bath_male	5.5e-3
+Pf_ICB_Bath_female	8.25e-3 #5.5e-3*1.5 (Increase)
+Pf_LIS_Bath	110.0
+#
+#  reflection coefficients, default set to 1
+#
+sig_Na_LIS_Bath	0.0
+sig_K_LIS_Bath	0.0
+sig_Cl_LIS_Bath	0.0
+sig_HCO3_LIS_Bath	0.0
+sig_H2CO3_LIS_Bath	0.0
+sig_CO2_LIS_Bath	0.0
+sig_HPO4_LIS_Bath	0.0
+sig_H2PO4_LIS_Bath	0.0
+sig_urea_LIS_Bath	0.0
+sig_NH3_LIS_Bath	0.0
+sig_NH4_LIS_Bath	0.0
+sig_H_LIS_Bath	0.0
+sig_HCO2_LIS_Bath	0.0
+sig_H2CO2_LIS_Bath	0.0
+sig_glucose_LIS_Bath	0.0
+#
+#  solute permeabilities, apical interface (in 1e-5cm/s)
+#  default permeability = 0
+#
+perm_Na_Lumen_Cell	3.0 #used to be 0.0!
+perm_K_Lumen_Cell	8.0
+perm_Cl_Lumen_Cell	0.8
+perm_HCO3_Lumen_Cell	0.16
+perm_H2CO3_Lumen_Cell	130.0
+perm_CO2_Lumen_Cell	1.5e4
+perm_HPO4_Lumen_Cell	8.0e-4
+perm_H2PO4_Lumen_Cell	8.0e-4
+perm_urea_Lumen_Cell	0.1
+perm_NH3_Lumen_Cell	2000.0
+perm_NH4_Lumen_Cell	1.6
+perm_H_Lumen_Cell	2000.0
+perm_HCO2_Lumen_Cell	0.0
+perm_H2CO2_Lumen_Cell	0.0
+perm_glucose_Lumen_Cell	0.0
+#
+#  solute permeabilities, Cell-LIS interface (in 1e-5cm/s)
+#  default permeability = 0
+#
+perm_Na_Cell_LIS	0.0
+perm_K_Cell_LIS	4.0
+perm_Cl_Cell_LIS	0.2
+perm_HCO3_Cell_LIS	0.04
+perm_H2CO3_Cell_LIS	130.0
+perm_CO2_Cell_LIS	1.5e4
+perm_HPO4_Cell_LIS	0.008
+perm_H2PO4_Cell_LIS	0.008
+perm_urea_Cell_LIS	0.1
+perm_NH3_Cell_LIS	2000.0
+perm_NH4_Cell_LIS	0.8
+perm_H_Cell_LIS	2000.0
+perm_HCO2_Cell_LIS	1.0e-4
+perm_H2CO2_Cell_LIS	1.0e-4
+perm_glucose_Cell_LIS	1.0e-4
+#
+#  solute permeabilities, Lumen-ICA interface (in 1e-5cm/s)
+#  default permeability = 0
+#
+perm_Na_Lumen_ICA	0.0
+perm_K_Lumen_ICA	0.0
+perm_Cl_Lumen_ICA	0.0
+perm_HCO3_Lumen_ICA	0.0
+perm_H2CO3_Lumen_ICA	10.0
+perm_CO2_Lumen_ICA	900.0
+perm_HPO4_Lumen_ICA	0.0
+perm_H2PO4_Lumen_ICA	0.0
+perm_urea_Lumen_ICA	0.1
+perm_NH3_Lumen_ICA	900.0
+perm_NH4_Lumen_ICA	0.0
+perm_H_Lumen_ICA	0.0
+perm_HCO2_Lumen_ICA	0.0
+perm_H2CO2_Lumen_ICA	0.0
+perm_glucose_Lumen_ICA	0.0
+#
+#  solute permeabilities, ICA-LIS interface (in 1e-5cm/s)
+#  default permeability = 0
+#
+perm_Na_ICA_LIS	0.0
+perm_K_ICA_LIS	0.448
+perm_Cl_ICA_LIS	11.0
+perm_HCO3_ICA_LIS	1.5
+perm_H2CO3_ICA_LIS	10.0
+perm_CO2_ICA_LIS	900.0
+perm_HPO4_ICA_LIS	7.0e-3
+perm_H2PO4_ICA_LIS	7.0e-3
+perm_urea_ICA_LIS	0.1
+perm_NH3_ICA_LIS	900.0
+perm_NH4_ICA_LIS	0.18
+perm_H_ICA_LIS	9.0
+perm_HCO2_ICA_LIS	1.0e-4
+perm_H2CO2_ICA_LIS	1.0e-4
+perm_glucose_ICA_LIS	1.0e-4
+#
+#  solute permeabilities, Lumen-ICB interface (in 1e-5cm/s)
+#  default permeability = 0
+#
+perm_Na_Lumen_ICB	0.0
+perm_K_Lumen_ICB	0.0
+perm_Cl_Lumen_ICB	0.0
+perm_HCO3_Lumen_ICB	0.0
+perm_H2CO3_Lumen_ICB	10.0
+perm_CO2_Lumen_ICB	900.0
+perm_HPO4_Lumen_ICB	0.0
+perm_H2PO4_Lumen_ICB	0.0
+perm_urea_Lumen_ICB	0.1
+perm_NH3_Lumen_ICB	900.0
+perm_NH4_Lumen_ICB	0.0
+perm_H_Lumen_ICB	0.0
+perm_HCO2_Lumen_ICB	0.0
+perm_H2CO2_Lumen_ICB	0.0
+perm_glucose_Lumen_ICB	0.0
+#
+#  solute permeabilities, ICB-LIS interface (in 1e-5cm/s)
+#  default permeability = 0
+#
+perm_Na_ICB_LIS	0.0
+perm_K_ICB_LIS	0.12
+perm_Cl_ICB_LIS	3.2
+perm_HCO3_ICB_LIS	0.4
+perm_H2CO3_ICB_LIS	10.0
+perm_CO2_ICB_LIS	900.0
+perm_HPO4_ICB_LIS	4.8e-3
+perm_H2PO4_ICB_LIS	4.8e-3
+perm_urea_ICB_LIS	0.1
+perm_NH3_ICB_LIS	900.0
+perm_NH4_ICB_LIS	0.12
+perm_H_ICB_LIS	6.0
+perm_HCO2_ICB_LIS	1.0e-4
+perm_H2CO2_ICB_LIS	1.0e-4
+perm_glucose_ICB_LIS	1.0e-4
+#
+#  solute permeabilities, Lumen-LIS interface (in 1e-5cm/s)
+#  default permeability = 0
+#
+perm_Na_Lumen_LIS_male	1.0e3
+perm_Na_Lumen_LIS_female 1.4e3 #1.0e3*1.4 (Increase)
+perm_K_Lumen_LIS	1.2e3
+perm_Cl_Lumen_LIS_male	1.2e3
+perm_Cl_Lumen_LIS_female 1.68e3 #1.2e3*1.4 (Increase)
+perm_HCO3_Lumen_LIS	0.6e3
+perm_H2CO3_Lumen_LIS	2.0e3
+perm_CO2_Lumen_LIS	2.0e3
+perm_HPO4_Lumen_LIS	0.14e3
+perm_H2PO4_Lumen_LIS	0.14e3
+perm_urea_Lumen_LIS	0.4e3
+perm_NH3_Lumen_LIS	6.0e3
+perm_NH4_Lumen_LIS	1.2e3
+perm_H_Lumen_LIS	10.0e3
+perm_HCO2_Lumen_LIS	100.0 #Raised in Human 
+perm_H2CO2_Lumen_LIS	100.0 #Raised in Human
+perm_glucose_Lumen_LIS	10.0
+#
+#  solute permeabilities, LIS-Bath interface (in 1e-5cm/s)
+#  default permeability = 0
+#
+perm_Na_LIS_Bath	12.0e3
+perm_K_LIS_Bath		16.0e3
+perm_Cl_LIS_Bath	16.0e3
+perm_HCO3_LIS_Bath	8.0e3
+perm_H2CO3_LIS_Bath	12.0e3
+perm_CO2_LIS_Bath	12.0e3
+perm_HPO4_LIS_Bath	8.0e3
+perm_H2PO4_LIS_Bath	8.0e3
+perm_urea_LIS_Bath	8.0e3
+perm_NH3_LIS_Bath	16.0e3
+perm_NH4_LIS_Bath	16.0e3
+perm_H_LIS_Bath		8.0e5
+perm_HCO2_LIS_Bath	200.0
+perm_H2CO2_LIS_Bath	200.0
+perm_glucose_LIS_Bath	200.0
+#
+#  solute concentrations
+#  solute   <luminal conc>  <cell conc>  <LIS conc>  <bath conc> [optional: <IC A conc>  <IC B conc>]
+#
+conc_Na	26.44436	9.13631	137.28903	144.0	17.09864	15.56609
+conc_K	6.07946	153.17216	4.16444	4.9	135.53857	134.44201
+conc_Cl	15.31436	5.36289	110.4349	116.26869	42.0899	40.8052
+conc_HCO3	2.9148	25.58383	24.50938	24.82997	25.47796	30.41101
+conc_H2CO3	0.55733e-2	0.00265	0.00552	0.0043851	0.00412	0.00421
+conc_CO2	1.4991	1.4967	1.4961	1.5	1.4129	1.4417
+conc_HPO4	2.7377	27.67	2.7389	3.0002	29.086	28.893
+conc_H2PO4	8.8899	4.8715	1.0474	0.89981	7.9935	6.794
+conc_urea	44.022	6.1491	4.8466	8.0	7.276	5.7792
+conc_NH3	0.49449e-2	0.00443	0.00282	0.0014675	0.00343	0.00313
+conc_NH4	3.5947	0.1747	0.24182	0.098532	0.21108	0.16457
+conc_H	0.51464e-3	0.00003	0.00006	0.47534e-4	0.00004	0.00004
+conc_HCO2	3.5244	0.01266	0.22582	0.99973	0.16446	0.09277
+conc_H2CO2	0.10437e-1	0.00011	0.00008	0.27345e-3	0.00014	0.0001
+conc_glucose	0.2582e-1	5.0	5.0	5.0	5.0	5.0
+#
+#
+# Rates used in HCO3/H2CO3 reaction, default is set to 0
+#
+dkd_Lumen 496.0
+dkd_Cell 496.0
+dkd_ICA 496.0e3
+dkd_ICB 496.0e3
+dkd_LIS 496.0e2
+dkh_Lumen 1.450
+dkh_Cell 1.450
+dkh_ICA 1.45e3
+dkh_ICB 1.45e3
+dkh_LIS 1.450e2
+#
+#
+# Reference impermeat concentrations
+#
+cimpref_Lumen	0.0
+cimpref_Cell	50.0
+cimpref_ICA	18.0
+cimpref_ICB	18.0
+cimpref_LIS	0
+cimpref_Bath	2.0
+#
+# Impermeant Properties
+#
+zimp_Cell -1.0
+zimp_ICA -1.0
+zimp_ICB -1.0
+#
+# Reference Buffer Concentrations
+#
+cbuftot_Cell 32.0
+cbuftot_ICA 40.0
+cbuftot_ICB 40.0
+#
+#  membrane potential
+#
+ep_Lumen	-30.52722
+ep_Cell	-87.62827
+ep_ICA	-28.00235
+ep_ICB	-31.62093
+ep_LIS	0.05476
+ep_Bath 0.0
+# 
+#  coupled transporters, specify permeability and coefficients
+#
+coupled_Cell_LIS_Na_H_male 20.0e-9	1	-1
+coupled_Cell_LIS_Na_H_female	18.0e-9	1	-1
+#20.0e-9*0.9 (Decrease)
+coupled_Cell_Bath_Na_H_male 20.0e-9	1	-1
+coupled_Cell_Bath_Na_H_female	18.0e-9	1	-1
+#20.0e-9*0.9 (Decrease)
+coupled_ICA_LIS_Na_H_male	36.0e-9	1	-1
+coupled_ICA_LIS_Na_H_female	32.4e-9	1	-1
+#36.0e-9*0.9 (Decrease)
+coupled_ICA_Bath_Na_H_male	36.0e-9	1	-1
+coupled_ICA_Bath_Na_H_female	32.4e-9	1	-1
+#36.0e-9*0.9 (Decrease)
+coupled_ICB_LIS_Na_H_male	24.0e-9	1	-1
+coupled_ICB_LIS_Na_H_female	21.6e-9	1	-1
+#24.0*0.9 (Decrease)
+coupled_ICB_Bath_Na_H_male	24.0e-9	1	-1
+coupled_ICB_Bath_Na_H_female	21.6e-9	1	-1
+#24.0*0.9 (Decrease)
+coupled_Cell_LIS_Na_HPO4_male 2.0e-9	2	1
+coupled_Cell_LIS_Na_HPO4_female	1.8e-9	2	1
+#2.0*0.9 (Decrease)
+coupled_Cell_Bath_Na_HPO4_male 2.0e-9	2	1
+coupled_Cell_Bath_Na_HPO4_female	1.8e-9	2	1
+#2.0*0.9 (Decrease)
+coupled_ICA_LIS_Na_HPO4_male	1.2e-9	2	1
+coupled_ICA_LIS_Na_HPO4_female	1.08e-9	2	1
+#1.2*0.9 (Decrease)
+coupled_ICA_Bath_Na_HPO4_male	1.2e-9	2	1
+coupled_ICA_Bath_Na_HPO4_female	1.08e-9	2	1
+#1.2*0.9 (Decrease)
+coupled_ICB_LIS_Na_HPO4_male	0.8e-9	2	1
+coupled_ICB_LIS_Na_HPO4_female	0.72e-9	2	1
+#0.8*0.9 (Decrease)
+coupled_ICB_Bath_Na_HPO4_male	0.8e-9	2	1
+coupled_ICB_Bath_Na_HPO4_female	0.72e-9	2	1
+#0.8*0.9 (Decrease)
+coupled_Cell_LIS_Cl_HCO3 2.0e-9	 1	-1
+coupled_Cell_Bath_Cl_HCO3 2.0e-9	1	-1
+#
+#  specific transporters, specify activity
+#
+transport_Cell_LIS_NaKATPase_male	3410.0e-9
+transport_Cell_LIS_NaKATPase_female	5115.0e-9 #3410e-9*1.5 (Increase)
+transport_Cell_Bath_NaKATPase_male	3410.0e-9
+transport_Cell_Bath_NaKATPase_female	5115.0e-9 #3410e-9*1.5 (Increase)
+transport_ICA_LIS_NaKATPase_male	450.0e-9
+transport_ICA_LIS_NaKATPase_female	675.0e-9 #450e-9*1.5 (Increase)
+transport_ICA_Bath_NaKATPase_male	450.0e-9
+transport_ICA_Bath_NaKATPase_female	675.0e-9 #450e-9*1.5 (Increase)
+transport_ICB_LIS_NaKATPase_male	300.0e-9
+transport_ICB_LIS_NaKATPase_female	450.0e-9 #300e-9*1.5 (Increase)
+transport_ICB_Bath_NaKATPase_male	300.0e-9
+transport_ICB_Bath_NaKATPase_female	450.0e-9 #300e-9*1.5 (Increase)
+transport_Lumen_ICA_HATPase	12000.0e-9
+transport_ICB_LIS_HATPase	6000.0e-9
+transport_ICB_Bath_HATPase	6000.0e-9
+transport_Lumen_Cell_HKATPase	0.0
+transport_Lumen_ICA_HKATPase_male	720.0e-9
+transport_Lumen_ICA_HKATPase_female	720.0e-9 
+transport_Lumen_ICB_HKATPase	0.0
+transport_Lumen_ICB_Pendrin	0.57142857142857141e-9 #800.0e-9/1400.0
+transport_ICA_LIS_AE1	150.0e-9
+transport_ICA_Bath_AE1	150.0e-9
+transport_Lumen_Cell_ENaC_male	14.0e-8			#Dania: Easier to adjust this parameter in data files
+transport_Lumen_Cell_ENaC_female	18.2e-8
+# 14.0e-8*1.3 (Increase)
+#	Na		K		Cl		HCO3	H2CO3		CO2		HPO4	H2PO4	urea	NH3		NH4		H	HCO2	H2CO2	glucose
+cm 	140.0	4.0		100.0	25.0	4.41e-3		1.45	1.45	0.0		5.0		1.0		0.0		0.0	1.0		0.0		5.0
+oi	299.0	8.0		279.94	25.0	4.41e-3		1.45	1.45	0.0		60.0	3.9		0.0		0.0	1.0		0.0		8.33
+pap	239.0	15.0	229.92	25.0	4.41e-3		1.45	1.45	0.0		200.0	8.95	0.0		0.0	1.0		0.0		8.5
