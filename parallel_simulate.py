@@ -41,7 +41,7 @@ parser.add_argument('--pregnant', choices=['mid','late'], default='non', type=st
 
 args = parser.parse_args()
 sex = args.sex
-humOrrat = args.species
+species = args.species
 sup_or_multi = args.type
 diabete = args.diabetes
 inhib = args.inhibition
@@ -52,20 +52,20 @@ if diabete != 'Non':
     if preg != 'non':
         raise Exception('pregnant diabetic not done')
     if inhib != None:
-        file_to_save = inhib+'_'+sex+'_'+humOrrat[0:3]+'_'+diabete+'_diab'+'_'+unx+'_unx'
+        file_to_save = inhib+'_'+sex+'_'+species[0:3]+'_'+diabete+'_diab'+'_'+unx+'_unx'
     else:
-        file_to_save = sex+'_'+humOrrat[0:3]+'_'+diabete+'_diab'+'_'+unx+'_unx'
+        file_to_save = sex+'_'+species[0:3]+'_'+diabete+'_diab'+'_'+unx+'_unx'
 elif preg != 'non':
     if sex == 'Male':
         raise Exception('pregnant only for female')
-    if humOrrat[0:3] == 'hum' or humOrrat[0:3] == 'mou':
+    if species[0:3] == 'hum' or species[0:3] == 'mou':
         raise Exception('pregnant model not set up for human or mouse yet')
     if inhib != None:
         raise Exception('pregnant model does not have inhibition set up yet')
 
-    file_to_save = preg+'pregnant_'+humOrrat[0:3]
+    file_to_save = preg+'pregnant_'+species[0:3]
 else:
-    file_to_save = sex + '_' + humOrrat[0:3] +'_normal'
+    file_to_save = sex + '_' + species[0:3] +'_normal'
     
 if os.path.isdir(file_to_save) == False:
     os.makedirs(file_to_save)
@@ -76,7 +76,7 @@ else:
     parts = ['sup','jux1','jux2','jux3','jux4','jux5']
     
 def multiprocessing_func(sup_or_jux):
-    compute_segment(sup_or_jux, sex, humOrrat, sup_or_multi, diabete, inhib, unx, preg, file_to_save)
+    compute_segment(sup_or_jux, sex, species, sup_or_multi, diabete, inhib, unx, preg, file_to_save)
 
 if __name__ == '__main__':
 
@@ -91,12 +91,12 @@ if __name__ == '__main__':
     print('CCD start')
     NCCD = 200
     if sex == 'Male':
-        filename = './datafiles/CCDparams_M_'+humOrrat[0:3]+'.dat'
+        filename = './datafiles/CCDparams_M_'+species[0:3]+'.dat'
     elif sex == 'Female':
-        filename = './datafiles/CCDparams_F_'+humOrrat[0:3]+'.dat'
+        filename = './datafiles/CCDparams_F_'+species[0:3]+'.dat'
     else:
-        filename ='./datafiles/CCDparams_F_'+humOrrat[0:3]+'.dat'
-    ccd=compute(NCCD,filename,'Newton',diabete=diabete,humOrrat=humOrrat,sup_or_multi=sup_or_multi,inhibition = inhib,unx = unx, preg=preg)
+        filename ='./datafiles/CCDparams_F_'+species[0:3]+'.dat'
+    ccd=compute(NCCD,filename,'Newton',diabete=diabete,species=species,sup_or_multi=sup_or_multi,inhibition = inhib,unx = unx, preg=preg)
 
     Scaletorq = np.ones(NCCD)
 
@@ -111,15 +111,15 @@ if __name__ == '__main__':
     print('OMCD start')
     NOMCD = 200
     if sex == 'Male':
-        filename = './datafiles/OMCDparams_M_'+humOrrat[0:3]+'.dat'
+        filename = './datafiles/OMCDparams_M_'+species[0:3]+'.dat'
     elif sex == 'Female':
-        filename = './datafiles/OMCDparams_F_'+humOrrat[0:3]+'.dat'
+        filename = './datafiles/OMCDparams_F_'+species[0:3]+'.dat'
     else:
-        filename ='./datafiles/OMCDparams_F_'+humOrrat[0:3]+'.dat'
+        filename ='./datafiles/OMCDparams_F_'+species[0:3]+'.dat'
     if ccd[0].sex == 'male':
-        omcd=compute(NOMCD,filename,'Newton',diabete=diabete,humOrrat=humOrrat,sup_or_multi=sup_or_multi,inhibition=inhib,unx=unx, preg=preg)
+        omcd=compute(NOMCD,filename,'Newton',diabete=diabete,species=species,sup_or_multi=sup_or_multi,inhibition=inhib,unx=unx, preg=preg)
     elif ccd[0].sex == 'female':
-        omcd=compute(NOMCD,filename,'Newton',diabete=diabete,humOrrat=humOrrat,sup_or_multi=sup_or_multi,inhibition=inhib,unx=unx, preg=preg)
+        omcd=compute(NOMCD,filename,'Newton',diabete=diabete,species=species,sup_or_multi=sup_or_multi,inhibition=inhib,unx=unx, preg=preg)
 
     Scaletorq = np.ones(NOMCD)
 
@@ -134,12 +134,12 @@ if __name__ == '__main__':
     print('IMCD start')
     NIMCD = 200
     if sex == 'Male':
-        filename = './datafiles/IMCDparams_M_'+humOrrat[0:3]+'.dat'
+        filename = './datafiles/IMCDparams_M_'+species[0:3]+'.dat'
     elif sex == 'Female':
-        filename = './datafiles/IMCDparams_F_'+humOrrat[0:3]+'.dat'
+        filename = './datafiles/IMCDparams_F_'+species[0:3]+'.dat'
     else:
-        filename ='./datafiles/IMCDparams_F_'+humOrrat[0:3]+'.dat'
-    imcd=compute(NIMCD,filename,'Newton',diabete=diabete,humOrrat=humOrrat,sup_or_multi=sup_or_multi,inhibition=inhib,unx=unx, preg=preg)
+        filename ='./datafiles/IMCDparams_F_'+species[0:3]+'.dat'
+    imcd=compute(NIMCD,filename,'Newton',diabete=diabete,species=species,sup_or_multi=sup_or_multi,inhibition=inhib,unx=unx, preg=preg)
 
     Scaletorq = np.ones(NIMCD)
 

@@ -34,7 +34,7 @@ def female_conc(cell, i):
     
 
 def boundaryBath(cell,i):
-    if cell.humOrrat == 'rat':
+    if cell.species == 'rat':
         if cell.inhib == 'NHE3-50':
             cell.oi[0] = TotSodOI_noinhib
             cell.oi[1] = TotPotOI_noinhib
@@ -91,17 +91,17 @@ def boundaryBath(cell,i):
             cell.pap[8] = TotureaPap_100NKCCinhib
             
     if cell.segment=='cTAL' or cell.segment == 'MD' or cell.segment=='DCT' or cell.segment=='PT' or cell.segment == 'CNT' or cell.segment == 'CCD':
-        if cell.humOrrat == 'rat':
+        if cell.species == 'rat':
             pHplasma = 7.323
             phpap = 7.0
-        elif cell.humOrrat == 'mou':
+        elif cell.species == 'mou':
             pHplasma = 7.323
             phpap = 7.0
-        elif cell.humOrrat == 'hum':
+        elif cell.species == 'hum':
             pHplasma = 7.4
             phpap = 7.3
         else:
-            print('cell.humOrrat: ' + str(cell.humOrrat))
+            print('cell.species: ' + str(cell.species))
             raise Exception('what is species?')
 
         if cell.unx == 'Y':
@@ -147,14 +147,14 @@ def boundaryBath(cell,i):
         elif cell.segment =='PT':
             TotAmmCT = 0.1
             TotAmmCM = 1.5
-            if cell.humOrrat == 'hum':
+            if cell.species == 'hum':
                 total = cell.total*0.9
-            elif cell.humOrrat == 'rat':
+            elif cell.species == 'rat':
                 total = cell.total*0.88
-            elif cell.humOrrat == 'mou':
+            elif cell.species == 'mou':
                 total = cell.total*0.88
             else:
-                print('cell.humOrrat: ' + str(cell.humOrrat))
+                print('cell.species: ' + str(cell.species))
                 raise Exception('what is species?')
             pos = i/total
         elif cell.segment == 'CNT':
@@ -186,7 +186,7 @@ def boundaryBath(cell,i):
             elecS = elecS+zval[j]*cell.conc[j,5]
 
         cell.conc[2,5] = cell.conc[2,5]+elecS
-        if cell.sex=='female' and cell.humOrrat == 'rat':
+        if cell.sex=='female' and cell.species == 'rat':
             female_conc(cell, i)
 
     elif cell.segment=='mTAL' or cell.segment=='SDL' or cell.segment=='OMCD':
@@ -197,17 +197,17 @@ def boundaryBath(cell,i):
             pos = 0.3+0.7*i/(1*cell.total)
         elif cell.segment == 'OMCD':
             pos = (1*i)/(1*cell.total)
-        if cell.humOrrat == 'rat':
+        if cell.species == 'rat':
             pHplasma = 7.323
             phpap = 7.0
-        elif cell.humOrrat == 'mou':
+        elif cell.species == 'mou':
             pHplasma = 7.323
             phpap = 7.0
-        elif cell.humOrrat == 'hum':
+        elif cell.species == 'hum':
             pHplasma = 7.4
             phpap = 7.3
         else:
-            print('cell.humOrrat: ' + str(cell.humOrrat))
+            print('cell.species: ' + str(cell.species))
             raise Exception('what is species?')
 
         if cell.unx == 'Y':
@@ -256,22 +256,22 @@ def boundaryBath(cell,i):
         cell.conc[2,5] = cell.conc[2,5]+elecS
  
         #  Concentrations of K, Cl are lower in female rat.
-        if cell.sex=='female' and cell.humOrrat=='rat':
+        if cell.sex=='female' and cell.species=='rat':
             female_conc(cell, i)
     
     elif cell.segment=='S3':
         if i == 1:
-            if cell.humOrrat == 'rat':
+            if cell.species == 'rat':
                 pHplasma = 7.323
                 phpap = 7.0
-            elif cell.humOrrat == 'mou':
+            elif cell.species == 'mou':
                 pHplasma = 7.323
                 phpap = 7.0
-            elif cell.humOrrat == 'hum':
+            elif cell.species == 'hum':
                 pHplasma = 7.4
                 phpap = 7.3
             else:
-                print('cell.humOrrat: ' + str(cell.humOrrat))
+                print('cell.species: ' + str(cell.species))
                 raise Exception('what is species?')
 
             if cell.unx == 'Y':
@@ -322,23 +322,23 @@ def boundaryBath(cell,i):
             cell.conc[2,5] = cell.conc[2,5]+elecS
             
         else:
-            if cell.humOrrat == 'hum':
+            if cell.species == 'hum':
                 NPT=0.9*cell.total
                 pHplasma = 7.4
                 phpap = 7.3
 
-            elif cell.humOrrat == 'rat':
+            elif cell.species == 'rat':
                 NPT=0.88*cell.total
                 pHplasma = 7.323
                 phpap = 7.0
 
-            elif cell.humOrrat == 'mou':
+            elif cell.species == 'mou':
                 NPT=0.88*cell.total
                 pHplasma = 7.323
                 phpap = 7.0
 
             else:
-                print('cell.humOrrat: ' + str(cell.humOrrat))
+                print('cell.species: ' + str(cell.species))
                 raise Exception('what is species?')
 
             if cell.unx == 'Y':
@@ -388,7 +388,7 @@ def boundaryBath(cell,i):
             cell.conc[2,5] = cell.conc[2,5]+elecS
             
         #  Concentrations of K, Cl are lower in female rat.
-        if cell.sex=='female' and cell.humOrrat=='rat':
+        if cell.sex=='female' and cell.species=='rat':
             female_conc(cell, i)
 
     elif cell.segment == 'IMCD' or cell.segment == 'LDL' or cell.segment == 'LAL':
@@ -410,17 +410,17 @@ def boundaryBath(cell,i):
         elif cell.segment == 'LAL':
             pos = looplen*(cell.total-i)/cell.total                
         
-        if cell.humOrrat == 'rat':
+        if cell.species == 'rat':
             pHplasma = 7.323
             phpap = 7.0
-        elif cell.humOrrat == 'mou':
+        elif cell.species == 'mou':
             pHplasma = 7.323
             phpap = 7.0
-        elif cell.humOrrat == 'hum':
+        elif cell.species == 'hum':
             pHplasma = 7.4
             phpap = 7.3
         else:
-            print('cell.humOrrat: ' + str(cell.humOrrat))
+            print('cell.species: ' + str(cell.species))
             raise Exception('what is species?')
 
         if cell.unx == 'Y':
@@ -470,7 +470,7 @@ def boundaryBath(cell,i):
         cell.conc[2,5] = cell.conc[2,5]+elecS
 
         #  Concentrations of K, Cl are lower in female rat.
-        if cell.sex=='female' and cell.humOrrat=='rat':
+        if cell.sex=='female' and cell.species=='rat':
             female_conc(cell, i)
 
     else:

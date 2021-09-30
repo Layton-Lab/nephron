@@ -42,7 +42,7 @@ parser.add_argument('--pregnant', choices=['mid','late'], default='non', type=st
 
 args = parser.parse_args()
 sex = args.sex
-humOrrat = args.species
+species = args.species
 sup_or_multi = args.type
 diabete = args.diabetes
 inhib = args.inhibition
@@ -53,20 +53,20 @@ if diabete != 'Non':
     if preg != 'non':
         raise Exception('pregnant diabetic not done')
     # if inhib != None:
-    #     file_to_save = inhib+'_'+sex+'_'+humOrrat[0:3]+'_'+diabete+'_diab'+'_'+unx+'_unx'
+    #     file_to_save = inhib+'_'+sex+'_'+species[0:3]+'_'+diabete+'_diab'+'_'+unx+'_unx'
     # else:
-    #     file_to_save = sex+'_'+humOrrat[0:3]+'_'+diabete+'_diab'+'_'+unx+'_unx'
+    #     file_to_save = sex+'_'+species[0:3]+'_'+diabete+'_diab'+'_'+unx+'_unx'
 elif preg != 'non':
     if sex == 'Male':
         raise Exception('pregnant only for female')
-    if humOrrat[0:3] == 'hum':
+    if species[0:3] == 'hum':
         raise Exception('pregnant model not set up for human yet')
     if inhib != None:
         raise Exception('pregnant model does not have inhibition set up yet')
 
-    #file_to_save = preg+'pregnant_'+humOrrat[0:3]
+    #file_to_save = preg+'pregnant_'+species[0:3]
 # else:
-#     file_to_save = sex + '_' + humOrrat[0:3] +'_normal'
+#     file_to_save = sex + '_' + species[0:3] +'_normal'
 
 file_to_save = args.file2save
     
@@ -78,7 +78,7 @@ if sup_or_multi == 'superficial':
 else:
     parts = ['sup','jux1','jux2','jux3','jux4','jux5']
 
-def compute_segmentPTS3(sup_or_jux,sex,humOrrat,sup_or_multi,diabete,inhib,unx,preg,file_to_save):
+def compute_segmentPTS3(sup_or_jux,sex,species,sup_or_multi,diabete,inhib,unx,preg,file_to_save):
     solute = ['Na','K','Cl','HCO3','H2CO3','CO2','HPO4','H2PO4','urea','NH3','NH4','H','HCO2','H2CO2','glu']
     compart = ['Lumen','Cell','ICA','ICB','LIS','Bath']
     cw=Vref*60e6
@@ -86,18 +86,18 @@ def compute_segmentPTS3(sup_or_jux,sex,humOrrat,sup_or_multi,diabete,inhib,unx,p
     # Proximal convolute tubule
     #========================================================
     print('%s PCT start' %(sup_or_jux))
-    if humOrrat == 'human':
+    if species == 'human':
         NPT = 181
-    elif humOrrat == 'rat':
+    elif species == 'rat':
         NPT = 176
     if sex == 'Male':
-        filename = './datafiles/PTparams_M_'+humOrrat[0:3]+'.dat'
+        filename = './datafiles/PTparams_M_'+species[0:3]+'.dat'
     elif sex == 'Female':
-        filename = './datafiles/PTparams_F_'+humOrrat[0:3]+'.dat'
+        filename = './datafiles/PTparams_F_'+species[0:3]+'.dat'
     else:
-        filename ='./datafiles/PTparams_F_'+humOrrat[0:3]+'.dat'
+        filename ='./datafiles/PTparams_F_'+species[0:3]+'.dat'
 
-    pt=compute(NPT,filename,'Broyden',sup_or_jux,diabete,humOrrat,sup_or_multi=sup_or_multi,inhibition = inhib,unx = unx, preg = preg)
+    pt=compute(NPT,filename,'Broyden',sup_or_jux,diabete,species,sup_or_multi=sup_or_multi,inhibition = inhib,unx = unx, preg = preg)
     
     Scaletorq = np.zeros(NPT)
     for j in range(NPT):
@@ -110,16 +110,16 @@ def compute_segmentPTS3(sup_or_jux,sex,humOrrat,sup_or_multi,diabete,inhib,unx,p
 
         #torque-modulated effects                
         PM=pt[j].pres[0]                
-        Radref,torqR,torqvm,PbloodPT,torqL,torqd = set_torq_params(pt[j].humOrrat,pt[j].sex,pt[j].preg)
+        Radref,torqR,torqvm,PbloodPT,torqL,torqd = set_torq_params(pt[j].species,pt[j].sex,pt[j].preg)
                                     
-        if pt[j].humOrrat == 'rat':
+        if pt[j].species == 'rat':
             fac1 = 8.0*visc*(pt[j].vol_init[0]*Vref)*torqL/(Radref**2)
-        elif pt[j].humOrrat == 'mou':
+        elif pt[j].species == 'mou':
             fac1 = 8.0*visc*(pt[j].vol_init[0]*Vref)*torqL/(Radref**2)
-        elif pt[j].humOrrat == 'hum':
+        elif pt[j].species == 'hum':
             fac1 = 8.0*visc*(pt[j].volref[0]*Vref)*torqL/(Radref**2)
         else:
-            print('pt.humOrrat: ' + str(pt[j].humOrrat))
+            print('pt.species: ' + str(pt[j].species))
             raise Exception('what is species?')
         fac2 = 1.0 + (torqL+torqd)/Radref + 0.50*((torqL/Radref)**2)
         TM0= fac1*fac2
@@ -141,17 +141,17 @@ def compute_segmentPTS3(sup_or_jux,sex,humOrrat,sup_or_multi,diabete,inhib,unx,p
     # S3
     #========================================================
     print('%s S3 start' %(sup_or_jux))
-    if humOrrat == 'human':
+    if species == 'human':
         NS3 = 20
-    elif humOrrat == 'rat':
+    elif species == 'rat':
         NS3 = 25
     if sex == 'Male':
-        filename = './datafiles/S3params_M_'+humOrrat[0:3]+'.dat'
+        filename = './datafiles/S3params_M_'+species[0:3]+'.dat'
     elif sex == 'Female':
-        filename = './datafiles/S3params_F_'+humOrrat[0:3]+'.dat'
+        filename = './datafiles/S3params_F_'+species[0:3]+'.dat'
     else:
-        filename ='./datafiles/S3params_F_'+humOrrat[0:3]+'.dat'
-    s3=compute(NS3,filename,'Newton',sup_or_jux,diabete,humOrrat,sup_or_multi=sup_or_multi,inhibition = inhib,unx = unx,preg = preg)
+        filename ='./datafiles/S3params_F_'+species[0:3]+'.dat'
+    s3=compute(NS3,filename,'Newton',sup_or_jux,diabete,species,sup_or_multi=sup_or_multi,inhibition = inhib,unx = unx,preg = preg)
 
     Scaletorq = np.zeros(NS3)
     
@@ -167,16 +167,16 @@ def compute_segmentPTS3(sup_or_jux,sex,humOrrat,sup_or_multi,diabete,inhib,unx,p
                 
         PM=s3[j].pres[0]
 
-        Radref,torqR,torqvm,PbloodPT,torqL,torqd = set_torq_params(s3[j].humOrrat,s3[j].sex,s3[j].preg)
+        Radref,torqR,torqvm,PbloodPT,torqL,torqd = set_torq_params(s3[j].species,s3[j].sex,s3[j].preg)
                     
-        if s3[j].humOrrat == 'rat':
+        if s3[j].species == 'rat':
             fac1 = 8.0*visc*(s3[j].vol_init[0]*Vref)*torqL/(Radref**2)
-        elif s3[j].humOrrat == 'mou':
+        elif s3[j].species == 'mou':
             fac1 = 8.0*visc*(s3[j].vol_init[0]*Vref)*torqL/(Radref**2)
-        elif s3[j].humOrrat == 'hum':
+        elif s3[j].species == 'hum':
             fac1 = 8.0*visc*(s3[j].volref[0]*Vref)*torqL/(Radref**2) 
         else:
-            print('s3.humOrrat: ' + str(s3[j].humOrrat))
+            print('s3.species: ' + str(s3[j].species))
             raise Exception('what is species?')
         fac2 = 1.0 + (torqL+torqd)/Radref + 0.50*((torqL/Radref)**2)
         TM0= fac1*fac2
@@ -200,7 +200,7 @@ def compute_segmentPTS3(sup_or_jux,sex,humOrrat,sup_or_multi,diabete,inhib,unx,p
 #=============================
 
 def multiprocessing_funcPTS3(sup_or_jux):
-    compute_segmentPTS3(sup_or_jux, sex, humOrrat, sup_or_multi, diabete, inhib, unx, preg, file_to_save)
+    compute_segmentPTS3(sup_or_jux, sex, species, sup_or_multi, diabete, inhib, unx, preg, file_to_save)
 
 if __name__ == '__main__':
     pool = multiprocessing.Pool()

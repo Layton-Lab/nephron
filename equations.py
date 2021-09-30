@@ -70,14 +70,14 @@ def conservation_eqs (x,i):
         Am = PI*(cell1.diam**2)/4
         
         if cell1.segment == 'IMCD':
-            if cell1.humOrrat == 'rat':
+            if cell1.species == 'rat':
                 coalesce = 0.2*(1-0.95*(i/N)**2)*np.exp(-2.75*i/N)
-            elif cell1.humOrrat == 'mou':
+            elif cell1.species == 'mou':
                 coalesce = 0.2*(1-0.95*(i/N)**2)*np.exp(-2.75*i/N)
-            elif cell1.humOrrat == 'hum':
+            elif cell1.species == 'hum':
                 coalesce = 0.1*(1-0.95*(i/N)**2)*np.exp(-2.75*i/N)
             else:
-                print('cell1.humOrrat: ' + str(cell1.humOrrat))
+                print('cell1.species: ' + str(cell1.species))
                 raise Exception('what is species?')
             Bm = Bm*coalesce
             Am = Am*coalesce
@@ -240,16 +240,16 @@ def conservation_eqs (x,i):
             
             PM=cell1.pres[0]
 
-            Radref,torqR,torqvm,PbloodPT,torqL,torqd = set_torq_params(cell1.humOrrat,cell1.sex,cell1.preg)
+            Radref,torqR,torqvm,PbloodPT,torqL,torqd = set_torq_params(cell1.species,cell1.sex,cell1.preg)
 
-            if cell1.humOrrat == 'hum':
+            if cell1.species == 'hum':
                 fac1 = 8.0*visc*(cell1.volref[0]*Vref)*torqL/(Radref**2) 
-            elif cell1.humOrrat == 'rat':
+            elif cell1.species == 'rat':
                 fac1 = 8.0*visc*(cell1.vol_init[0]*Vref)*torqL/(Radref**2)
-            elif cell1.humOrrat == 'mou':
+            elif cell1.species == 'mou':
                 fac1 = 8.0*visc*(cell1.vol_init[0]*Vref)*torqL/(Radref**2)
             else:
-                print('cell1.humOrrat: ' + str(cell1.humOrrat))
+                print('cell1.species: ' + str(cell1.species))
                 raise Exception('what is species?')
             fac2 = 1.0 + (torqL+torqd)/Radref + 0.50*((torqL/Radref)**2)
             TM0= fac1*fac2
@@ -336,16 +336,16 @@ def conservation_eqs (x,i):
 #---------------------------------------------------------------------72    
        # PT and S3 are the only compliant segments.
         if cell1.segment == 'PT' or cell1.segment == 'S3':       
-            Radref,torqR,torqvm,PbloodPT,torqL,torqd = set_torq_params(cell1.humOrrat,cell1.sex,cell1.preg)
+            Radref,torqR,torqvm,PbloodPT,torqL,torqd = set_torq_params(cell1.species,cell1.sex,cell1.preg)
        
-        if cell1.humOrrat == 'hum':
+        if cell1.species == 'hum':
             if cell1.segment == 'PT' or cell1.segment == 'S3':
                 RMcompl = torqR*(1.0e0+torqvm*(cell1.pres[0] - PbloodPT))
                 Amcompl = PI*(RMcompl**2)
                 factor1 = 8.0*PI*visc/(Amcompl**2)
             else:
                 factor1 = 8.0*PI*visc/(Am**2)
-        elif cell1.humOrrat == 'rat':
+        elif cell1.species == 'rat':
             if cell1.segment == 'PT' or cell1.segment == 'S3':
                 RMcompl = torqR*(1.0e0+torqvm*(cell1.pres[0] - PbloodPT))
                 Amcompl = PI*(RMcompl**2)
@@ -353,7 +353,7 @@ def conservation_eqs (x,i):
             else:
                 factor1 = 8.0*PI*visc/(Am**2)
 
-        elif cell1.humOrrat == 'mou':
+        elif cell1.species == 'mou':
             if cell1.segment == 'PT' or cell1.segment == 'S3':
                 RMcompl = torqR*(1.0e0+torqvm*(cell1.pres[0] - PbloodPT))
                 Amcompl = PI*(RMcompl**2)
@@ -361,18 +361,18 @@ def conservation_eqs (x,i):
             else:
                 factor1 = 8.0*PI*visc/(Am**2)
         else:
-            print('cell1.humOrrat: ' + str(cell1.humOrrat))
+            print('cell1.species: ' + str(cell1.species))
             raise Exception('what is species?')
 
         if cell1.segment == 'IMCD':
-            if cell1.humOrrat == 'rat':
+            if cell1.species == 'rat':
                 factor1 = factor1*coalesce*2
-            elif cell1.humOrrat == 'mou':
+            elif cell1.species == 'mou':
                 factor1 = factor1*coalesce*2
-            elif cell1.humOrrat == 'hum':
+            elif cell1.species == 'hum':
                 factor1 = factor1*coalesce*1.0
             else:
-                print('cell1.humOrrat: ' + str(cell1.humOrrat))
+                print('cell1.species: ' + str(cell1.species))
                 raise Exception('what is species?')
 
         fvec[6+3*NS] = PM1-PM0+factor1*cell1.vol[0]*Vref*cell1.len/cell1.total
@@ -395,24 +395,24 @@ def conservation_eqs (x,i):
             ph[j] = -np.log(abs(cell1.conc[11][j])/1.0e3)/np.log(10.0)
         
         if cell1.segment == 'CNT':
-            if cell1.humOrrat == 'rat':
+            if cell1.species == 'rat':
                 coalesce = 2.0**(-2.32*(i+1)/cell1.total)
-            elif cell1.humOrrat == 'mou':
+            elif cell1.species == 'mou':
                 coalesce = 2.0**(-2.32*(i+1)/cell1.total)
-            elif cell1.humOrrat == 'hum':
+            elif cell1.species == 'hum':
                 coalesce = 2.0**(-3.32*(i+1)/cell1.total)
             else:
-                print('cell1.humOrrat: ' + str(cell1.humOrrat))
+                print('cell1.species: ' + str(cell1.species))
                 raise Exception('what is species?')
         elif cell1.segment == 'CCD' or cell1.segment == 'OMCD':
-            if cell1.humOrrat == 'rat':
+            if cell1.species == 'rat':
                 coalesce = 0.2
-            elif cell1.humOrrat == 'mou':
+            elif cell1.species == 'mou':
                 coalesce = 0.2
-            elif cell1.humOrrat == 'hum':    
+            elif cell1.species == 'hum':    
                 coalesce = 0.1
             else:
-                print('cell1.humOrrat: ' + str(cell1.humOrrat))
+                print('cell1.species: ' + str(cell1.species))
                 raise Exception('what is species?')
         else:
             coalesce = 1.0
@@ -685,14 +685,14 @@ def conservation_eqs (x,i):
     #     For Pressure, flow must be multiplied by Vref
     #---------------------------------------------------------------------
         if cell1.segment == 'CNT':
-            if cell1.humOrrat == 'rat':
+            if cell1.species == 'rat':
                 ratio = 8.0*PI*visc/(Am**2)*coalesce*2
-            elif cell1.humOrrat == 'mou':
+            elif cell1.species == 'mou':
                 ratio = 8.0*PI*visc/(Am**2)*coalesce*2
-            elif cell1.humOrrat == 'hum':
+            elif cell1.species == 'hum':
                 ratio = 8.0*PI*visc/(Am**2)*coalesce*1.0
             else:
-                print('cell1.humOrrat: ' + str(cell1.humOrrat))
+                print('cell1.species: ' + str(cell1.species))
                 raise Exception('what is species?')
 
         elif cell1.segment == 'CCD' or cell1.segment == 'OMCD':

@@ -126,16 +126,16 @@ def compute_fluxes (cell,j):
         #torque-modulated effects
         
         PM=cell.pres[0]
-        Radref,torqR,torqvm,PbloodPT,torqL,torqd = set_torq_params(cell.humOrrat,cell.sex,cell.preg)
+        Radref,torqR,torqvm,PbloodPT,torqL,torqd = set_torq_params(cell.species,cell.sex,cell.preg)
 
-        if cell.humOrrat == 'rat':
+        if cell.species == 'rat':
             fac1 = 8.0*visc*(cell.vol_init[0]*Vref)*torqL/(Radref**2)
-        elif cell.humOrrat == 'mou':
+        elif cell.species == 'mou':
             fac1 = 8.0*visc*(cell.vol_init[0]*Vref)*torqL/(Radref**2)
-        elif cell.humOrrat == 'hum':
+        elif cell.species == 'hum':
             fac1 = 8.0*visc*(cell.volref[0]*Vref)*torqL/(Radref**2)
         else:
-            print('cell.humOrrat: ' + str(cell.humOrrat))
+            print('cell.species: ' + str(cell.species))
             raise Exception('what is species?')
         fac2 = 1.0 + (torqL+torqd)/Radref + 0.50*((torqL/Radref)**2)
         TM0= fac1*fac2
