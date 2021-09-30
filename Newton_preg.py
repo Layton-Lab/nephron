@@ -4,8 +4,8 @@ import numpy as np
 from Newton import Jac
 
 def newton_preg_rat(func,x,k,cell):
-    if cell.humOrrat != 'rat':
-        print('humOrrat:' + cell.humOrrat)
+    if cell.species != 'rat':
+        print('species:' + cell.species)
         raise Exception('newton_preg_rat only for rat model')
     if cell.sex.lower() != 'female':
         print('sex: ' + cell.sex)
@@ -15,19 +15,27 @@ def newton_preg_rat(func,x,k,cell):
     TOLpcn = 1
     i = 1
     iter = 0
-    maxiter = 150
+    if k==0:
+        maxiter = 300
+    else:
+        maxiter = 150
 
     # check
     if np.isnan(np.linalg.norm(f)):
         raise Exception('norm(f) is Nan')
 
     while(np.linalg.norm(f) > 0.0001) and (iter<maxiter+1): 
-        if np.linalg.norm(f)>1e12 or np.isnan(np.linalg.norm(f)):
-            raise Exception('Newton solver diverged in '+ cell.segment + ' at cell number: ' + str(k))
+        if np.linalg.norm(f)>1e14 or np.isnan(np.linalg.norm(f)):
+            if cell.segment == 'CCD' or cell.segment == 'OMCD' or cell.segment == 'IMCD':
+                raise Exception('Newton solver diverged in ' + cell.segment + ' at cell number: ' + str(k))
+            else:
+                raise Exception('Newton solver diverged in '+cell.type + ' ' + cell.segment + ' at cell number: ' + str(k))
         elif iter == maxiter:
-            print('Warning!!: Newton solver did not converge in <'+str(iter)+' iterations in ' + cell.segment + ' cell number ' + str(k) + '\n')
+            if cell.segment == 'CCD' or cell.segment == 'OMCD' or cell.segment == 'IMCD':
+                print('Warning!!: Newton solver did not converge in <'+str(iter)+' iterations in ' + cell.segment + ' cell number ' + str(k) + '\n')
+            else:
+                print('Warning!!: Newton solver did not converge in <'+str(iter)+' iterations in ' + cell.type + ' ' + cell.segment + ' cell number ' + str(k) + '\n')
             print('error size: '+ str(np.linalg.norm(f)) + '\n')
-            #raise Exception('Newton solver did not converge in <'+str(iter)+' iterations in ' + cell.segment + ' cell number ' + str(k))
 
         i += 1
         J = np.matrix(Jac(fun,x,k))
@@ -78,14 +86,25 @@ def newton_preg_rat(func,x,k,cell):
         # CNT
         elif cell.segment == 'CNT':
             if np.linalg.norm(f)>5000:
-                amp = 0.5
-            elif np.linalg.norm(f)>1500:
-                amp = 0.7
+                if cell.preg == 'mid':
+                    amp = 0.3
+                elif cell.preg == 'late':
+                    amp = 0.3
+            elif np.linalg.norm(f)>2000:
+                if cell.preg == 'mid':
+                    amp = 0.7
+                elif cell.preg == 'late':
+                    amp = 0.7
+            elif np.linalg.norm(f)>1000:
+                if cell.preg == 'mid':
+                    amp = 1.0 #0.8
+                elif cell.preg == 'late':
+                    amp = 1.0
             elif iter > 50:
                 if np.linalg.norm(f)>1:
-                    amp = 0.85
+                    amp = 0.9 
                 else:
-                    amp = 0.95
+                    amp = 0.85
             else:
                 amp = 1.0 
         # CCD     
@@ -128,44 +147,33 @@ def newton_preg_rat(func,x,k,cell):
                 amp = 1.0
             elif np.linalg.norm(f)>100:
                 amp = 1.0
+            elif iter>100:
+                amp = 0.9
             else:
                 amp = 1.0
         # IMCD
         elif cell.segment == 'IMCD':
-            if cell.preg == 'mid':
-                if np.linalg.norm(f)>5000:
-                    if k==0:
-                        amp = 0.25 
-                    else:
-                        amp = 0.5 
-                elif np.linalg.norm(f)>1000:
-                    amp = 1.0 #0.5
-                elif iter>75:
-                    if np.linalg.norm(f)>10:
-                        amp = 0.75
-                    elif np.linalg.norm(f)>1:
-                        amp = 0.9
-                    else:
-                        amp = 1.0
-                elif iter>50:
-                    if np.linalg.norm(f)>10:
-                        amp = 0.8
-                    else:
-                        amp = 0.9
+            if np.linalg.norm(f)>5000:
+                if k==0:
+                    amp = 0.25 
+                else:
+                    amp = 0.5 
+            elif np.linalg.norm(f)>1000:
+                amp = 1.0 #0.5
+            elif iter>75:
+                if np.linalg.norm(f)>10:
+                    amp = 0.75
+                elif np.linalg.norm(f)>1:
+                    amp = 0.9
                 else:
                     amp = 1.0
-            elif cell.preg == 'late':
-                if np.linalg.norm(f)>5000:
-                    if k==0:
-                        amp = 0.25 
-                    else:
-                        amp = 0.5 
-                elif np.linalg.norm(f)>1000:
-                    amp = 1.0 #0.5
-                elif iter>75:
-                    amp = 0.95
+            elif iter>50:
+                if np.linalg.norm(f)>10:
+                    amp = 0.8
                 else:
-                    amp = 1.0
+                    amp = 0.9
+            else:
+                amp = 1.0
         else:
             print('What is this segment?', cell.segment)
             raise Exception('cell.segment is not characterized')

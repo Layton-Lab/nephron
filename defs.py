@@ -146,7 +146,7 @@ class membrane:
         self.inhib = ''
 
         # default is human
-        self.humOrrat = 'hum'
+        self.species = 'hum'
         self.flag=0
         
         # interstitial concentration parameters of solutes

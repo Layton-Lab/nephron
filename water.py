@@ -29,7 +29,7 @@ def compute_water_fluxes (cell):
   
     
     if cell.segment == 'PT' or cell.segment == 'S3':
-        Radref,torqR,torqvm,PbloodPT,torqL,torqd = set_torq_params(cell.humOrrat,cell.sex,cell.preg)
+        Radref,torqR,torqvm,PbloodPT,torqL,torqd = set_torq_params(cell.species,cell.sex,cell.preg)
         PB = PbloodPT        
     else:
         PB=0
@@ -40,7 +40,7 @@ def compute_water_fluxes (cell):
     PRES[3] = PRES[0]
     PRES[5] = PB/(RTosm*Cref)
     PRES[4] = PRES[5]+(cell.vol[4]/cell.volref[4]-1)/compl/(RTosm*Cref) 
-    if cell.humOrrat == 'rat' or cell.humOrrat == 'mou':
+    if cell.species == 'rat' or cell.species == 'mou':
         if cell.segment == 'SDL'or cell.segment == 'LDL' or cell.segment == 'LAL':
             PRES[1] = PRES[5]
 

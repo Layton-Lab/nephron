@@ -80,24 +80,33 @@ def broyden(func,x,k,type):
 #=====================================================
 # rat newton solver
 def newton_rat(func,x,k,cell):
-    if cell.humOrrat != 'rat' and cell.humOrrat != 'mou':
+    if cell.species != 'rat' and cell.species != 'mou':
         raise Exception('newton_rat only for rat or mouse model')
     fun=equations.conservation_eqs
     f=np.matrix(fun(x,k))
     TOLpcn = 1
     i = 1
     iter = 0
-    maxiter = 150
+    if k==0:
+        maxiter = 300
+    else:
+        maxiter = 150
 
     # check
     if np.isnan(np.linalg.norm(f)):
         raise Exception('norm(f) is Nan')
 
     while(np.linalg.norm(f) > 0.0001) and (iter<maxiter+1): #(iter<300)
-        if np.linalg.norm(f)>1e12 or np.isnan(np.linalg.norm(f)):
-            raise Exception('Newton solver diverged in '+ cell.segment + ' at cell number: ' + str(k))
+        if np.linalg.norm(f)>1e14 or np.isnan(np.linalg.norm(f)):
+            if cell.segment == 'CCD' or cell.segment == 'OMCD' or cell.segment == 'IMCD':
+                raise Exception('Newton solver diverged in ' + cell.segment + ' at cell number: ' + str(k))
+            else:
+                raise Exception('Newton solver diverged in '+ cell.type + ' ' + cell.segment + ' at cell number: ' + str(k))
         elif iter == maxiter:
-            print('Warning!!: Newton solver did not converge in <'+str(iter)+' iterations in ' + cell.segment + ' cell number ' + str(k) + '\n')
+            if cell.segment == 'CCD' or cell.segment == 'OMCD' or cell.segment == 'IMCD':
+                print('Warning!!: Newton solver did not converge in <'+str(iter)+' iterations in ' + cell.segment + ' cell number ' + str(k) + '\n')
+            else:
+                print('Warning!!: Newton solver did not converge in <'+str(iter)+' iterations in ' + cell.type + ' ' + cell.segment + ' cell number ' + str(k) + '\n')
             print('error size: '+ str(np.linalg.norm(f)))
             print('\n')
             
@@ -116,20 +125,32 @@ def newton_rat(func,x,k,cell):
             amp = 1.0
         # LDL
         elif cell.segment == 'LDL':
-            if np.linalg.norm(f)>5000:
-                amp = 0.5
+            if iter>75:
+                amp = 0.9
+            elif iter>100:
+                amp = 0.7
             else:
                 amp = 1.0
         # LAL
         elif cell.segment == 'LAL':
-            if np.linalg.norm(f)>5000:
-                amp = 0.5
-            else:
-                amp = 1.0
+            amp = 1.0
         # mTAL
         elif cell.segment == 'mTAL':
             if np.linalg.norm(f)>5000:
-                amp = 0.5
+                if k==0:
+                    amp = 0.2
+                else:
+                    amp = 0.5
+            elif np.linalg.norm(f)>1500:
+                if k==0:
+                    amp = 0.2
+                else:
+                    amp = 0.5
+            elif np.linalg.norm(f)>100:
+                if k==0:
+                    amp = 0.2
+                else:
+                    amp = 0.95
             elif iter>100:
                 amp = 0.95
             else:
@@ -138,8 +159,12 @@ def newton_rat(func,x,k,cell):
         elif cell.segment == 'cTAL':
             if np.linalg.norm(f)>5000:
                 amp = 0.2
+            elif np.linalg.norm(f)>2000:
+                amp = 0.3
             elif np.linalg.norm(f)>1000:
                 amp = 0.5
+            elif np.linalg.norm(f)>100:
+                amp = 0.9
             elif iter>100:
                 if np.linalg.norm(f)>1:
                     amp = 0.9
@@ -153,12 +178,46 @@ def newton_rat(func,x,k,cell):
         # CNT
         elif cell.segment == 'CNT':
             if np.linalg.norm(f)>5000:
-                amp = 0.25
+                if cell.type == 'jux2':
+                    if k==0:
+                        amp = 1.0
+                    else:
+                        amp = 0.5
+                elif cell.type == 'jux3':
+                    if k==0:
+                        amp = 1.0
+                    else:
+                        amp = 0.5
+                elif cell.type == 'jux4':
+                    if k==0:
+                        amp = 1.0
+                    else:
+                        amp = 0.5
+                elif cell.type == 'jux5':
+                    if k==0:
+                        amp = 1.0
+                    else:
+                        amp = 0.5
+                else:
+                    if k==0:
+                        amp = 0.25
+                    else:
+                        amp = 0.4
+            elif np.linalg.norm(f)>1500:
+                if k==0:
+                    amp = 0.4
+                else:
+                    amp = 0.6
             elif np.linalg.norm(f)>1000:
-                amp = 0.5
+                if k==0:
+                    amp = 0.5
+                else:
+                    amp = 0.7
+            elif np.linalg.norm(f)>500:
+                amp = 1.0 #0.8
             elif iter > 50:
                 if np.linalg.norm(f)>1:
-                    amp = 0.8
+                    amp = 0.85
                 else:
                     amp = 0.95
             else:
@@ -167,16 +226,26 @@ def newton_rat(func,x,k,cell):
         elif cell.segment == 'CCD':
             if np.linalg.norm(f)>5000:
                 if k==0:
-                    amp = 0.4
+                    amp = 0.25
                 else:
-                    amp = 0.5
+                    amp = 0.3 #0.5
             elif np.linalg.norm(f)>1000:
-                amp = 0.6
+                if k==0:
+                    amp = 0.5
+                else:
+                    amp = 0.6 #0.75
             elif iter>75:
                 amp = 0.7
             elif iter>50:
                 if np.linalg.norm(f)>1:
+                    amp = 0.8
+                else:
                     amp = 0.95
+            elif iter>30:
+                if np.linalg.norm(f)>20:
+                    amp = 0.8
+                elif np.linalg.norm(f)>5:
+                    amp = 0.9
                 else:
                     amp = 1.0
             else:
@@ -184,9 +253,9 @@ def newton_rat(func,x,k,cell):
         # OMCD
         elif cell.segment == 'OMCD':
             if np.linalg.norm(f)>5000:
-                amp = 0.25
+                amp = 1.0
             elif np.linalg.norm(f)>1000:
-                amp = 0.5
+                amp = 1.0
             elif np.linalg.norm(f)>100:
                 amp = 1.0
             else:
@@ -195,14 +264,25 @@ def newton_rat(func,x,k,cell):
         elif cell.segment == 'IMCD':
             if np.linalg.norm(f)>5000:
                 if k==0:
-                    amp = 0.25 
+                    amp = 0.25
                 else:
                     amp = 0.5 
             elif np.linalg.norm(f)>1000:
                 amp = 1.0 #0.5
+            elif iter>100:
+                if np.linalg.norm(f)>100:
+                    amp = 0.9
+                elif np.linalg.norm(f)>50:
+                    amp = 0.8
+                elif np.linalg.norm(f)>1:
+                    amp = 1.0
+                else:
+                    amp = 1.0
             elif iter>75:
-                if np.linalg.norm(f)>10:
-                    amp = 0.75
+                if np.linalg.norm(f)>100:
+                    amp = 0.95
+                elif np.linalg.norm(f)>10:
+                    amp = 0.85
                 elif np.linalg.norm(f)>1:
                     amp = 0.9
                 else:
@@ -229,7 +309,7 @@ def newton_rat(func,x,k,cell):
 
 # human newton solver
 def newton_human(func,x,k,cell):
-    if cell.humOrrat != 'hum':
+    if cell.species != 'hum':
         raise Exception('newton_human only for human model')
     fun=equations.conservation_eqs
     f=np.matrix(fun(x,k))

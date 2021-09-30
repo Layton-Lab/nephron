@@ -58,8 +58,8 @@ def read_params_preg(cell,filename,j):
     if cell.unx == 'Y':
         print('cell.unx:' + cell.unx)
         raise Exception('unx has not been done for pregnancy yet')
-    if cell.humOrrat != 'rat':
-        print('cell.humOrrat: ' + cell.humOrrat)
+    if cell.species != 'rat':
+        print('cell.species: ' + cell.species)
         raise Exception('pregnancy only done for rat, human model not set up yet')
     
     line = file.readline()
@@ -127,7 +127,7 @@ def read_params_preg(cell,filename,j):
                 else:
                     cell.len = value
 
-                if cell.type != 'sup' and cell.humOrrat == 'rat':
+                if cell.type != 'sup' and cell.species == 'rat':
                     if cell.segment == 'cTAL':
                         if cell.sex == 'male':
                             cell.len = 0.05
@@ -139,7 +139,7 @@ def read_params_preg(cell,filename,j):
                         elif cell.sex == 'female':
                             cell.len = 0.3*0.85 #0.3*0.9, updated female
 
-                if cell.type != 'sup' and cell.humOrrat == 'hum':
+                if cell.type != 'sup' and cell.species == 'hum':
                     if cell.segment == 'cTAL':
                         if cell.sex == 'male':
                             cell.len = 0.125
@@ -158,7 +158,7 @@ def read_params_preg(cell,filename,j):
             # Luminal pressure:
             elif compare_string_prefix(id,"Pressure"):
                 cell.pres[0] = value
-                if cell.type !='sup' and cell.segment == 'PT' and cell.humOrrat == 'rat':
+                if cell.type !='sup' and cell.segment == 'PT' and cell.species == 'rat':
                     if cell.preg == 'mid':
                         cell.pres[0] = 13.0
                     elif cell.preg == 'late':
@@ -176,7 +176,7 @@ def read_params_preg(cell,filename,j):
                 cell.area[ind2][ind1] = value  # symmetry
                 cell.area_init[ind1][ind2] = value
                 cell.area_init[ind2][ind1] = value
-                if cell.type != 'sup' and cell.humOrrat == 'rat':
+                if cell.type != 'sup' and cell.species == 'rat':
                     if cell.segment == 'PT' or cell.segment == 'S3':
                         cell.area[ind1][ind2] = 1.75*cell.area[ind1][ind2]
                         cell.area[ind2][ind1] = cell.area[ind1][ind2]
@@ -433,7 +433,7 @@ def read_params_preg(cell,filename,j):
                 newTransp.act = value/(href*Cref)
                 #print('transporter')
                 #print(newTransp.membrane_id,newTransp.type,newTransp.act)
-                if cell.type != 'sup' and cell.sex == 'female' and cell.humOrrat == 'rat':
+                if cell.type != 'sup' and cell.sex == 'female' and cell.species == 'rat':
                     if cell.segment == 'mTAL' or cell.segment == 'cTAL':
                         if newTransp.type == 'NKCC2A' or newTransp.type == 'NKCC2B' or newTransp.type == 'NKCC2F' or newTransp.type == 'NaKATPase':
                             newTransp.act = 1.5*value/(href*Cref)
@@ -586,7 +586,7 @@ def read_params_preg(cell,filename,j):
                     else:
                         cell.vol[compart_id[tmp[1]]] = float(num[0]) 
                         cell.vol_init[compart_id[tmp[1]]] = float(num[0])
-                elif cell.segment == 'PT' and cell.type != 'sup' and cell.humOrrat == 'rat':
+                elif cell.segment == 'PT' and cell.type != 'sup' and cell.species == 'rat':
                     # SNGFR for jux nephrons
                     if compart_id[tmp[1]] == 0:
                         if cell.preg == 'mid':

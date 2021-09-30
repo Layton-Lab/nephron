@@ -30,17 +30,17 @@ def output_segment_results(cell,sup_or_jux,Scaletorq,file_to_save,N):
     # output concentrations in Lumen and Cell
     #========================================================
     for i in range(NS):
-        file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[0].segment+'_con_of_'+solute[i]+'_in_Lumen'+sup_or_jux+'.txt','w')
+        file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[0].segment+'_con_of_'+solute[i]+'_in_Lumen'+sup_or_jux+'.txt','w')
         for j in range(N):
             file.write(str(cell[j].conc[i,0])+'\n')
         file.close()
     for i in range(NS):
-        file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[0].segment+'_con_of_'+solute[i]+'_in_Cell'+sup_or_jux+'.txt','w')
+        file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[0].segment+'_con_of_'+solute[i]+'_in_Cell'+sup_or_jux+'.txt','w')
         for j in range(N):
             file.write(str(cell[j].conc[i,1])+'\n')
         file.close()
     for i in range(NS):
-        file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[0].segment+'_con_of_'+solute[i]+'_in_Bath'+sup_or_jux+'.txt','w')
+        file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[0].segment+'_con_of_'+solute[i]+'_in_Bath'+sup_or_jux+'.txt','w')
         for j in range(N):
             file.write(str(cell[j].conc[i,5])+'\n')
         file.close()
@@ -48,11 +48,11 @@ def output_segment_results(cell,sup_or_jux,Scaletorq,file_to_save,N):
     #========================================================
     # output water volume in Lumen and Cell
     #========================================================
-    file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[0].segment+'_water_volume_in_Lumen'+sup_or_jux+'.txt','w')
+    file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[0].segment+'_water_volume_in_Lumen'+sup_or_jux+'.txt','w')
     for j in range(N):
         file.write(str(cell[j].vol[0]*cw)+'\n')
     file.close()
-    file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[0].segment+'_water_volume_in_Cell'+sup_or_jux+'.txt','w')
+    file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[0].segment+'_water_volume_in_Cell'+sup_or_jux+'.txt','w')
     for j in range(N):
         file.write(str(cell[j].vol[1]*cw)+'\n')
     file.close()
@@ -61,12 +61,12 @@ def output_segment_results(cell,sup_or_jux,Scaletorq,file_to_save,N):
     # output solute flows in Lumen and Cell
     #========================================================
     for i in range(NS):
-        file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[0].segment+'_flow_of_'+solute[i]+'_in_Lumen'+sup_or_jux+'.txt','w')
+        file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[0].segment+'_flow_of_'+solute[i]+'_in_Lumen'+sup_or_jux+'.txt','w')
         for j in range(N):
             file.write(str(cell[j].conc[i,0]*cell[j].vol[0]*cw)+'\n')
         file.close()
     for i in range(NS):
-        file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[0].segment+'_flow_of_'+solute[i]+'_in_Cell'+sup_or_jux+'.txt','w')
+        file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[0].segment+'_flow_of_'+solute[i]+'_in_Cell'+sup_or_jux+'.txt','w')
         for j in range(N):
             file.write(str(cell[j].conc[i,1]*cell[j].vol[1]*cw)+'\n')
         file.close()
@@ -74,10 +74,10 @@ def output_segment_results(cell,sup_or_jux,Scaletorq,file_to_save,N):
     #========================================================
     # output osmolality in Lumen, Cell, LIS, Bath
     #========================================================
-    file_lumen = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[0].segment+'_osmolality_in_Lumen'+sup_or_jux+'.txt','w')
-    file_cell = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[0].segment+'_osmolality_in_Cell'+sup_or_jux+'.txt','w')
-    file_lis = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[0].segment+'_osmolality_in_LIS'+sup_or_jux+'.txt','w')
-    file_bath = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[0].segment+'_osmolality_in_Bath'+sup_or_jux+'.txt','w')
+    file_lumen = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[0].segment+'_osmolality_in_Lumen'+sup_or_jux+'.txt','w')
+    file_cell = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[0].segment+'_osmolality_in_Cell'+sup_or_jux+'.txt','w')
+    file_lis = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[0].segment+'_osmolality_in_LIS'+sup_or_jux+'.txt','w')
+    file_bath = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[0].segment+'_osmolality_in_Bath'+sup_or_jux+'.txt','w')
     for j in range(N):
         osm_l = 0
         osm_c = 0
@@ -101,7 +101,7 @@ def output_segment_results(cell,sup_or_jux,Scaletorq,file_to_save,N):
     #=======================================================
     # output pH
     #=======================================================
-    file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[0].segment+'_pH_in_Lumen'+sup_or_jux+'.txt','w')
+    file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[0].segment+'_pH_in_Lumen'+sup_or_jux+'.txt','w')
     for j in range(1,N):
         file.write(str(-np.log(abs(cell[j-1].conc[11,0])/1000)/np.log(10))+'\n')
     file.close()
@@ -109,7 +109,7 @@ def output_segment_results(cell,sup_or_jux,Scaletorq,file_to_save,N):
     #========================================================
     # output luminal pressure
     #========================================================
-    file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[0].segment+'_pressure_in_Lumen'+sup_or_jux+'.txt','w')
+    file=open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[0].segment+'_pressure_in_Lumen'+sup_or_jux+'.txt','w')
     for j in range(N):
         file.write(str(cell[j].pres[0])+'\n')
     file.close()
@@ -124,10 +124,10 @@ def output_segment_results(cell,sup_or_jux,Scaletorq,file_to_save,N):
 
         jvol,jsol = flux.compute_fluxes(cell[j],j)            
 
-        file_Na_apical = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_apical_Na'+sup_or_jux+'.txt','a')
+        file_Na_apical = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_apical_Na'+sup_or_jux+'.txt','a')
         file_Na_apical.write(str(jsol[0,0,1])+'\n')
 
-        file_Na_para = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_paracellular_Na'+sup_or_jux+'.txt','a')
+        file_Na_para = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_paracellular_Na'+sup_or_jux+'.txt','a')
         file_Na_para.write(str(jsol[0,0,4])+'\n')
 
     #========================================================
@@ -142,94 +142,94 @@ def output_segment_results(cell,sup_or_jux,Scaletorq,file_to_save,N):
                 if transporter_type == 'SGLT1':
                     solute_id,fluxs = glucose.sglt1(cell[j],cell[j].ep,memb_id,cell[j].trans[i].act,cell[j].area)
                     for k in range(len(solute_id)):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')
                 elif transporter_type == 'SGLT2':
                     solute_id,fluxs = glucose.sglt2(cell[j],cell[j].ep,memb_id,cell[j].trans[i].act,cell[j].area)
                     for k in range(len(solute_id)):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')
                 elif transporter_type == 'GLUT1':
                     solute_id,fluxs=glucose.glut1(cell[j],cell[j].ep,memb_id,cell[j].trans[i].act,cell[j].area)
                     for k in range(len([solute_id])):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id]+str(memb_id[0])+str(memb_id[1])+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id]+str(memb_id[0])+str(memb_id[1])+sup_or_jux+'.txt','a')
                         file.write(str(fluxs*Scaletorq[j])+'\n')
                 elif transporter_type == 'GLUT2':
                     solute_id,fluxs=glucose.glut2(cell[j],cell[j].ep,memb_id,cell[j].trans[i].act,cell[j].area)
                     for k in range(len([solute_id])):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id]+str(memb_id[0])+str(memb_id[1])+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id]+str(memb_id[0])+str(memb_id[1])+sup_or_jux+'.txt','a')
                         file.write(str(fluxs*Scaletorq[j])+'\n')			
                 elif transporter_type == 'NHE3':
                     solute_id,fluxs=NHE3.nhe3(cell[j],cell[j].ep,memb_id,cell[j].trans[i].act,cell[j].area)
                     for k in range(len(solute_id)):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')
                 elif transporter_type == 'NaKATPase':
                     solute_id,fluxs=ATPase.nakatpase(cell[j],cell[j].ep,memb_id,cell[j].trans[i].act,cell[j].area)
                     for k in range(len(solute_id)):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+str(memb_id[0])+str(memb_id[1])+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+str(memb_id[0])+str(memb_id[1])+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')
                         
                 elif transporter_type == 'HATPase':
                     solute_id,fluxs=ATPase.hatpase(cell[j],cell[j].ep,memb_id,cell[j].trans[i].act,cell[j].area)
                     for k in range(len(solute_id)):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')
                 elif transporter_type == 'NKCC2A':
                     solute_id,fluxs=NKCC.nkcc2(cell[j],memb_id,cell[j].trans[i].act,cell[j].area,'A')
                     for k in range(len(solute_id)):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')
                 elif transporter_type == 'NKCC2B':
                     solute_id,fluxs=NKCC.nkcc2(cell[j],memb_id,cell[j].trans[i].act,cell[j].area,'B')
                     for k in range(len(solute_id)):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')
                 elif transporter_type == 'NKCC2F':
                     solute_id,fluxs=NKCC.nkcc2(cell[j],memb_id,cell[j].trans[i].act,cell[j].area,'F')
                     for k in range(len(solute_id)):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')       
                 elif transporter_type == 'KCC4':
                     solute_id,fluxs=KCC.kcc4(cell[j].conc,memb_id,cell[j].trans[i].act,cell[j].area)
                     for k in range(len(solute_id)):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')
                 elif transporter_type == 'ENaC':
                     solute_id,fluxs=ENaC.ENaC(cell[j],j,memb_id,cell[j].trans[i].act,cell[j].area,jvol)
                     for k in range(len(solute_id)):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')
                 elif transporter_type == 'NCC':
                     solute_id,fluxs=NCC.NCC(cell[j],j,memb_id,cell[j].trans[i].act,cell[j].area)
                     for k in range(len(solute_id)):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')
                 elif transporter_type == 'Pendrin':
                     solute_id,fluxs=Pendrin.Pendrin(cell[j],memb_id,cell[j].trans[i].act,cell[j].area)
                     for k in range(len(solute_id)):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')
                 elif transporter_type =='AE1':
                     solute_id,fluxs=AE1.AE1(cell[j],memb_id,cell[j].trans[i].act,cell[j].area)
                     for k in range(len(solute_id)):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')
                 elif transporter_type == 'HKATPase':
                     solute_id,fluxs=ATPase.hkatpase(cell[j],memb_id,cell[j].trans[i].act,cell[j].area)
                     for k in range(len(solute_id)):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')
                 elif transporter_type == 'NHE1':
                     solute_id,fluxs=NHE1.NHE1(cell[j],memb_id,cell[j].trans[i].act,cell[j].area)
                     for k in range(len(solute_id)):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')
                 elif transporter_type == 'NKCC1':
                     jsol,delmu = electrochemical.compute_ecd_fluxes(cell[j],jvol)
                     solute_id,fluxs=NKCC.nkcc1(cell[j],memb_id,cell[j].trans[i].act,delmu)
                     for k in range(len(solute_id)):
-                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].humOrrat+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')
                 else:
                     print('transport: ' + transporter_type)
