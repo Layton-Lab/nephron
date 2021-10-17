@@ -26,18 +26,18 @@ def conservation_init (my_cell0, my_cell1,my_celln, my_dx):
     dx    = my_dx
 
 
-#----------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 # compute residuals of conservation equations
 # inputs:
 #  cell:  current cell values
-#  celln: cell function values at previous time-step
-#  dx:    time-step
+#  celln: cell function values at previous step
+#  dx:    step
 # returns:
 #  fvec:  residuals
 #
 # no. of unknowns = no. of solutes, in cell and in LIS, plus 4 membrane
 #  potentials (lumen-cell/LIS, cell/LIS-bath)
-#----------------------------------------------------------------------------
+#---------------------------------------------------------------------------
 
 def conservation_eqs (x,i):
 

@@ -94,7 +94,10 @@ def newton_rat(func,x,k,cell):
 
     # check
     if np.isnan(np.linalg.norm(f)):
-        raise Exception('norm(f) is Nan')
+        if cell.segment == 'CCD' or cell.segment == 'OMCD' or cell.segment == 'IMCD':
+            raise Exception(cell.segment + ' norm(f) is Nan')
+        else:
+            raise Exception(cell.segment + ' ' + cell.type + ' norm(f) is Nan')
 
     while(np.linalg.norm(f) > 0.0001) and (iter<maxiter+1): #(iter<300)
         if np.linalg.norm(f)>1e14 or np.isnan(np.linalg.norm(f)):
@@ -185,7 +188,7 @@ def newton_rat(func,x,k,cell):
                         amp = 0.5
                 elif cell.type == 'jux3':
                     if k==0:
-                        amp = 1.0
+                        amp = 0.5
                     else:
                         amp = 0.5
                 elif cell.type == 'jux4':
@@ -247,7 +250,7 @@ def newton_rat(func,x,k,cell):
                 elif np.linalg.norm(f)>5:
                     amp = 0.9
                 else:
-                    amp = 1.0
+                    amp = 0.9 #1.0
             else:
                 amp = 1.0
         # OMCD

@@ -2,22 +2,7 @@ from compute_sup_jux_segment import compute_segment
 from driver import compute
 from values import *
 from defs import *
-import electrochemical 
-import water
-import glucose
-import cotransport
-import NHE3
-import ATPase
-import NKCC
-import KCC
-import NCC
-import ENaC
-import Pendrin
-import AE1
-import NHE1
-import flux
 import os
-import sys
 import argparse
 import multiprocessing
 import output
@@ -74,6 +59,9 @@ if sup_or_multi == 'superficial':
     parts = ['sup']
 else:
     parts = ['sup','jux1','jux2','jux3','jux4','jux5']
+
+if os.path.isdir('outlets') == False:
+    os.makedirs('outlets')
     
 def multiprocessing_func(sup_or_jux):
     compute_segment(sup_or_jux, sex, species, sup_or_multi, diabete, inhib, unx, preg, file_to_save)

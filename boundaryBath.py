@@ -9,10 +9,10 @@ def female_conc(cell, i):
     if cell.segment == 'PT':
         if cell.preg == 'mid':
             # conc of Na, K, Cl, HCO3 different in MP rat plasma
-            cell.conc[0,0] = cell.conc[0,0]*0.95
+            cell.conc[0,0] = cell.conc[0,0]*0.94
             cell.conc[1,0] = cell.conc[1,0]*1.0 #no change in K in MP
-            cell.conc[2,0] = cell.conc[2,0]*0.95
-            cell.conc[3,0] = cell.conc[3,0]*0.95
+            cell.conc[2,0] = cell.conc[2,0]*0.94
+            cell.conc[3,0] = cell.conc[3,0]*0.94
 
             # also change in starting for bath
             cell.conc[0,5] = cell.conc[0,0]
@@ -21,9 +21,9 @@ def female_conc(cell, i):
             cell.conc[3,5] = cell.conc[3,0]
         elif cell.preg == 'late':
             # conc of Na, K, Cl, HCO3 different in LP rat plasma
-            cell.conc[0,0] = cell.conc[0,0]*0.93
+            cell.conc[0,0] = cell.conc[0,0]*0.95
             cell.conc[1,0] = cell.conc[1,0]*1.15 # upregulated K in LP
-            cell.conc[2,0] = cell.conc[2,0]*0.93
+            cell.conc[2,0] = cell.conc[2,0]*0.95
             cell.conc[3,0] = cell.conc[3,0]*0.95
 
             # also change in starting for bath
