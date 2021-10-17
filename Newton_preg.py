@@ -54,12 +54,16 @@ def newton_preg_rat(func,x,k,cell):
         elif cell.segment == 'LDL':
             if np.linalg.norm(f)>5000:
                 amp = 0.5
+            elif iter>75:
+                amp = 0.95
             else:
                 amp = 1.0
         # LAL
         elif cell.segment == 'LAL':
             if np.linalg.norm(f)>5000:
                 amp = 0.5
+            elif iter>75:
+                amp = 0.95
             else:
                 amp = 1.0
         # mTAL
@@ -87,9 +91,21 @@ def newton_preg_rat(func,x,k,cell):
         elif cell.segment == 'CNT':
             if np.linalg.norm(f)>5000:
                 if cell.preg == 'mid':
-                    amp = 0.3
+                    if cell.type == 'jux2':
+                        amp = 0.3
+                    elif cell.type == 'jux3':
+                        amp = 0.4
+                    elif cell.type == 'jux4':
+                        amp = 0.25
+                    elif cell.type == 'jux5':
+                        amp = 0.3
+                    else:
+                        amp = 0.5
                 elif cell.preg == 'late':
-                    amp = 0.3
+                    if cell.type == 'jux3':
+                        amp = 0.4
+                    else:
+                        amp = 0.3
             elif np.linalg.norm(f)>2000:
                 if cell.preg == 'mid':
                     amp = 0.7
@@ -100,6 +116,11 @@ def newton_preg_rat(func,x,k,cell):
                     amp = 1.0 #0.8
                 elif cell.preg == 'late':
                     amp = 1.0
+            elif np.linalg.norm(f)>150:
+                if cell.preg == 'mid':
+                    amp = 1.0 
+                elif cell.preg == 'late':
+                    amp = 0.8
             elif iter > 50:
                 if np.linalg.norm(f)>1:
                     amp = 0.9 

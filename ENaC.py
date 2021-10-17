@@ -12,7 +12,7 @@ def ENaC(cell,i,memb_id,hNaMP,area,jvol):
         # Partial overlap of NCC and ENaC in DCT
         LzD=i-1
         x1=LzD+1
-        xn=N
+        xn=cell.total
         xdct2=2.0/3.0
 
         if x1/xn<xdct2:

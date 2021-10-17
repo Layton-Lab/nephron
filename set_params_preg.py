@@ -91,16 +91,25 @@ def read_params_preg(cell,filename,j):
             # Diameter:
             elif compare_string_prefix(id,"Diameter"):
                 # pregnant diameter
+                preg_rat = 1.0 # reset preg_rat
                 if cell.segment == 'PT' or cell.segment == 'S3':
                     if cell.preg == 'mid':
-                        cell.diam = value*1.14
+                        preg_rat = 1.14
                     elif cell.preg == 'late':
-                        cell.diam = value*1.16
+                        preg_rat = 1.16
                 else:
                     if cell.preg == 'mid':
-                        cell.diam = value*1.08
+                        preg_rat = 1.08
                     elif cell.preg == 'late':
-                        cell.diam = value*1.1
+                        preg_rat = 1.1
+
+                if cell.type != 'sup':
+                    if cell.preg == 'mid':
+                        preg_rat = preg_rat*1.02 #2% increase in juxt nephron diameter
+                    elif cell.preg == 'late':
+                        preg_rat = preg_rat*1.0 # no increase in LP model... low jux flow
+
+                cell.diam = value*preg_rat
 
             # Length:
             elif compare_string_prefix(id,"Length"):
@@ -160,9 +169,9 @@ def read_params_preg(cell,filename,j):
                 cell.pres[0] = value
                 if cell.type !='sup' and cell.segment == 'PT' and cell.species == 'rat':
                     if cell.preg == 'mid':
-                        cell.pres[0] = 13.0
+                        cell.pres[0] = 12.5
                     elif cell.preg == 'late':
-                        cell.pres[0] = 13.7
+                        cell.pres[0] = 12.5
 
             # pH:
             elif compare_string_prefix(id,"pH"):
@@ -199,39 +208,51 @@ def read_params_preg(cell,filename,j):
                                 preg_rat = 1.0
                             elif cell.preg == 'late':
                                 preg_rat = 3.0
+                        elif cell.segment == 'LDL':
+                            if cell.preg == 'mid':
+                                preg_rat = 1.0
+                            elif cell.preg == 'late':
+                                preg_rat = 3.0
                         elif cell.segment == 'CCD':
                             if cell.preg == 'mid':
-                                preg_rat = 1.5
+                                preg_rat = 1.25
                             elif cell.preg == 'late':
                                 preg_rat = 2.0
                         elif cell.segment == 'OMCD':
                             if cell.preg == 'mid':
-                                preg_rat = 1.5
+                                preg_rat = 1.25
                             elif cell.preg == 'late':
                                 preg_rat = 2.0
                         elif cell.segment == 'IMCD':
                             if cell.preg == 'mid':
-                                preg_rat = 2.0
+                                preg_rat = 1.5
                             elif cell.preg == 'late':
                                 preg_rat = 2.75
                     elif ind1 == 1:
                         if ind2 == 4 or ind2 == 5:
                             if cell.segment == 'SDL':
-                                if cell.preg == 'late':
+                                if cell.preg == 'mid':
+                                    preg_rat = 1.0
+                                elif cell.preg == 'late':
+                                    preg_rat = 3.0
+                            elif cell.segment == 'LDL':
+                                if cell.preg == 'mid':
+                                    preg_rat = 1.0
+                                elif cell.preg == 'late':
                                     preg_rat = 3.0
                             elif cell.segment == 'CCD':
                                 if cell.preg == 'mid':
-                                    preg_rat = 1.5
+                                    preg_rat = 1.25
                                 elif cell.preg == 'late':
                                     preg_rat = 2.0
                             elif cell.segment == 'OMCD':
                                 if cell.preg == 'mid':
-                                    preg_rat = 1.5
+                                    preg_rat = 1.25
                                 elif cell.preg == 'late':
                                     preg_rat = 2.0
                             elif cell.segment == 'IMCD':
                                 if cell.preg == 'mid':
-                                    preg_rat = 2.0
+                                    preg_rat = 1.5
                                 elif cell.preg == 'late':
                                     preg_rat = 2.75
 
@@ -334,28 +355,28 @@ def read_params_preg(cell,filename,j):
                             preg_rat = 0.35
                             cell.h[1,0,1] = 0.6*preg_rat
                         elif cell.preg == 'mid':
-                            preg_rat = 0.5 
+                            preg_rat = 0.7 
                             cell.h[1,0,1] = 0.6*preg_rat
                 elif cell.segment == 'CNT':
                     if cell.preg == 'late':
                         preg_rat = 0.35
                         cell.h[1,0,1] = 8.0*preg_rat
                     elif cell.preg == 'mid':
-                        preg_rat = 0.5 
+                        preg_rat = 0.7 
                         cell.h[1,0,1] = 8.0*preg_rat
                 elif cell.segment == 'CCD':
                     if cell.preg == 'late':
                         preg_rat = 0.55
                         cell.h[1,0,1] = 2.8*preg_rat
                     elif cell.preg == 'mid':
-                        preg_rat = 0.6 
+                        preg_rat = 0.8 
                         cell.h[1,0,1] = 2.8*preg_rat
                 elif cell.segment == 'OMCD':
                     if cell.preg == 'late':
                         preg_rat = 0.55
                         cell.h[1,0,1] = 2.4*preg_rat
                     elif cell.preg == 'mid':
-                        preg_rat = 0.6 
+                        preg_rat = 0.8 
                         cell.h[1,0,1] = 2.4*preg_rat
                     
                             
@@ -404,18 +425,18 @@ def read_params_preg(cell,filename,j):
                     else:
                         print('segment: '+cell.segment)
                         raise Exception('K-Cl coupled transporter not characterized for pregnancy in this segment')
-                # Na-Cl cotransporter
+                #Na-Cl cotransporter
                 elif newdLA.solute_id == (0,2):
                     if cell.segment == 'OMCD':
                         if cell.preg == 'mid':
-                            newdLA.perm = 1.05*newdLA.perm
+                            newdLA.perm = 1.1*newdLA.perm
                         elif cell.preg == 'late':
-                            newdLA.perm = 1.15*newdLA.perm
+                            newdLA.perm = 1.0*newdLA.perm
                     elif cell.segment == 'IMCD':
                         if cell.preg == 'mid':
-                            newdLA.perm = 1.05*newdLA.perm
+                            newdLA.perm = 1.1*newdLA.perm
                         elif cell.preg == 'late':
-                            newdLA.perm = 1.15*newdLA.perm
+                            newdLA.perm = 1.0*newdLA.perm
                     else:
                         print('segment: ' + cell.segment)
                         raise Exception('Na-Cl coupled transporter not characterized for pregnancy in this segment')
@@ -579,7 +600,7 @@ def read_params_preg(cell,filename,j):
                     # SNGFR for sup nephrons
                     if compart_id[tmp[1]] == 0:
                         if cell.preg == 'mid':
-                            cell.vol[0] = 0.0056 #0.004*1.4
+                            cell.vol[0] = 0.0057 #0.004*1.425
                         elif cell.preg == 'late':
                             cell.vol[0] = 0.006 #0.004*1.5
                         cell.vol_init[0] = cell.vol[0]
@@ -590,9 +611,9 @@ def read_params_preg(cell,filename,j):
                     # SNGFR for jux nephrons
                     if compart_id[tmp[1]] == 0:
                         if cell.preg == 'mid':
-                            cell.vol[0] = 0.006*1.4 
+                            cell.vol[0] = 0.008 
                         elif cell.preg == 'late':
-                            cell.vol[0] = 0.006*1.0333333 
+                            cell.vol[0] = 0.006 #0.00568
                         cell.vol_init[0] = cell.vol[0]
                     else:
                         cell.vol[compart_id[tmp[1]]] = float(num[0])

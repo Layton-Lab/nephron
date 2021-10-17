@@ -5,7 +5,7 @@ def NCC(cell,i,memb_id,xNCC,area):
 	if cell.segment == 'DCT':
 		LzD=i-1
 		x1=LzD+1
-		xn=N
+		xn=cell.total
 		xdct2=2.0/3.0
 
 		if x1/xn<xdct2:

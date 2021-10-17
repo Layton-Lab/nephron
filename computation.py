@@ -19,6 +19,7 @@ import NHE1
 import flux
 import os
 import argparse
+import re
 
 solute = ['Na','K','Cl','HCO3','H2CO3','CO2','HPO4','H2PO4','urea','NH3','NH4','H','HCO2','H2CO2','glu']
 compart = ['Lumen','Cell','ICA','ICB','LIS','Bath']
@@ -66,13 +67,6 @@ unx = args.unx
 
 preg = args.pregnant
 
-if segment == 'PT':
-    N = 176
-elif segment == 'S3':
-    N = 25
-else:
-    N = 200
-
 file_to_save = args.savefile
 if os.path.isdir(file_to_save) == False:
     os.makedirs(file_to_save)
@@ -84,6 +78,25 @@ elif sex == 'Female':
 else:
 	print('sex: ' + sex)
 	raise Exception('must be male or female')
+
+file = open(filename, 'r')
+line = file.readline()
+while (line):
+	line = line.replace('\t', ' ')
+	terms = line.split(' ')
+	if ((line[0][0] != '#') and ('total' == terms[0])):
+		first_space_pos = line.index(' ')
+		num = re.findall(r'-?\d+\.?\d*[Ee]?[+-]?\d*', line[first_space_pos:len(line)])
+		N = float(num[0])
+		break
+	else:
+		line = file.readline()
+file.close()
+
+if segment == 'PT':
+    N = 7*N / 8
+elif segment == 'S3':
+    N = N / 8
 
 N = int(N)
 method = 'Newton'

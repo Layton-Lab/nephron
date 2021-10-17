@@ -132,6 +132,8 @@ def read_params(cell,filename,j):
                 # diabetic diameter
                 if cell.diabete == 'Non':
                     cell.diam = value
+                    if cell.type != 'sup':
+                        cell.diam = value*1.02 #slight increase in juxt diam size
                 elif cell.diabete == 'Moderate':
                     if cell.segment == 'PT' or cell.segment == 'S3':
                         cell.diam = value*1.1
@@ -197,15 +199,17 @@ def read_params(cell,filename,j):
     # parameter files specify superficial segmental lengths; for some segments, lengths are different for juxtamedullary nephrons, so we overwrite them here...
                 if cell.type != 'sup' and cell.species == 'rat':
                     if cell.segment == 'cTAL':
+                        # cTAL is short in jux nephrons
                         if cell.sex == 'male':
                             cell.len = 0.05
                         elif cell.sex == 'female':
-                            cell.len = 0.05*0.9 #0.05*0.85, updated female
+                            cell.len = 0.05*0.9
                     elif cell.segment == 'CNT':
+                        # CNT is longer in jux nephrons
                         if cell.sex == 'male':
                             cell.len = 0.3
                         elif cell.sex == 'female':
-                            cell.len = 0.3*0.9 #0.3*0.85, updated female
+                            cell.len = 0.3*0.9 
 
                 if cell.type != 'sup' and cell.species == 'mou':
                     if cell.segment == 'PT':
@@ -271,12 +275,12 @@ def read_params(cell,filename,j):
             elif compare_string_prefix(id,"Pressure"):
                 cell.pres[0] = value
                 
-            # parameter files specify pressure (value) for superficial nephrons; we manually specify juxtamedullary pressure values...
+            # parameter files specify pressure (value) for superficial nephrons
                 if cell.type !='sup' and cell.segment == 'PT' and cell.species == 'rat':
                     if cell.sex == 'male':
                         cell.pres[0] = 12.5
                     elif cell.sex == 'female':
-                        cell.pres[0] = 12.5
+                        cell.pres[0] = 13.0 #12.5
 
                 if cell.type !='sup' and cell.segment == 'PT' and cell.species == 'mou':
                     if cell.sex == 'male':
@@ -716,38 +720,38 @@ def read_params(cell,filename,j):
             elif compare_string_prefix(id,"vol"):
                 tmp = (id).split('_')
 
-                # data files specify values for superficial nephrons, so we hardcord juxmedullary nephron values
+                # data files specify values for superficial nephrons, juxmedullary nephron values are hardcoded here
                 if cell.segment == 'PT' and cell.type != 'sup' and cell.species == 'rat':
                     if compart_id[tmp[1]] == 0:	
                         if cell.type == 'jux1':
                             if cell.sex == 'male':
                                 cell.vol[0] = 0.0075
                             elif cell.sex == 'female':
-                                cell.vol[0] = 0.006
+                                cell.vol[0] = 0.0056
                             cell.vol_init[0] = cell.vol[0]
                         elif cell.type == 'jux2':
                             if cell.sex == 'male':
                                 cell.vol[0] = 0.0075
                             elif cell.sex == 'female':
-                                cell.vol[0] = 0.006
+                                cell.vol[0] = 0.0056
                             cell.vol_init[0] = cell.vol[0]
                         elif cell.type == 'jux3':
                             if cell.sex == 'male':
                                 cell.vol[0] = 0.0075
                             elif cell.sex == 'female':
-                                cell.vol[0] = 0.006
+                                cell.vol[0] = 0.0056
                             cell.vol_init[0] = cell.vol[0]
                         elif cell.type == 'jux4':
                             if cell.sex == 'male':
                                 cell.vol[0] = 0.0075
                             elif cell.sex == 'female':
-                                cell.vol[0] = 0.006
+                                cell.vol[0] = 0.0056
                             cell.vol_init[0] = cell.vol[0]
                         elif cell.type == 'jux5':
                             if cell.sex == 'male':
                                 cell.vol[0] = 0.0075
                             elif cell.sex == 'female':
-                                cell.vol[0] = 0.006
+                                cell.vol[0] = 0.0056
                             cell.vol_init[0] = cell.vol[0]
                     else:
                         cell.vol[compart_id[tmp[1]]] = float(num[0])
