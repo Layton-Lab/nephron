@@ -21,10 +21,10 @@ def female_conc(cell, i):
             cell.conc[3,5] = cell.conc[3,0]
         elif cell.preg == 'late':
             # conc of Na, K, Cl, HCO3 different in LP rat plasma
-            cell.conc[0,0] = cell.conc[0,0]*0.95
+            cell.conc[0,0] = cell.conc[0,0]*0.93
             cell.conc[1,0] = cell.conc[1,0]*1.15 # upregulated K in LP
-            cell.conc[2,0] = cell.conc[2,0]*0.95
-            cell.conc[3,0] = cell.conc[3,0]*0.95
+            cell.conc[2,0] = cell.conc[2,0]*0.93
+            cell.conc[3,0] = cell.conc[3,0]*0.94
 
             # also change in starting for bath
             cell.conc[0,5] = cell.conc[0,0]
@@ -89,6 +89,26 @@ def boundaryBath(cell,i):
             cell.pap[1] = TotPotPap_100NKCCinhib
             cell.pap[2] = TotCloPap_100NKCCinhib
             cell.pap[8] = TotureaPap_100NKCCinhib
+        elif cell.preg == 'mid':
+            cell.oi[0] = TotSodOI_MP
+            cell.oi[1] = TotPotOI_MP
+            cell.oi[2] = TotCloOI_MP
+            cell.oi[3] = TotHCO3OI_MP
+            cell.pap[0] = TotSodPap_MP
+            cell.pap[1] = TotPotPap_MP
+            cell.pap[2] = TotCloPap_MP
+            cell.pap[3] = TotHCO3Pap_MP
+        elif cell.preg == 'late':
+            cell.oi[0] = TotSodOI_LP
+            cell.oi[1] = TotPotOI_LP
+            cell.oi[2] = TotCloOI_LP
+            cell.oi[3] = TotHCO3OI_LP
+            cell.pap[0] = TotSodPap_LP
+            cell.pap[1] = TotPotPap_LP
+            cell.pap[2] = TotCloPap_LP
+            cell.pap[3] = TotHCO3Pap_LP
+            
+
             
     if cell.segment=='cTAL' or cell.segment == 'MD' or cell.segment=='DCT' or cell.segment=='PT' or cell.segment == 'CNT' or cell.segment == 'CCD':
         if cell.species == 'rat':

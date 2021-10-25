@@ -35,7 +35,7 @@ args=parser.parse_args()
 
 sex = args.sex
 species = args.species
-sup_or_multi = args.type
+sup_or_multi = 'multiple'
 segment = args.segment
 
 if segment[-2:] == 'CD':

@@ -100,6 +100,9 @@ elif segment == 'S3':
 
 N = int(N)
 method = 'Newton'
+
+print(sup_or_jux + ' ' + segment + ' start')
+
 cell=compute(N,filename,method,sup_or_jux,diabete=diabete,species=species,sup_or_multi = sup_or_multi,inhibition=inhib,unx = unx, preg=preg)
 if sup_or_jux != '':
 	sup_or_jux = '_' + sup_or_jux
