@@ -115,36 +115,48 @@ pKHPO4 = 6.8
 pKNH3 = 9.15
 pKHCO2 = 3.76
 
-# parameters used for NHE3i, NKCC2i, SNB
+# parameters used for NHE3i, NKCC2i, SNB, pregnancy
 
 TotSodCM = 144.0
 TotSodOI_noinhib = 299.0
 TotSodOI_100NKCCinhib = 180.0
 TotSodOI_70NKCCinhib = 239.5
+TotSodOI_MP = 281.1
+TotSodOI_LP = 299.0*0.93
 TotSodPap_noinhib = 349.0
 TotSodPap_50inhib = 324.0
 TotSodPap_80inhib = 274.0
 TotSodPap_100NKCCinhib = 140.0
 TotSodPap_70NKCCinhib = 244.5
+TotSodPap_MP = 328.0
+TotSodPap_LP = 349.0*0.93
 
 TotPotCM = 4.9
 TotPotOI_noinhib = 10.0
 TotPotOI_100NKCCinhib = 5.0
 TotPotOI_70NKCCinhib = 7.5
+TotPotOI_MP = 10.0
+TotPotOI_LP = 10.0*1.15
 TotPotPap_noinhib = 20.0
 TotPotPap_80inhib = 10.0
 TotPotPap_100NKCCinhib = 5.0
 TotPotPap_70NKCCinhib = 12.5
+TotPotPap_MP = 20.0
+TotPotPap_LP = 20.0*1.15
 
 TotCloCM = 116.17
 TotCloOI_noinhib = 279.94
 TotCloOI_100NKCCinhib = 158.0
 TotCloOI_70NKCCinhib = 218.97
+TotCloOI_MP = 263.0
+TotCloOI_LP = 279.94*0.93
 TotCloPap_noinhib = 344.92
 TotCloPap_50inhib = 320.0
 TotCloPap_80inhib = 260.0
 TotCloPap_100NKCCinhib = 136.0
 TotCloPap_70NKCCinhib = 240.46
+TotCloPap_MP = 324.2
+TotCloPap_LP = 344.92*0.93
 
 TotureaCM = 8.0
 TotureaOI_noinhib = 60.0
@@ -152,8 +164,17 @@ TotureaOI_50inhib = 50.0
 TotureaOI_80inhib = 20.0
 TotureaOI_100NKCCinhib = 20.0
 TotureaOI_70NKCCinhib = 40.0
+
 TotureaPap_noinhib = 200.0
 TotureaPap_50inhib = 180.0
 TotureaPap_80inhib = 20.0
 TotureaPap_100NKCCinhib = 20.0
 TotureaPap_70NKCCinhib = 110.0
+
+
+TotHCO3OI_noinhib = 25.0
+TotHCO3OI_MP = 23.5
+TotHCO3OI_LP = 25.0*0.94
+TotHCO3Pap_noinhib = 25.0
+TotHCO3Pap_MP = 23.5
+TotHCO3Pap_LP = 25.0*0.94

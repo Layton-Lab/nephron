@@ -376,7 +376,8 @@ def compute(N,filename,method,sup_or_jux=None,diabete='Non',species = 'human',su
         else:
             print('cell.segment:' + cell[0].segment)
             raise Exception('cell.segment:' + cell[0].segment +' is not set up')
-    
+        #print(x)
+        #input('pausing...')
         # set up nonlinear system
         equations.conservation_init (cell[i],cell[i+1],celln,dx)
         fvec = equations.conservation_eqs (x,i)
