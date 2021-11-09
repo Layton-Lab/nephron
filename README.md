@@ -45,6 +45,7 @@ The unit of flow is **pmol/min**.
 
 ## Research Papers
 Please cite appropriate paper(s) when using this model.
+
 Published papers:
 
 * **superficial nephron (sex-specific):** [2019 Hu et al. "Functional implications of the sex differences in transporter abundance along the rat nephron: modeling and analysis"](https://journals.physiology.org/doi/full/10.1152/ajprenal.00352.2019)
