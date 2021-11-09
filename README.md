@@ -41,11 +41,11 @@ The unit of volume is **nl/min**.
 
 The unit of flow is **pmol/min**.
 
-**/plot/** contains scripts for plotting output
+**/plot/** contains some example scripts for plotting output
 
 ## Research Papers
 Please cite appropriate paper(s) when using this model.
-Published papers related to/using model:
+Published papers:
 
 * **superficial nephron (sex-specific):** [2019 Hu et al. "Functional implications of the sex differences in transporter abundance along the rat nephron: modeling and analysis"](https://journals.physiology.org/doi/full/10.1152/ajprenal.00352.2019)
 * **multiple nephron (sex-specific):** [2020 Hu et al. "Sex differences in solute transport along the nephrons: effects of Na+ transport inhibition"](https://journals.physiology.org/doi/abs/10.1152/ajprenal.00240.2020?rfr_dat=cr_pub++0pubmed&url_ver=Z39.88-2003&rfr_id=ori%3Arid%3Acrossref.org)
