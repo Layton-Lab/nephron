@@ -61,14 +61,14 @@ def set_torq_params(species,sex,preg):
                 Radref = 0.002125/2.0 #female radius
                 PbloodPT = 8.0e0
             elif preg == 'mid':
-                torqR = 0.001025 
-                torqvm = 0.055 
-                Radref = 0.0024225/2.0
+                torqR = 0.00101 
+                torqvm = 0.050 
+                Radref = 0.00227375/2.0
                 PbloodPT = 8.0e0 
             elif preg == 'late':
-                torqR = 0.001025 
-                torqvm = 0.055 
-                Radref = 0.0024225/2.0
+                torqR = 0.00101
+                torqvm = 0.050 
+                Radref = 0.00227375/2.0
                 PbloodPT = 8.0e0
         torqL = 2.50e-4
         torqd = 1.50e-5
@@ -280,13 +280,13 @@ def read_params(cell,filename,j):
                     if cell.sex == 'male':
                         cell.pres[0] = 12.5
                     elif cell.sex == 'female':
-                        cell.pres[0] = 13.0 #12.5
+                        cell.pres[0] = 12.75 #12.5
 
                 if cell.type !='sup' and cell.segment == 'PT' and cell.species == 'mou':
                     if cell.sex == 'male':
                         cell.pres[0] = 12.5
                     elif cell.sex == 'female':
-                        cell.pres[0] = 12.5
+                        cell.pres[0] = 12.7
 
                 if cell.diabete != 'Non' and cell.species == 'hum':
                     if cell.type == 'sup' and cell.segment == 'PT':

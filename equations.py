@@ -331,9 +331,9 @@ def conservation_eqs (x,i):
 
         fvec[5+3*NS]=elecE
     
-#---------------------------------------------------------------------72
+#---------------------------------------------------------------------
 #     For Pressure
-#---------------------------------------------------------------------72    
+#---------------------------------------------------------------------    
        # PT and S3 are the only compliant segments.
         if cell1.segment == 'PT' or cell1.segment == 'S3':       
             Radref,torqR,torqvm,PbloodPT,torqL,torqd = set_torq_params(cell1.species,cell1.sex,cell1.preg)
@@ -703,67 +703,10 @@ def conservation_eqs (x,i):
             raise Exception ('ratio not set for this segment')
             
         fvec[5*NS+10] = cell1.pres[0]-cell0.pres[0]+ratio*cell1.vol[0]*Vref*cell1.len/cell1.total  
+    
     else:
 
-        Jvol1=np.zeros(NC*NC).reshape(NC,NC)
-        Jsol1=np.zeros(NS*NC*NC).reshape(NS,NC,NC)
-        ph = np.zeros(NC)
-    
-        cell1.conc[:,0] = x[0:NS]
-        cell1.vol[0] = x[NS]
-        cell1.pres[0] = x[NS+1]
-
-        ph[0] = np.log(cell1.conc[11,0]/1000)/np.log(10)
-
-        Jvol1,Jsol1 = flux.compute_fluxes(cell1,i)
-
-        fvec = np.zeros(NS+3)
-        S    = np.zeros(NS+3)         
-
-        #----------------------------------------------------------------------
-        #    COMPUTE SOURCE TERMS FOR FLOW OF SOLUTE I IN THE LUMEN           
-        #----------------------------------------------------------------------
-        
-        Bm = PI*cell1.diam
-        Am = PI*(cell1.diam**2)/4
-        
-        for i in range(NS):
-            sumJsol1 = Jsol1[i,0,5]
-            fsola = cell0.vol[0]*cell0.conc[i][0]*Vref/href
-            fsolb = cell1.vol[0]*cell1.conc[i][0]*Vref/href
-            fvec[i] = fsolb-fsola+Bm*cell1.len*sumJsol1/cell1.total
-
-        # Modify the acid-base pairs:
-        fvec[3] = fvec[3]+fvec[4]+fvec[5]
-        fvec[4] = ph[0] - pKHCO3 - np.log(cell1.conc[3,0]/cell1.conc[4,0])/np.log(10)
-        fkin2 = cell1.dkh[0]*cell1.conc[5,0]-cell1.dkd[0]*cell1.conc[4,0]
-        fvec[5] = fvec[5]+Am*cell1.len*fkin2/cell1.total/href
-
-        fvec[6] = fvec[6]+fvec[7]
-        fvec[7] = ph[0]-pKHPO4-np.log(cell1.conc[6,0]/cell1.conc[7,0])/np.log(10)
-
-        fvec[9] = fvec[9]+fvec[10]
-        fvec[10] = ph[0]-pKNH3-np.log(cell1.conc[9,0]/cell1.conc[10,0])/np.log(10)
-        
-        #----------------------------------------------------------------------
-        #     COMPUTE SOURCE TERMS FOR VOLUME FLOW IN THE LUMEN           
-        #----------------------------------------------------------------------
-        fvmult = Pfref*Vwbar*Cref
-        sumJvb = Jvol1[0,5]*fvmult
-        fvola = cell0.vol[0]*Vref
-        fvolb = cell1.vol[0]*Vref
-        fvec[NS] = fvolb-fvola+Bm*cell1.len*sumJvb/cell1.total
-        
-        #----------------------------------------------------------------------
-        #                     EQUATION OF PRESSURE           
-        #----------------------------------------------------------------------
-        ratio = 8*visc/(PI*(0.5*cell1.diam)**4)
-        fvec[1+NS] = cell1.pres[0]-cell0.pres[0]+ratio*cell1.vol[0]*Vref*cell1.len/cell1.total
-
-        #----------------------------------------------------------------------
-        #                     ELECTRONEUTRALITY           
-        #----------------------------------------------------------------------
-        fvec[2+NS] = sum(zval*cell1.conc[:,0])
+        raise Exception('what is this segment? ' + cell1.segment)
         
     return fvec
 

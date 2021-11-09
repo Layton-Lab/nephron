@@ -96,11 +96,11 @@ def newton_preg_rat(func,x,k,cell):
         # CNT
         elif cell.segment == 'CNT':
             if np.linalg.norm(f)>1e6:
-                amp = 0.2
+                amp = 0.25
             elif np.linalg.norm(f)>5000:
                 if cell.preg == 'mid':
                     if cell.type == 'jux1':
-                        amp = 0.4
+                        amp = 0.3
                     elif cell.type == 'jux2':
                         amp = 0.3
                     elif cell.type == 'jux3':
@@ -109,50 +109,61 @@ def newton_preg_rat(func,x,k,cell):
                         amp = 0.3
                     elif cell.type == 'jux5':
                         if k==0:
-                            amp = 0.15
+                            amp = 0.3
                         else:
                             amp = 0.5
                     else:
                         amp = 0.5
                 elif cell.preg == 'late':
-                    if cell.type == 'jux5':
-                        amp = 0.5
+                    if cell.type == 'jux1':
+                        amp = 0.45
+                    elif cell.type == 'jux2':
+                        amp = 0.45
                     elif cell.type == 'jux3':
                         amp = 0.5
                     elif cell.type == 'jux4':
                         amp = 0.5
-                    elif cell.type == 'jux2':
-                        amp = 0.5
                     else:
-                        amp = 0.3
+                        amp = 0.65
             elif np.linalg.norm(f)>2000:
                 if cell.preg == 'mid':
-                    amp = 0.75
+                    amp = 0.85
                 elif cell.preg == 'late':
-                    amp = 1.0
+                    amp = 0.85
             elif np.linalg.norm(f)>1000:
                 if cell.preg == 'mid':
                     amp = 0.8
                 elif cell.preg == 'late':
-                    amp = 0.8
+                    amp = 0.9
             elif np.linalg.norm(f)>150:
                 if cell.preg == 'mid':
                     amp = 0.9
                 elif cell.preg == 'late':
-                    amp = 0.9
+                    amp = 0.95
+            elif iter>100:
+                amp = 0.65
             elif iter > 30:
-                if np.linalg.norm(f)>1:
-                    amp = 0.9 
-                else:
+                if np.linalg.norm(f)>15:
+                    amp = 0.65
+                elif np.linalg.norm(f)>5:
                     amp = 0.5
+                else:
+                    amp = 0.76
+            elif iter>10:
+                if np.linalg.norm(f)<1:
+                    amp = 0.5
+                else:
+                    amp = 1.0
             else:
                 amp = 1.0 
         # CCD     
         elif cell.segment == 'CCD':
-            if cell.preg == 'mid':
+            if np.linalg.norm(f)>1e6:
+                amp = 0.5
+            elif cell.preg == 'mid':
                 if np.linalg.norm(f)>5000:
                     if k==0:
-                        amp = 0.5 
+                        amp = 0.5
                     else:
                         amp = 0.75
                 elif np.linalg.norm(f)>1000:
@@ -167,24 +178,36 @@ def newton_preg_rat(func,x,k,cell):
             elif cell.preg == 'late':
                 if np.linalg.norm(f)>5000:
                     if k==0:
-                        amp = 0.25 
+                        amp = 0.78
                     else:
                         amp = 0.5
-                elif np.linalg.norm(f)>1000:
+                elif np.linalg.norm(f)>2000:
                     amp = 0.75 
-                elif iter > 75:
+                elif np.linalg.norm(f)>1000:
+                    amp = 0.95
+                elif iter > 100:
+                    amp = 1.0
+                elif iter > 125:
                     if np.linalg.norm(f)>1:
                         amp = 0.8
                     else:
-                        amp = 0.95
+                        amp = 0.75
                 else:
                     amp = 1.0
         # OMCD
         elif cell.segment == 'OMCD':
-            if np.linalg.norm(f)>5000:
-                amp = 1.0
+            if np.linalg.norm(f)>1e6:
+                amp = 0.35
+            elif np.linalg.norm(f)>5000:
+                if k==0:
+                    amp = 0.5
+                else:
+                    amp = 1.0
             elif np.linalg.norm(f)>1000:
-                amp = 1.0
+                if k==0:
+                    amp = 0.75
+                else:
+                    amp = 1.0
             elif np.linalg.norm(f)>100:
                 amp = 1.0
             elif iter>50:
