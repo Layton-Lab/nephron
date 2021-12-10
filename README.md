@@ -53,7 +53,7 @@ Published papers:
 * **human multiple nephron (male only):** [2019 Layton and Layton "A computational model of epithelial solute and water transport along a human nephron"](https://journals.plos.org/ploscompbiol/article?rev=2&id=10.1371/journal.pcbi.1006108)
 * **human multiple nephron (sex-specific):** [2021 Hu et al. "Sex differences in solute and water handling in the human kidney: Modeling and functional implications"](https://www.sciencedirect.com/science/article/pii/S2589004221006350)
 * **diabetic human (sex-specific):** [2021 Hu et al. "A Computational Model of Kidney Function in a Patient with Diabetes"](https://www.mdpi.com/1422-0067/22/11/5819)
-* **pregnant rat:** (under review)
+* **pregnant rat:** 2022 Stadt & Layton. "Adaptive changes in single-nephron GFR, tubular morphology, and transport in a pregnant rat nephron: Modeling and analysis", AJP-Renal, in press.
 
-## Previous versions
+### Previous versions
 Previous versions of this model are on [this](https://github.com/uwrhu) page.
