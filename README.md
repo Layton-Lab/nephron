@@ -56,4 +56,4 @@ Published papers:
 * **pregnant rat (superficial nephron):** [2022 Stadt and Layton "Adaptive changes in single-nephron GFR, tubular morphology, and transport in a pregnant rat nephron: modeling and analysis"](https://journals.physiology.org/doi/abs/10.1152/ajprenal.00264.2021)
 
 ### Previous versions
-Previous versions of this model code are on [this](https://github.com/uwrhu) page.
+Previous versions of this model code are available [here](https://github.com/uwrhu).
