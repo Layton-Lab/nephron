@@ -1,11 +1,13 @@
 #
 #  physical dimension
 #
-sex	male
+sex	female
 diameter_male	 0.0015    # luminal diameter for male
-diameter_female  0.00135  # 90% of male
+## diameter_female  0.00135  # 90% of male
+diameter_female  0.0015 
 length_male		0.08   # tubule length for male：0.2, for jux nephron male : 0.3
-length_female   0.072  # 90% of male
+## length_female   0.072  # 90% of male
+length_female   0.08 
 total 200           # total amount of cells
 #
 #  luminal pressure
@@ -42,10 +44,13 @@ vol_LIS	-0.35506
 #
 Pf_Lumen_Cell_male	0.036
 Pf_Lumen_Cell_female	0.0432  # 20% higher than male
+## Pf_Lumen_Cell_female	0.036  # 20% higher than male
 Pf_Lumen_ICA_male	0.22e-3
 Pf_Lumen_ICA_female	0.264e-3
+## Pf_Lumen_ICA_female	0.22e-3
 Pf_Lumen_ICB_male	0.22e-3
 Pf_Lumen_ICB_female	0.264e-3
+## Pf_Lumen_ICB_female	0.22e-3
 Pf_Lumen_LIS_male	1.1
 Pf_Lumen_LIS_female	1.1
 Pf_Cell_LIS	0.44
@@ -53,10 +58,13 @@ Pf_ICA_LIS	5.5e-3
 Pf_ICB_LIS	5.5e-3
 Pf_Cell_Bath_male	0.44
 Pf_Cell_Bath_female	0.528
+## Pf_Cell_Bath_female	0.44
 Pf_ICA_Bath_male	5.5e-3
 Pf_ICA_Bath_female	6.6e-3
+## Pf_ICA_Bath_female	5.5e-3
 Pf_ICB_Bath_male	5.5e-3
 Pf_ICB_Bath_female	6.6e-3
+## Pf_ICB_Bath_female	5.5e-3
 Pf_LIS_Bath	110.0
 #
 #  reflection coefficients, default set to 1
@@ -82,7 +90,8 @@ sig_glucose_LIS_Bath	0.0
 #
 perm_Na_Lumen_Cell	0.0
 # perm_K_Lumen_Cell	8.0
-perm_K_Lumen_Cell	2.0
+perm_K_Lumen_Cell_male	2.0
+perm_K_Lumen_Cell_female	2.0
 perm_Cl_Lumen_Cell	0.8
 perm_HCO3_Lumen_Cell	0.16
 perm_H2CO3_Lumen_Cell	130.0
@@ -196,10 +205,14 @@ perm_glucose_ICB_LIS	1.0e-4
 #  default permeability = 0
 #
 perm_Na_Lumen_LIS_male	1.0e3
-perm_Na_Lumen_LIS_female 1.3e3  # 30% higher in female
-perm_K_Lumen_LIS	1.2e3
+## perm_Na_Lumen_LIS_female 1.3e3  # 30% higher in female
+perm_Na_Lumen_LIS_female 1.0e3  # 30% higher in female
+## perm_K_Lumen_LIS	1.2e3
+perm_K_Lumen_LIS_male	0.6e3
+perm_K_Lumen_LIS_female	0.3e3
 perm_Cl_Lumen_LIS_male	1.2e3
-perm_Cl_Lumen_LIS_female 1.56e3  #  30% higher in female
+## perm_Cl_Lumen_LIS_female 1.56e3  #  30% higher in female
+perm_Cl_Lumen_LIS_female 1.2e3  #  30% higher in female
 perm_HCO3_Lumen_LIS	0.6e3
 perm_H2CO3_Lumen_LIS	2.0e3
 perm_CO2_Lumen_LIS	2.0e3
@@ -326,21 +339,30 @@ coupled_Cell_Bath_Cl_HCO3 2.0e-9	1	-1
 #  specific transporters, specify activity
 #
 transport_Cell_LIS_NaKATPase_male	3410.0e-9
+## %%%%
+## transport_Cell_LIS_NaKATPase_female	4092.0e-9
 transport_Cell_LIS_NaKATPase_female	3410.0e-9
 transport_Cell_Bath_NaKATPase_male	3410.0e-9
+## transport_Cell_Bath_NaKATPase_female	4092.0e-9
 transport_Cell_Bath_NaKATPase_female	3410.0e-9
 transport_ICA_LIS_NaKATPase_male	450.0e-9
+## transport_ICA_LIS_NaKATPase_female	540.0e-9
 transport_ICA_LIS_NaKATPase_female	450.0e-9
 transport_ICA_Bath_NaKATPase_male	450.0e-9
+## transport_ICA_Bath_NaKATPase_female	540.0e-9
 transport_ICA_Bath_NaKATPase_female	450.0e-9
 transport_ICB_LIS_NaKATPase_male	300.0e-9
+## transport_ICB_LIS_NaKATPase_female	360.0e-9
 transport_ICB_LIS_NaKATPase_female	300.0e-9
 transport_ICB_Bath_NaKATPase_male	300.0e-9
+## transport_ICB_Bath_NaKATPase_female	360.0e-9
 transport_ICB_Bath_NaKATPase_female	300.0e-9
-## transport_Lumen_ICA_HATPase	12000.0e-9
+# transport_Lumen_ICA_HATPase_male	12000.0e-9
+# transport_Lumen_ICA_HATPase_female	6000.0e-9
+transport_Lumen_ICA_HATPase_male	6000.0e-9
+transport_Lumen_ICA_HATPase_female	3000.0e-9
 ## transport_ICB_LIS_HATPase	6000.0e-9
 ## transport_ICB_Bath_HATPase	6000.0e-9
-transport_Lumen_ICA_HATPase	6000.0e-9
 transport_ICB_LIS_HATPase	3000.0e-9
 transport_ICB_Bath_HATPase	3000.0e-9
 transport_Lumen_Cell_HKATPase	0.0
@@ -351,6 +373,8 @@ transport_Lumen_ICB_Pendrin	0.57e-9
 transport_ICA_LIS_AE1	150.0e-9
 transport_ICA_Bath_AE1	150.0e-9
 transport_Lumen_Cell_ENaC_male	14.0e-8
+# transport_Lumen_Cell_ENaC_female	18.2e-8 %%%%%
+transport_Lumen_Cell_ENaC_female	14.0e-8
 #	Na		K		Cl		HCO3	H2CO3		CO2		HPO4	H2PO4	urea	NH3		NH4		H	HCO2	H2CO2	glucose
 cm 	144.0	4.9		116.17	25.0	4.41e-3		1.5		3.9		0.0		8.0		1.0		0.0		0.0	1.0		0.0		5.0
 oi	299.0	10.0	279.94	25.0	4.41e-3		1.5		3.9		0.0		60.0	3.9		0.0		0.0	1.0		0.0		8.33

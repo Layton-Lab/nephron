@@ -1,7 +1,7 @@
 #
 #  physical dimension
 #
-sex	male
+sex	female
 diameter_male	 0.0024    # luminal diameter for male
 diameter_female  0.0024
 ## diameter_female  0.00216
@@ -305,12 +305,24 @@ coupled_Cell_Bath_Cl_HCO3 0.5e-9	1	-1
 #
 #  specific transporters, specify activity
 #
-transport_Cell_LIS_NaKATPase	852.5e-9
-transport_Cell_Bath_NaKATPase	852.5e-9
-transport_ICA_LIS_NaKATPase	112.5e-9
-transport_ICA_Bath_NaKATPase	112.5e-9
-transport_ICB_LIS_NaKATPase	75.0e-9
-transport_ICB_Bath_NaKATPase	75.0e-9
+transport_Cell_LIS_NaKATPase_male	852.5e-9
+## transport_Cell_LIS_NaKATPase_female	937.75e-9
+transport_Cell_LIS_NaKATPase_female	852.5e-9
+transport_Cell_Bath_NaKATPase_male	852.5e-9
+## transport_Cell_Bath_NaKATPase_female	937.75e-9
+transport_Cell_Bath_NaKATPase_female	852.5e-9
+transport_ICA_LIS_NaKATPase_male	112.5e-9
+## transport_ICA_LIS_NaKATPase_female	123.75e-9
+transport_ICA_LIS_NaKATPase_female	112.5e-9
+transport_ICA_Bath_NaKATPase_male	112.5e-9
+## transport_ICA_Bath_NaKATPase_female	123.75e-9
+transport_ICA_Bath_NaKATPase_female	112.5e-9
+transport_ICB_LIS_NaKATPase_male	75.0e-9
+## transport_ICB_LIS_NaKATPase_female	82.5e-9
+transport_ICB_LIS_NaKATPase_female	75.0e-9
+transport_ICB_Bath_NaKATPase_male	75.0e-9
+## transport_ICB_Bath_NaKATPase_female	82.5e-9
+transport_ICB_Bath_NaKATPase_female	75.0e-9
 ## transport_Lumen_ICA_HATPase	3000.0e-9
 ## transport_ICB_LIS_HATPase	1500.0e-9
 ## transport_ICB_Bath_HATPase	1500.0e-9

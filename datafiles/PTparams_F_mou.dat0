@@ -1,15 +1,16 @@
 #
 #  physical dimension
 #
-sex	male
-diameter_male	 0.00250    # luminal diameter for male
-length_male		1.1   # tubule length for male
+sex	female
+diameter_male	 0.0020    # luminal diameter for male
+diameter_female	 0.0016    # luminal diameter for male
+length_male		0.4   # tubule length for male
+length_female		0.32   # tubule length for male
 total 200           # total amount of PT cells
 #
 #  luminal pressure
 #
-# pressure 11.3
-pressure 12.8
+pressure 6.6
 #
 #  surface areas
 area_Lumen_Cell	36.0
@@ -24,17 +25,20 @@ volref_Cell    10.0
 volref_LIS	0.7
 #
 #  compartment areas (actual)
-vol_Lumen_male      0.00511
-## vol_Lumen_male      0.00714
+vol_Lumen_male      0.0017
+vol_Lumen_female      0.0017
 vol_Cell	 7.74582
 vol_LIS		-1.53296
 #
 #  water permeability (in cm/s)
 #
 Pf_Lumen_Cell_male	0.011111111
+Pf_Lumen_Cell_female	0.015555555
 Pf_Lumen_LIS	220
 Pf_Cell_Bath_male	 0.011111111
+Pf_Cell_Bath_female	 0.015555555
 Pf_Cell_LIS_male	 0.011111111
+Pf_Cell_LIS_female	 0.015555555
 Pf_LIS_Bath	330.0
 #
 #  reflection coefficients, default set to 1
@@ -98,8 +102,10 @@ perm_glucose_Cell_Bath	0.0
 #  default permeability = 0
 #
 perm_Na_Lumen_LIS_male	26.0e3
+perm_Na_Lumen_LIS_female	15.6e3
 perm_K_Lumen_LIS	29.0e3
 perm_Cl_Lumen_LIS_male	20.0e3
+perm_Cl_Lumen_LIS_female	12.0e3
 perm_HCO3_Lumen_LIS	8.0e3
 perm_H2CO3_Lumen_LIS	8.0e3
 perm_CO2_Lumen_LIS	8.0e3
@@ -137,7 +143,9 @@ perm_glucose_LIS_Bath	3.0e3
 #
 conc_Na	144.0	15.71436	144.79078	144.0
 conc_K_male	4.9	152.05142	4.67467	4.9
+conc_K_female	4.9	152.05142	4.67467	4.9
 conc_Cl_male	116.26869	11.6633	114.5325	116.26869
+conc_Cl_female	116.26869	11.6633	114.5325	116.26869
 conc_HCO3	24.82997	26.03714	27.41408	24.82997
 conc_H2CO3	0.00438507	0.0043562	0.004353	0.00439
 conc_CO2	1.5	1.4930	1.49230	1.5
@@ -184,6 +192,7 @@ ep_LIS	      -0.02464
 #  coupled transporters, specify permeability and coefficients
 #
 coupled_Lumen_Cell_Na_H2PO4_male	1.25e-9	1	1
+coupled_Lumen_Cell_Na_H2PO4_female	0.625e-9	1	1
 # coupled_Lumen_Cell_Cl_HCO3	2.0e-9	1	-1
 coupled_Lumen_Cell_Cl_HCO2	10.0e-9	1	-1
 coupled_Cell_Bath_K_Cl		0.0e-9	1	1
@@ -200,13 +209,14 @@ transport_Lumen_Cell_SGLT2	0.52e-9 #1.3e-9
 #transport_Cell_Bath_GLUT1	0.3e-5
 transport_Cell_Bath_GLUT2	0.1625e-5
 transport_Cell_LIS_GLUT2	0.1625e-5
-transport_Lumen_Cell_NHE3_male	2.7777777e-08
+transport_Lumen_Cell_NHE3_male	1.9e-08  # 2.7777777e-08
+transport_Lumen_Cell_NHE3_female	1.14e-08  # 2.7777777e-08
 transport_Cell_Bath_NaKATPase	300e-9
 transport_Cell_LIS_NaKATPase	300e-9
 transport_Lumen_Cell_HATPase	 50e-9
 #
 #  interstitial concentration parameters
-# CM: cortico-medullary boundary; OI: outer-inner stripe boundary; Pap: papillary tip
+#
 #	Na		K		Cl		HCO3	H2CO3		CO2		HPO4	H2PO4	urea	NH3		NH4		H	HCO2	H2CO2	glucose
 cm 	144.0	4.9		116.17	25.0	4.41e-3		1.5		3.9		0.0		8.0		1.0		0.0		0.0	1.0		0.0		5.0
 oi	299.0	10.0	279.94	25.0	4.41e-3		1.5		3.9		0.0		60.0	3.9		0.0		0.0	1.0		0.0		8.33

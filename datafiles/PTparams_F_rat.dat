@@ -8,7 +8,8 @@ total 200           # total amount of PT cells
 #
 #  luminal pressure
 #
-pressure 11.3
+# pressure 11.3
+pressure 12.8
 #
 #  surface areas
 area_Lumen_Cell	36.0
@@ -24,6 +25,7 @@ volref_LIS	0.7
 #
 #  compartment areas (actual)
 vol_Lumen_female	0.004
+## vol_Lumen_female	0.0056
 vol_Cell	 7.74582
 vol_LIS		-1.53296
 #

@@ -54,23 +54,61 @@ def boundaryBath(cell,i):
             cell.pap[2] = TotCloPap_80inhib
             cell.pap[8] = TotureaPap_80inhib
         elif cell.inhib == 'NKCC2-70':
-            cell.oi[0] = TotSodOI_70NKCCinhib
-            cell.oi[1] = TotPotOI_70NKCCinhib
-            cell.oi[2] = TotCloOI_70NKCCinhib		
-            cell.oi[8] = TotureaOI_70NKCCinhib
-            cell.pap[0] = TotSodPap_70NKCCinhib
-            cell.pap[1] = TotPotPap_70NKCCinhib
-            cell.pap[2] = TotCloPap_70NKCCinhib
-            cell.pap[8] = TotureaPap_70NKCCinhib
+            if cell.preg == 'non':
+                cell.oi[0] = TotSodOI_70NKCCinhib
+                cell.oi[1] = TotPotOI_70NKCCinhib
+                cell.oi[2] = TotCloOI_70NKCCinhib		
+                cell.oi[8] = TotureaOI_70NKCCinhib
+                cell.pap[0] = TotSodPap_70NKCCinhib
+                cell.pap[1] = TotPotPap_70NKCCinhib
+                cell.pap[2] = TotCloPap_70NKCCinhib
+                cell.pap[8] = TotureaPap_70NKCCinhib
+            elif cell.preg == 'mid':
+                cell.oi[0] = TotSodOI_MP_70NKCCinhib
+                cell.oi[1] = TotPotOI_MP_70NKCCinhib
+                cell.oi[2] = TotCloOI_MP_70NKCCinhib		
+                cell.oi[8] = TotureaOI_70NKCCinhib
+                cell.pap[0] = TotSodPap_MP_70NKCCinhib
+                cell.pap[1] = TotPotPap_MP_70NKCCinhib
+                cell.pap[2] = TotCloPap_MP_70NKCCinhib
+                cell.pap[8] = TotureaPap_70NKCCinhib
+            elif cell.preg == 'late':
+                cell.oi[0] = TotSodOI_LP_70NKCCinhib
+                cell.oi[1] = TotPotOI_LP_70NKCCinhib
+                cell.oi[2] = TotCloOI_LP_70NKCCinhib		
+                cell.oi[8] = TotureaOI_70NKCCinhib
+                cell.pap[0] = TotSodPap_LP_70NKCCinhib
+                cell.pap[1] = TotPotPap_LP_70NKCCinhib
+                cell.pap[2] = TotCloPap_LP_70NKCCinhib
+                cell.pap[8] = TotureaPap_70NKCCinhib
         elif cell.inhib == 'NKCC2-100':
-            cell.oi[0] = TotSodOI_100NKCCinhib
-            cell.oi[1] = TotPotOI_100NKCCinhib
-            cell.oi[2] = TotCloOI_100NKCCinhib		
-            cell.oi[8] = TotureaOI_100NKCCinhib
-            cell.pap[0] = TotSodPap_100NKCCinhib
-            cell.pap[1] = TotPotPap_100NKCCinhib
-            cell.pap[2] = TotCloPap_100NKCCinhib
-            cell.pap[8] = TotureaPap_100NKCCinhib
+            if cell.preg == 'non':
+                cell.oi[0] = TotSodOI_100NKCCinhib
+                cell.oi[1] = TotPotOI_100NKCCinhib
+                cell.oi[2] = TotCloOI_100NKCCinhib		
+                cell.oi[8] = TotureaOI_100NKCCinhib
+                cell.pap[0] = TotSodPap_100NKCCinhib
+                cell.pap[1] = TotPotPap_100NKCCinhib
+                cell.pap[2] = TotCloPap_100NKCCinhib
+                cell.pap[8] = TotureaPap_100NKCCinhib
+            elif cell.preg == 'mid':
+                cell.oi[0] = TotSodOI_MP_100NKCCinhib
+                cell.oi[1] = TotPotOI_MP_100NKCCinhib
+                cell.oi[2] = TotCloOI_MP_100NKCCinhib		
+                cell.oi[8] = TotureaOI_100NKCCinhib
+                cell.pap[0] = TotSodPap_MP_100NKCCinhib
+                cell.pap[1] = TotPotPap_MP_100NKCCinhib
+                cell.pap[2] = TotCloPap_MP_100NKCCinhib
+                cell.pap[8] = TotureaPap_100NKCCinhib
+            elif cell.preg == 'late':
+                cell.oi[0] = TotSodOI_LP_100NKCCinhib
+                cell.oi[1] = TotPotOI_LP_100NKCCinhib
+                cell.oi[2] = TotCloOI_LP_100NKCCinhib		
+                cell.oi[8] = TotureaOI_100NKCCinhib
+                cell.pap[0] = TotSodPap_LP_100NKCCinhib
+                cell.pap[1] = TotPotPap_LP_100NKCCinhib
+                cell.pap[2] = TotCloPap_LP_100NKCCinhib
+                cell.pap[8] = TotureaPap_100NKCCinhib
         elif cell.inhib == 'SNB-70':
             cell.oi[0] = TotSodOI_70NKCCinhib
             cell.oi[1] = TotPotOI_70NKCCinhib

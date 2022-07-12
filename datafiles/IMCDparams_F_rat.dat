@@ -120,9 +120,11 @@ perm_glucose_Cell_LIS	1.0e-3
 perm_Na_Lumen_LIS_male	0.9e3
 perm_Na_Lumen_LIS_female 0.45e3
 perm_K_Lumen_LIS_male	0.7e3
-perm_K_Lumen_LIS_female	0.7e3
+## perm_K_Lumen_LIS_female	0.7e3
+perm_K_Lumen_LIS_female	2.1e3
 perm_Cl_Lumen_LIS_male	1.6e3
-perm_Cl_Lumen_LIS_female 0.8e3
+## perm_Cl_Lumen_LIS_female 0.8e3
+perm_Cl_Lumen_LIS_female 1.6e3
 perm_HCO3_Lumen_LIS	0.4e3
 perm_H2CO3_Lumen_LIS	1.2e3
 perm_CO2_Lumen_LIS	1.2e3
