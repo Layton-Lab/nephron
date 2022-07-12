@@ -1,7 +1,7 @@
 #
 #  physical dimension
 #
-sex	male
+sex	female
 diameter_male	 0.0024    # luminal diameter for male
 diameter_female  0.0024
 length_male		0.13   # tubule length for male
@@ -42,6 +42,7 @@ vol_LIS	-1.40939
 #
 Pf_Lumen_Cell_male	0.1666666667
 Pf_Lumen_Cell_female	0.1666666667
+## Pf_Lumen_Cell_female	0.2
 Pf_Lumen_ICA_male	0.22e-3
 Pf_Lumen_ICA_female	0.224e-3
 Pf_Lumen_ICB_male	0.22e-3
@@ -82,7 +83,7 @@ sig_glucose_LIS_Bath	0.0
 #
 perm_Na_Lumen_Cell	0.0
 perm_K_Lumen_Cell_male	2.0
-perm_K_Lumen_Cell_female	5.0
+perm_K_Lumen_Cell_female	2.0
 perm_Cl_Lumen_Cell	0.0
 perm_HCO3_Lumen_Cell	0.0
 perm_H2CO3_Lumen_Cell	130.0
@@ -101,7 +102,8 @@ perm_glucose_Lumen_Cell	1.0e-10
 #  default permeability = 0
 #
 perm_Na_Cell_LIS	0.0
-perm_K_Cell_LIS	1.0
+perm_K_Cell_LIS_male	1.0
+perm_K_Cell_LIS_female	1.0
 perm_Cl_Cell_LIS	0.05
 perm_HCO3_Cell_LIS	0.01
 perm_H2CO3_Cell_LIS	130.0
@@ -158,10 +160,13 @@ perm_glucose_ICA_LIS	1.0e-4
 #  default permeability = 0
 #
 perm_Na_Lumen_LIS_male	0.8e3
-perm_Na_Lumen_LIS_female 0.8e3
-perm_K_Lumen_LIS	1.2e3
+## perm_Na_Lumen_LIS_female 0.8e3
+perm_Na_Lumen_LIS_female 0.64e3
+perm_K_Lumen_LIS_male	1.2e3
+perm_K_Lumen_LIS_female	1.2e3
 perm_Cl_Lumen_LIS_male	1.0e3
-perm_Cl_Lumen_LIS_female   1.0e3
+## perm_Cl_Lumen_LIS_female   1.0e3
+perm_Cl_Lumen_LIS_female   0.8e3
 perm_HCO3_Lumen_LIS	0.3e3
 perm_H2CO3_Lumen_LIS	1.2e3
 perm_CO2_Lumen_LIS	1.2e3
@@ -279,8 +284,10 @@ coupled_Lumen_Cell_Na_Cl_female	200.0e-9	1	1
 #
 transport_Cell_LIS_NaKATPase_male	852.5e-9
 transport_Cell_LIS_NaKATPase_female 852.5e-9
+## transport_Cell_LIS_NaKATPase_female 937.75e-9
 transport_Cell_Bath_NaKATPase_male	852.5e-9
 transport_Cell_Bath_NaKATPase_female 852.5e-9
+## transport_Cell_Bath_NaKATPase_female 937.75e-9
 transport_ICA_LIS_NaKATPase_male	75.0e-9
 transport_ICA_LIS_NaKATPase_female	75.0e-9
 transport_ICA_Bath_NaKATPase_male	75.0e-9
@@ -296,6 +303,7 @@ transport_Lumen_ICA_HKATPase_female     75.0e-9
 transport_ICA_LIS_AE1	12.0e-9
 transport_ICA_Bath_AE1	12.0e-9
 transport_Lumen_Cell_ENaC_male	35.0e-8
+transport_Lumen_Cell_ENaC_female	35.0e-8
 transport_Cell_LIS_NHE1	1.7e-10
 transport_Cell_Bath_NHE1	1.7e-10
 #	Na		K		Cl		HCO3	H2CO3		CO2		HPO4	H2PO4	urea	NH3		NH4		H	HCO2	H2CO2	glucose

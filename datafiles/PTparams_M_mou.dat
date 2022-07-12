@@ -24,6 +24,9 @@ volref_LIS	0.7
 #
 #  compartment areas (actual)
 vol_Lumen_male      0.0017
+## vol_Lumen_male      0.00238  # acute saline expansion
+vol_Lumen_female      0.00136
+## vol_Lumen_female      0.001904  # acute saline expansion
 vol_Cell	 7.74582
 vol_LIS		-1.53296
 #
@@ -199,6 +202,7 @@ transport_Lumen_Cell_SGLT2	0.52e-9 #1.3e-9
 transport_Cell_Bath_GLUT2	0.1625e-5
 transport_Cell_LIS_GLUT2	0.1625e-5
 transport_Lumen_Cell_NHE3_male	1.9e-08  # 2.7777777e-08
+transport_Lumen_Cell_NHE3_female	1.235e-08  # 2.7777777e-08
 transport_Cell_Bath_NaKATPase	300e-9
 transport_Cell_LIS_NaKATPase	300e-9
 transport_Lumen_Cell_HATPase	 50e-9

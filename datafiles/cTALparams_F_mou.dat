@@ -1,11 +1,11 @@
 #
 #  physical dimension
 #
-sex	male
+sex	female
 diameter_male	 0.0018    # luminal diameter for male
-diameter_female  0.0018
+diameter_female  0.0018  # 90% of male
 length_male		0.13   # tubule length for superficial nephron male : 0.2, for jux nephron of male : 0.05
-length_female   0.13
+length_female   0.13  # 90% of male
 total 200           # total amount of TAL cells
 #
 #  luminal pressure
@@ -204,17 +204,13 @@ transport_Lumen_Cell_NKCC2B_male 19.8e-9
 transport_Lumen_Cell_NKCC2B_female	23.76e-9
 transport_Lumen_Cell_NHE3	6.6e-9
 transport_Cell_LIS_KCC4_male	0.77e-9
-transport_Cell_LIS_KCC4_female	0.77e-9
+transport_Cell_LIS_KCC4_female	1.54e-9
 transport_Cell_Bath_KCC4_male	0.77e-9
-transport_Cell_Bath_KCC4_female	0.77e-9
+transport_Cell_Bath_KCC4_female	1.54e-9
 transport_Cell_LIS_NaKATPase_male	1930.5e-9 # 25% lower than rat, Katz
 transport_Cell_LIS_NaKATPase_female	1737.5e-9
 transport_Cell_Bath_NaKATPase_male	1930.5e-9
 transport_Cell_Bath_NaKATPase_female	1737.5e-9
-## transport_Cell_LIS_NaKATPase_male	2145e-9 # 25% lower than rat, Katz
-## transport_Cell_LIS_NaKATPase_female	2145e-9
-## transport_Cell_Bath_NaKATPase_male	2145e-9
-## transport_Cell_Bath_NaKATPase_female	2145e-9
 #	Na		K		Cl		HCO3	H2CO3		CO2		HPO4	H2PO4	urea	NH3		NH4		H	HCO2	H2CO2	glucose
 cm 	144.0	4.9		116.17	25.0	4.41e-3		1.5		3.9		0.0		8.0		1.0		0.0		0.0	1.0		0.0		5.0
 oi	299.0	10.0	279.94	25.0	4.41e-3		1.5		3.9		0.0		60.0	3.9		0.0		0.0	1.0		0.0		8.33

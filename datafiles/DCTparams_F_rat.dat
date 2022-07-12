@@ -205,7 +205,7 @@ coupled_Cell_Bath_Na_HPO4_female	0.17e-9	2	1
 #
 #  specific transporters, specify activity
 #
-transport_Lumen_Cell_NHE3	200.0e-9
+transport_Lumen_Cell_NHE3	200.0e-9 # NHE3 model is used for NHE2 transporter, see Weinstein 2005 paper
 transport_Lumen_Cell_NCC_male	15.0e-9
 #transport_Lumen_Cell_NCC_female 15.0e-9
 transport_Lumen_Cell_NCC_female 30.0e-9

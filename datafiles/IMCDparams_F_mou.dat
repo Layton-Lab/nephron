@@ -1,7 +1,7 @@
 #
 #  physical dimension
 #
-sex	male
+sex	female
 diameter_male	 0.0026    # luminal diameter for male
 diameter_female  0.0026
 length_male		0.34   # tubule length for male
@@ -39,17 +39,20 @@ vol_LIS	0.0
 #  water permeability (in cm/s)
 #
 Pf_Lumen_Cell_male	41.354432e-3
-Pf_Lumen_Cell_female	41.354432e-3
+## Pf_Lumen_Cell_female	41.354432e-3
+Pf_Lumen_Cell_female	62.03165e-3
 Pf_Lumen_ICA	0.0
 Pf_Lumen_ICB	0.0
 Pf_Lumen_LIS_male	1.985
 Pf_Lumen_LIS_female	1.985
 Pf_Cell_LIS_male	8.2709e-3
-Pf_Cell_LIS_female	8.2709e-3
+## Pf_Cell_LIS_female	8.2709e-3
+Pf_Cell_LIS_female	12.4064e-3
 Pf_ICA_LIS	0.0
 Pf_ICB_LIS	0.0
 Pf_Cell_Bath_male	8.2709e-3
-Pf_Cell_Bath_female	8.2709e-3
+## Pf_Cell_Bath_female	8.2709e-3
+Pf_Cell_Bath_female	12.4064e-3
 Pf_ICA_Bath	0.0
 Pf_ICB_Bath	0.0
 Pf_LIS_Bath_male	33.08355
@@ -76,11 +79,14 @@ sig_glucose_LIS_Bath	0.0
 #  solute permeabilities, apical interface (in 1e-5cm/s)
 #  default permeability = 0
 #
-perm_Na_Lumen_Cell	1.0
+perm_Na_Lumen_Cell_male	1.0
+## perm_Na_Lumen_Cell_female	1.5
+perm_Na_Lumen_Cell_female	1.0
 perm_K_Lumen_Cell_male	1.0
-perm_K_Lumen_Cell_female	1.0
+perm_K_Lumen_Cell_female	2.5
 perm_Cl_Lumen_Cell	2.0e-4
-perm_HCO3_Lumen_Cell	2.0e-4
+perm_HCO3_Lumen_Cell_male	2.0e-4
+perm_HCO3_Lumen_Cell_female	2.0e-4
 perm_H2CO3_Lumen_Cell	130.0
 perm_CO2_Lumen_Cell	2.3077e3
 perm_HPO4_Lumen_Cell	2.0e-4
@@ -98,10 +104,12 @@ perm_glucose_Lumen_Cell	0.0
 #  default permeability = 0
 #
 perm_Na_Cell_LIS	2.0e-4
-perm_K_Cell_LIS	1.5
+perm_K_Cell_LIS_male	1.5
+perm_K_Cell_LIS_female	4.5
 ## perm_Cl_Cell_LIS	0.05
 perm_Cl_Cell_LIS	0.2
-perm_HCO3_Cell_LIS	0.025
+perm_HCO3_Cell_LIS_male	0.025
+perm_HCO3_Cell_LIS_female	0.025
 perm_H2CO3_Cell_LIS	130.0
 perm_CO2_Cell_LIS	2.3077e3
 perm_HPO4_Cell_LIS	0.002
@@ -117,12 +125,13 @@ perm_glucose_Cell_LIS	1.0e-3
 #  solute permeabilities, Lumen-LIS interface (in 1e-5cm/s)
 #  default permeability = 0
 #
-## perm_Na_Lumen_LIS_male	0.9e3
-perm_Na_Lumen_LIS_male	0.6e3
-perm_Na_Lumen_LIS_female 0.9e3
-perm_K_Lumen_LIS	0.7e3
-## perm_Cl_Lumen_LIS_male	1.6e3
+perm_Na_Lumen_LIS_male	0.9e3
+perm_Na_Lumen_LIS_female 0.45e3
+perm_K_Lumen_LIS_male	0.7e3
+## perm_K_Lumen_LIS_female	2.1e3
+perm_K_Lumen_LIS_female	0.7e3
 perm_Cl_Lumen_LIS_male	1.6e3
+## perm_Cl_Lumen_LIS_female 3.2e3
 perm_Cl_Lumen_LIS_female 1.6e3
 perm_HCO3_Lumen_LIS	0.4e3
 perm_H2CO3_Lumen_LIS	1.2e3
@@ -223,38 +232,41 @@ ep_Bath 0.0
 #
 #  coupled transporters, specify permeability and coefficients
 #
-## coupled_Cell_LIS_Na_H_male	6.0e-9	1	-1
 coupled_Cell_LIS_Na_H_male	2.0e-9	1	-1
 coupled_Cell_LIS_Na_H_female	6.0e-9	1	-1
-## coupled_Cell_Bath_Na_H_male	6.0e-9	1	-1
+## coupled_Cell_LIS_Na_H_female	4.5e-9	1	-1
 coupled_Cell_Bath_Na_H_male	2.0e-9	1	-1
 coupled_Cell_Bath_Na_H_female	6.0e-9	1	-1
+## coupled_Cell_Bath_Na_H_female	4.5e-9	2	-1
 coupled_Cell_LIS_Na_HPO4_male 1.0e-9	2	1
 coupled_Cell_LIS_Na_HPO4_female	1.0e-9	2	1
 coupled_Cell_Bath_Na_HPO4_male 1.0e-9	2	1
 coupled_Cell_Bath_Na_HPO4_female	1.0e-9	2	1
 coupled_Cell_LIS_K_Cl_male	250.0e-9	1	1
+## coupled_Cell_LIS_K_Cl_female	1000.0e-9	1	1
 coupled_Cell_LIS_K_Cl_female	250.0e-9	1	1
 coupled_Cell_Bath_K_Cl_male	250.0e-9	1	1
+## coupled_Cell_Bath_K_Cl_female	1000.0e-9	1	1
 coupled_Cell_Bath_K_Cl_female	250.0e-9	1	1
-coupled_Cell_LIS_Cl_HCO3 20.0e-9	1	-1
-coupled_Cell_Bath_Cl_HCO3 20.0e-9	1	-1
+coupled_Cell_LIS_Cl_HCO3_male 20.0e-9	1	-1
+coupled_Cell_Bath_Cl_HCO3_female 20.0e-9	1	-1
 coupled_Lumen_Cell_Na_Cl_male	600.0e-9	1	1
 coupled_Lumen_Cell_Na_Cl_female	600.0e-9	1	1
 #
 #  specific transporters, specify activity
 #
 transport_Cell_LIS_NKCC1_male	4.0e-9
-transport_Cell_LIS_NKCC1_female	4.0e-9
+transport_Cell_LIS_NKCC1_female	8.0e-9
 transport_Cell_Bath_NKCC1_male	4.0e-9
-transport_Cell_Bath_NKCC1_female	4.0e-9
+transport_Cell_Bath_NKCC1_female	8.0e-9
 transport_Cell_LIS_NaKATPase_male	1500.0e-9
+## transport_Cell_LIS_NaKATPase_female	1800.0e-9
 transport_Cell_LIS_NaKATPase_female	1500.0e-9
 transport_Cell_Bath_NaKATPase_male	1500.0e-9
+## transport_Cell_Bath_NaKATPase_female	1800.0e-9
 transport_Cell_Bath_NaKATPase_female	1500.0e-9
-## transport_Lumen_Cell_HKATPase_male	200.0e-9
 transport_Lumen_Cell_HKATPase_male	50.0e-9
-transport_Lumen_Cell_HKATPase_female	80.0e-9
+transport_Lumen_Cell_HKATPase_female	75.0e-9
 #	Na		K		Cl		HCO3	H2CO3		CO2		HPO4	H2PO4	urea	NH3		NH4		H	HCO2	H2CO2	glucose
 cm 	144.0	4.9		116.17	25.0	4.41e-3		1.5		3.9		0.0		8.0		1.0		0.0		0.0	1.0		0.0		5.0
 oi	299.0	10.0	279.94	25.0	4.41e-3		1.5		3.9		0.0		60.0	3.9		0.0		0.0	1.0		0.0		8.33
