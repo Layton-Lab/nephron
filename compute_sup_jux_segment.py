@@ -2,6 +2,7 @@ from driver import compute
 from values import *
 from defs import *
 from set_params import set_torq_params
+import re
 import electrochemical 
 import water
 import glucose
@@ -18,7 +19,7 @@ import NHE1
 import flux
 import output
 
-def compute_segment(sup_or_jux,sex,species,sup_or_multi,diabete,inhib,unx,preg,file_to_save):
+def compute_segment(sup_or_jux,sex,species,sup_or_multi,diabete,inhib,unx,preg,HT,file_to_save):
     solute = ['Na','K','Cl','HCO3','H2CO3','CO2','HPO4','H2PO4','urea','NH3','NH4','H','HCO2','H2CO2','glu']
     compart = ['Lumen','Cell','ICA','ICB','LIS','Bath']
     cw=Vref*60e6
@@ -43,7 +44,7 @@ def compute_segment(sup_or_jux,sex,species,sup_or_multi,diabete,inhib,unx,preg,f
     else:
         filename ='./datafiles/PTparams_F_'+species[0:3]+'.dat'
 
-    pt=compute(NPT,filename,'Broyden',sup_or_jux,diabete,species,sup_or_multi=sup_or_multi,inhibition = inhib,unx = unx, preg = preg)
+    pt=compute(NPT,filename,'Broyden',sup_or_jux,diabete,species,sup_or_multi=sup_or_multi,inhibition = inhib,unx = unx, preg = preg, HT=HT)
 
     Scaletorq = np.zeros(NPT)
     
@@ -104,7 +105,7 @@ def compute_segment(sup_or_jux,sex,species,sup_or_multi,diabete,inhib,unx,preg,f
         filename = './datafiles/S3params_F_'+species[0:3]+'.dat'
     else:
         filename ='./datafiles/S3params_F_'+species[0:3]+'.dat'
-    s3=compute(NS3,filename,'Newton',sup_or_jux,diabete,species,sup_or_multi=sup_or_multi,inhibition = inhib,unx = unx,preg = preg)
+    s3=compute(NS3,filename,'Newton',sup_or_jux,diabete,species,sup_or_multi=sup_or_multi,inhibition = inhib,unx = unx,preg = preg, HT = HT)
 
     Scaletorq = np.zeros(NS3)
     
@@ -169,7 +170,7 @@ def compute_segment(sup_or_jux,sex,species,sup_or_multi,diabete,inhib,unx,preg,f
     else:
         filename ='./datafiles/SDLparams_F_'+species[0:3]+'.dat'
     #sdl=compute(NSDL,filename,'Broyden',diabete)
-    sdl=compute(NSDL,filename,method,sup_or_jux,diabete,species,sup_or_multi=sup_or_multi,inhibition = inhib,unx = unx, preg = preg)
+    sdl=compute(NSDL,filename,method,sup_or_jux,diabete,species,sup_or_multi=sup_or_multi,inhibition = inhib,unx = unx, preg = preg, HT = HT)
     
     Scaletorq = np.ones(NSDL)
     output.output_segment_results(sdl,sup_or_jux,Scaletorq,file_to_save,NSDL)
@@ -189,7 +190,7 @@ def compute_segment(sup_or_jux,sex,species,sup_or_multi,diabete,inhib,unx,preg,f
             filename = './datafiles/LDLparams_F_'+species[0:3]+'.dat'
         else:
             filename ='./datafiles/LDLparams_F_'+species[0:3]+'.dat'
-        ldl=compute(NLDL,filename,'Newton',sup_or_jux,diabete,species,sup_or_multi=sup_or_multi,inhibition = inhib,unx = unx, preg = preg)
+        ldl=compute(NLDL,filename,'Newton',sup_or_jux,diabete,species,sup_or_multi=sup_or_multi,inhibition = inhib,unx = unx, preg = preg, HT = HT)
 
         Scaletorq = np.ones(NLDL)
         output.output_segment_results(ldl,sup_or_jux,Scaletorq,file_to_save,NLDL)
@@ -208,7 +209,7 @@ def compute_segment(sup_or_jux,sex,species,sup_or_multi,diabete,inhib,unx,preg,f
             filename = './datafiles/LALparams_F_rat.dat'
         else:
             filename ='./datafiles/LALparams_F_rat.dat'
-        lal=compute(NLAL,filename,'Newton',sup_or_jux,diabete,species,sup_or_multi=sup_or_multi,inhibition = inhib,unx = unx, preg = preg)
+        lal=compute(NLAL,filename,'Newton',sup_or_jux,diabete,species,sup_or_multi=sup_or_multi,inhibition = inhib,unx = unx, preg = preg, HT = HT)
 
         Scaletorq = np.ones(NLAL)
         output.output_segment_results(lal,sup_or_jux,Scaletorq,file_to_save,NLAL)
@@ -227,7 +228,7 @@ def compute_segment(sup_or_jux,sex,species,sup_or_multi,diabete,inhib,unx,preg,f
         filename = './datafiles/mTALparams_F_'+species[0:3]+'.dat'
     else:
         filename ='./datafiles/mTALparams_F_'+species[0:3]+'.dat'
-    mtal=compute(NmTAL,filename,'Newton',sup_or_jux,diabete,species,sup_or_multi,inhib,unx = unx, preg = preg)
+    mtal=compute(NmTAL,filename,'Newton',sup_or_jux,diabete,species,sup_or_multi,inhib,unx = unx, preg = preg, HT = HT)
 
     Scaletorq = np.ones(NmTAL)
     
@@ -247,7 +248,7 @@ def compute_segment(sup_or_jux,sex,species,sup_or_multi,diabete,inhib,unx,preg,f
         filename = './datafiles/cTALparams_F_'+species[0:3]+'.dat'
     else:
         filename ='./datafiles/cTALparams_F_'+species[0:3]+'.dat'
-    ctal=compute(NcTAL,filename,'Newton',sup_or_jux,diabete,species,sup_or_multi,inhib,unx = unx, preg = preg)
+    ctal=compute(NcTAL,filename,'Newton',sup_or_jux,diabete,species,sup_or_multi,inhib,unx = unx, preg = preg, HT = HT)
 
     Scaletorq = np.ones(NcTAL)
     
@@ -267,7 +268,7 @@ def compute_segment(sup_or_jux,sex,species,sup_or_multi,diabete,inhib,unx,preg,f
         filename = './datafiles/DCTparams_F_'+species[0:3]+'.dat'
     else:
         filename ='./datafiles/DCTparams_F_'+species[0:3]+'.dat'
-    dct=compute(NDCT,filename,'Newton',sup_or_jux,diabete,species,sup_or_multi,inhib,unx = unx, preg = preg)
+    dct=compute(NDCT,filename,'Newton',sup_or_jux,diabete,species,sup_or_multi,inhib,unx = unx, preg = preg, HT = HT)
 
     Scaletorq = np.ones(NDCT)
     
@@ -276,9 +277,9 @@ def compute_segment(sup_or_jux,sex,species,sup_or_multi,diabete,inhib,unx,preg,f
     print('%s DCT finished.'%(sup_or_jux))
     print('\n')
     
-    #========================================================
+    #=======================================================
     # Connecting tubule
-    #========================================================
+    #=======================================================
     print('%s CNT start' %(sup_or_jux))
     NCNT = 200
     if sex == 'Male':
@@ -287,7 +288,7 @@ def compute_segment(sup_or_jux,sex,species,sup_or_multi,diabete,inhib,unx,preg,f
         filename = './datafiles/CNTparams_F_'+species[0:3]+'.dat'
     else:
         filename ='./datafiles/CNTparams_F_'+species[0:3]+'.dat'
-    cnt=compute(NCNT,filename,'Newton',sup_or_jux,diabete,species,sup_or_multi,inhib,unx = unx, preg = preg)
+    cnt=compute(NCNT,filename,'Newton',sup_or_jux,diabete,species,sup_or_multi,inhib,unx = unx, preg = preg, HT = HT)
 
     Scaletorq = np.ones(NCNT)
     

@@ -15,7 +15,7 @@ import boundaryBath
 import time
 import os
 
-def compute(N,filename,method,sup_or_jux=None,diabete='Non',species = 'human',sup_or_multi = 'superficial',inhibition=None,unx = 'N',preg='non'):
+def compute(N,filename,method,sup_or_jux=None,diabete='Non',species = 'human',sup_or_multi = 'superficial',inhibition=None,unx = 'N',preg='non', HT='N'):
 
     start=timeit.default_timer()
 
@@ -31,9 +31,15 @@ def compute(N,filename,method,sup_or_jux=None,diabete='Non',species = 'human',su
         for i in range(N):
             cell[i].species = 'mou'
     # the diabetic status of cell.
+    else:
+        raise Exception('what is speciess', species)
     if diabete != 'Non':
         for i in range(N):
             cell[i].diabete = diabete
+    # hypertension status of cell
+    if HT != 'N':
+        for i in range(N):
+            cell[i].HT = HT
     # pregnancy status of cell
     if preg != 'non':
         for i in range(N):
@@ -248,7 +254,7 @@ def compute(N,filename,method,sup_or_jux=None,diabete='Non',species = 'human',su
             if species == 'rat':
                 neph_weight = [2/3,(1/3)*0.4,(1/3)*0.3,(1/3)*0.15,(1/3)*0.1,(1/3)*0.05]
             elif species == 'mouse':  # MOUSE: NEED ADJUSTMENT
-                neph_weight = [0.82,(0.18)*0.4,(1/3)*0.3,(1/3)*0.15,(1/3)*0.1,(1/3)*0.05]
+                neph_weight = [0.82,(0.18)*0.4,(0.18)*0.3,(0.18)*0.15,(0.18)*0.1,(0.18)*0.05]
             elif species == 'human':
                 neph_weight = [0.85,(0.15)*0.4,(0.15)*0.3,(0.15)*0.15,(0.15)*0.1,(0.15)*0.05]
             else:

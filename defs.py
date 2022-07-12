@@ -85,6 +85,8 @@ class membrane:
         self.diabete = 'Non'
         # unx status
         self.unx = 'N'
+        # hypertension status
+        self.HT = 'N'
         # pregnancy status
         self.preg = 'non'
         # tubule length

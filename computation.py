@@ -40,6 +40,7 @@ parser.add_argument('--inhibition',choices=['ACE','SGLT2','NHE3-50','NHE3-80','N
 parser.add_argument('--unx',choices=['N','Y'],default = 'N',type = str,help = 'uninephrectomy status')
 # pregnancy option
 parser.add_argument('--pregnant', choices=['mid','late'], default='non', type=str, help='pregnant female? (mid/late)')
+parser.add_argument('--HT',choices=['N','Y'],default = 'N',type = str,help = 'hypertension?')
 
 args=parser.parse_args()
 
@@ -64,6 +65,7 @@ if sup_or_jux == '':
 diabete = args.diabetes
 inhib = args.inhibition
 unx = args.unx
+HT = args.HT
 
 preg = args.pregnant
 
@@ -103,7 +105,7 @@ method = 'Newton'
 
 print(sup_or_jux + ' ' + segment + ' start')
 
-cell=compute(N,filename,method,sup_or_jux,diabete=diabete,species=species,sup_or_multi = sup_or_multi,inhibition=inhib,unx = unx, preg=preg)
+cell=compute(N,filename,method,sup_or_jux,diabete=diabete,species=species,sup_or_multi = sup_or_multi,inhibition=inhib,unx = unx, preg=preg, HT=HT)
 if sup_or_jux != '':
 	sup_or_jux = '_' + sup_or_jux
 

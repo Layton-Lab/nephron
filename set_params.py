@@ -46,13 +46,15 @@ def set_torq_params(species,sex,preg):
         torqR = 0.0014 #Reference radius
         torqL = 2.50e-4 #Microvillous length
         torqd = 1.5e-05 #Height above the microvillous tip
-        torqvm = 0.020 #Compliance Fortran Code
+        torqvm = 0.02 #Compliance Fortran Code
         PbloodPT = 20.0e0 #Reference pressure
     elif species == 'rat':
         if sex == 'male':
-            Radref = 0.0025/2.0
+            # Radref = 0.0025/2.0
+            Radref = 0.00265/2.0
             torqR = 0.00112
-            torqvm = 0.030
+            # torqvm = 0.030
+            torqvm = 0.02
             PbloodPT = 9.0e0
         elif sex == 'female':
             if preg == 'non':
@@ -79,7 +81,7 @@ def set_torq_params(species,sex,preg):
             torqvm = 0.0275
             PbloodPT = 9.0e0
         elif sex == 'female':
-            Radref = 0.002125/2.0 #female radius
+            Radref = 0.0018/2.0 #female radius
             torqR = 0.00095
             torqvm = 0.030
             PbloodPT = 8.0e0
@@ -211,12 +213,12 @@ def read_params(cell,filename,j):
                         elif cell.sex == 'female':
                             cell.len = 0.3*0.9 
 
-                if cell.type != 'sup' and cell.species == 'mou':
-                    if cell.segment == 'PT':
-                        if cell.sex == 'male':
-                            cell.len = 0.6
-                        elif cell.sex == 'female':
-                            cell.len = 0.05*0.9 #0.05*0.85, updated female
+                #if cell.type != 'sup' and cell.species == 'mou':
+                    #if cell.segment == 'PT':
+                    #    if cell.sex == 'male':
+                    #        cell.len = 0.6
+                    #    elif cell.sex == 'female':
+                    #        cell.len = 0.6*0.9 #0.05*0.85, updated female
                     #elif cell.segment == 'CNT':
                     #    if cell.sex == 'male':
                     #        cell.len = 0.12
@@ -278,15 +280,15 @@ def read_params(cell,filename,j):
             # parameter files specify pressure (value) for superficial nephrons
                 if cell.type !='sup' and cell.segment == 'PT' and cell.species == 'rat':
                     if cell.sex == 'male':
-                        cell.pres[0] = 12.5
+                        cell.pres[0] = 14.0
                     elif cell.sex == 'female':
-                        cell.pres[0] = 12.75 #12.5
+                        cell.pres[0] = 14.0 #12.75
 
                 if cell.type !='sup' and cell.segment == 'PT' and cell.species == 'mou':
                     if cell.sex == 'male':
-                        cell.pres[0] = 12.5
+                        cell.pres[0] = 8.5
                     elif cell.sex == 'female':
-                        cell.pres[0] = 12.7
+                        cell.pres[0] = 8.5
 
                 if cell.diabete != 'Non' and cell.species == 'hum':
                     if cell.type == 'sup' and cell.segment == 'PT':
@@ -364,6 +366,29 @@ def read_params(cell,filename,j):
                     elif cell.segment == 'IMCD':
                         cell.dLPV[0,1] = cell.dLPV[0,1]*1.4
                         cell.dLPV[1,5] = cell.dLPV[1,5]*1.4
+
+                if cell.HT != 'N':
+                    # AQP2 changed
+                    HT_rat = 1.0
+                    # AQP2 on the apical interface
+                    if ind1 == 0 and ind2 == 1:
+                        if cell.segment == 'CCD':
+                            HT_rat = 1.3
+                        elif cell.segment == 'OMCD':
+                            HT_rat = 1.3
+                        elif cell.segment == 'IMCD':
+                            HT_rat = 1.3
+                    # basolateral interface
+                    elif ind1 == 1:
+                        if ind2 == 4 or ind2 == 5:
+                            if cell.segment == 'CCD':
+                                HT_rat = 1.3
+                            elif cell.segment == 'OMCD':
+                                HT_rat = 1.3
+                            elif cell.segment == 'IMCD':
+                                HT_rat = 1.3
+
+                    cell.dLPV[ind1][ind2] = value/Pfref*HT_rat
                                 
             # Reflection coefficients:
             elif compare_string_prefix(id,"sig"):
@@ -432,7 +457,19 @@ def read_params(cell,filename,j):
                             cell.h[8,0,1]=80.0
                             cell.h[8,0,4]=80.0
                 if cell.inhib == 'ACE' and cell.segment == 'DCT':
-                    cell.h[1,0,1] = 0.5*value*1.0e-5/href                   
+                    cell.h[1,0,1] = 0.5*value*1.0e-5/href   
+
+                # ROMK2 (K secretion) change in HT rat
+                if cell.HT != 'N':
+                    temp = cell.h[1,0,1]
+                    if cell.segment == 'DCT':
+                        if j>0.66*cell.total:
+                            # DCT2
+                            HT_rat = 0.3 #0.175
+                            cell.h[1,0,1] = HT_rat*0.6
+                    elif cell.segment == 'CNT':
+                        HT_rat = 0.3 #0.2
+                        cell.h[1,0,1] = HT_rat*8.0
                             
             # Coupled transporters:
             elif compare_string_prefix(id,"coupled"):
@@ -448,6 +485,16 @@ def read_params(cell,filename,j):
                     coef.append(int(num[i]))
                 newdLA.coef = coef
                 newdLA.solute_id = vals[2:len(vals)]
+
+                # HTN
+                if cell.HT != 'N':
+                    # NaPi2
+                    if newdLA.solute_id == (0,7):
+                        if cell.segment == 'PT' or cell.segment == 'S3':
+                            HT_rat = 0.85
+                            newdLA.perm = HT_rat*newdLA.perm
+
+
                 cell.dLA.append(newdLA)
 
             # Specific transporters:
@@ -663,6 +710,39 @@ def read_params(cell,filename,j):
                             newTransp.act = 1.3*value/(href*Cref)
                         elif cell.sex == 'female':
                             newTransp.act = 1.2*value/(href*Cref)
+                
+                if cell.HT != 'N':
+                    if newTransp.type == 'NCC':
+                        HT_rat = 1.95
+                        newTransp.act = HT_rat*value/(href*Cref)
+                    elif newTransp.type == 'NHE3':
+                        if cell.segment == 'PT' or cell.segment == 'S3' or cell.segment == 'mTAL':
+                            HT_rat = 0.82
+                        elif cell.segment == 'cTAL' or cell.segment == 'DCT': 
+                            HT_rat = 1.0
+                        else:
+                            print('segment: ' + cell.segment)
+                            raise Exception('NHE3 activity not done for this segment in HT rat model')
+                        newTransp.act = HT_rat*value/(href*Cref)
+                    elif newTransp.type == 'NKCC2A' or newTransp.type == 'NKCC2B' or newTransp.type == 'NKCC2F':
+                        if cell.segment == 'mTAL':
+                            HT_rat = 0.7
+                        elif cell.segment == 'cTAL':
+                            HT_rat = 1.74
+                        else:
+                            print('segment: ' + cell.segment)
+                            raise Exception('NKCC2 activity not done for this segment in HT rat model')
+                        newTransp.act = HT_rat*value/(href*Cref)
+                    elif newTransp.type == 'NaKATPase':
+                        if cell.segment == 'mTAL':
+                            HT_rat = 0.70
+                        else:
+                            HT_rat = 1.0
+                        newTransp.act = HT_rat*value/(href*Cref)
+                    elif newTransp.type == 'ENaC':
+                        HT_rat = 1.45
+                        newTransp.act = HT_rat*value/(href*Cref)
+
                 cell.trans.append(newTransp)
 
             # Solute concentrations:
@@ -760,9 +840,9 @@ def read_params(cell,filename,j):
                 elif cell.segment == 'PT' and cell.type != 'sup' and cell.species == 'mou':
                     if compart_id[tmp[1]] == 0:	
                         if cell.sex == 'male':
-                            cell.vol[0] = 0.001533
+                            cell.vol[0] = 0.00204
                         elif cell.sex == 'female':
-                            cell.vol[0] = 0.006
+                            cell.vol[0] = 0.001632
                         cell.vol_init[0] = cell.vol[0]
                     else:
                         cell.vol[compart_id[tmp[1]]] = float(num[0])
@@ -805,10 +885,10 @@ def read_params(cell,filename,j):
                             cell.vol_init[0] = cell.vol[0]
                     elif cell.sex == 'female':
                         if cell.segment == 'PT' and cell.type == 'sup':
-                            cell.vol[0] = 0.004*1.75#1.5
+                            cell.vol[0] = 0.0075
                             cell.vol_init[0] = cell.vol[0]
                         if cell.segment == 'PT' and cell.type != 'sup':
-                            cell.vol[0] = 0.006*1.17
+                            cell.vol[0] = 0.008775
                             cell.vol_init[0] = cell.vol[0]
 
                 if cell.diabete == 'Moderate' and cell.species == 'hum':
