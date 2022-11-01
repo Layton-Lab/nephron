@@ -389,6 +389,20 @@ def read_params(cell,filename,j):
                                 HT_rat = 1.3
 
                     cell.dLPV[ind1][ind2] = value/Pfref*HT_rat
+
+                if cell.inhib == 'inhib':
+                    # AQP2 changed
+                    empa_rat = 1.0
+                    # AQP2 on the apical interface
+                    if ind1 == 0 and ind2 == 1:
+                        if cell.segment == 'CCD' or cell.segment == 'OMCD' or cell.segment == 'IMCD':
+                            empa_rat = 1.20
+                    # basolateral interface
+                    elif ind1 == 1:
+                        if ind2 == 4 or ind2 == 5:
+                            if cell.segment == 'CCD' or cell.segment == 'OMCD' or cell.segment == 'IMCD':
+                                empa_rat = 1.20
+                    cell.dLPV[ind1][ind2] = value/Pfref*empa_rat
                                 
             # Reflection coefficients:
             elif compare_string_prefix(id,"sig"):
@@ -470,6 +484,16 @@ def read_params(cell,filename,j):
                     elif cell.segment == 'CNT':
                         HT_rat = 0.3 #0.2
                         cell.h[1,0,1] = HT_rat*8.0
+
+                if cell.inhib == 'empa':
+                    if cell.segment == 'DCT':
+                        if j>0.66*cell.total:
+                            #DCT2
+                            empa_rat = 1.10
+                            cell.h[1,0,1] = empa_rat*0.6
+                    elif cell.segment == 'CNT':
+                        empa_rat = 1.10
+                        cell.h[1,0,1] = empa_rat*8.0
                             
             # Coupled transporters:
             elif compare_string_prefix(id,"coupled"):
