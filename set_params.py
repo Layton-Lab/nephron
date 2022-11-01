@@ -735,7 +735,7 @@ def read_params(cell,filename,j):
                         empa_rat = 0.15
                     elif newTransp.type == 'SGLT1':
                         empa_rat = 0.93
-                    elif newTransp.type == 'NKCC2A' or newTransp.typpe == 'NKCC2B' or newTransp.type == 'NKCC2F':
+                    elif newTransp.type == 'NKCC2A' or newTransp.type == 'NKCC2B' or newTransp.type == 'NKCC2F':
                         empa_rat = 1.04
                     elif newTransp.type == 'NaKATPase':
                         if cell.segment == 'mTAL' or cell.segment == 'cTAL':
