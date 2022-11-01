@@ -699,6 +699,32 @@ def read_params(cell,filename,j):
                         newTransp.act = value/(href*Cref)*0.2
                     if newTransp.type == 'SGLT1':
                         newTransp.act = value/(href*Cref)*3.5
+
+                if cell.inhib == 'empa':
+                    empa_rat = 1.0
+                    if newTransp.type == 'NHE3':
+                        if cell.segment == 'PT' or cell.segment == 'S3' or cell.segment == 'cTAL':
+                            empa_rat = 1.45
+                        elif cell.segment == 'mTAL':
+                            empa_rat = 1.36
+                    elif newTransp.type == 'SGLT2':
+                        empa_rat = 0.15
+                    elif newTransp.type == 'SGLT1':
+                        empa_rat = 0.93
+                    elif newTransp.type == 'NKCC2A' or newTransp.typpe == 'NKCC2B' or newTransp.type == 'NKCC2F':
+                        empa_rat = 1.04
+                    elif newTransp.type == 'NaKATPase':
+                        if cell.segment == 'mTAL' or cell.segment == 'cTAL':
+                            empa_rat = 1.20
+                    elif newTransp.type == 'NCC':
+                        empa_rat = 1.25
+                    elif newTransp.type == 'Pendrin':
+                        empa_rat = 1.52
+                    elif newTransp.type == 'ENaC':
+                        empa_rat = 0.95
+                    # update activity based on empa change
+                    newTransp.act = empa_rat*value/(href*Cref)
+
                 
                 if cell.unx == 'Y':
                     if newTransp.type == 'NKCC2A' or newTransp.type == 'NKCC2B' or newTransp.type == 'NKCC2F':
