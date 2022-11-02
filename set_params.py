@@ -390,18 +390,26 @@ def read_params(cell,filename,j):
 
                     cell.dLPV[ind1][ind2] = value/Pfref*HT_rat
 
-                if cell.inhib == 'inhib':
+                if cell.inhib == 'empa':
                     # AQP2 changed
                     empa_rat = 1.0
-                    # AQP2 on the apical interface
+                    # apical interface
                     if ind1 == 0 and ind2 == 1:
-                        if cell.segment == 'CCD' or cell.segment == 'OMCD' or cell.segment == 'IMCD':
-                            empa_rat = 1.20
+                        # AQP1
+                        if cell.segment == 'PT' or cell.segment == 'S3' or cell.segment == 'SDL':
+                            empa_rat = 1.05
+                        # AQP2
+                        elif cell.segment == 'CCD' or cell.segment == 'OMCD' or cell.segment == 'IMCD':
+                            empa_rat = 1.12
                     # basolateral interface
                     elif ind1 == 1:
                         if ind2 == 4 or ind2 == 5:
-                            if cell.segment == 'CCD' or cell.segment == 'OMCD' or cell.segment == 'IMCD':
-                                empa_rat = 1.20
+                            # AQP1
+                            if cell.segment == 'PT' or cell.segment == 'S3' or cell.segment == 'SDL':
+                                empa_rat = 1.05
+                            # AQP2
+                            elif cell.segment == 'CCD' or cell.segment == 'OMCD' or cell.segment == 'IMCD':
+                                empa_rat = 1.12
                     cell.dLPV[ind1][ind2] = value/Pfref*empa_rat
                                 
             # Reflection coefficients:
@@ -489,10 +497,10 @@ def read_params(cell,filename,j):
                     if cell.segment == 'DCT':
                         if j>0.66*cell.total:
                             #DCT2
-                            empa_rat = 1.10
+                            empa_rat = 1.02
                             cell.h[1,0,1] = empa_rat*0.6
                     elif cell.segment == 'CNT':
-                        empa_rat = 1.10
+                        empa_rat = 1.02
                         cell.h[1,0,1] = empa_rat*8.0
                             
             # Coupled transporters:
@@ -727,25 +735,30 @@ def read_params(cell,filename,j):
                 if cell.inhib == 'empa':
                     empa_rat = 1.0
                     if newTransp.type == 'NHE3':
-                        if cell.segment == 'PT' or cell.segment == 'S3' or cell.segment == 'cTAL':
-                            empa_rat = 1.45
-                        elif cell.segment == 'mTAL':
+                        if cell.segment == 'PT' or cell.segment == 'cTAL':
                             empa_rat = 1.36
+                        elif cell.segment == 'S3' or cell.segment == 'mTAL':
+                            empa_rat = 1.45
                     elif newTransp.type == 'SGLT2':
-                        empa_rat = 0.15
+                        empa_rat = 0.46*(1-0.9)
                     elif newTransp.type == 'SGLT1':
                         empa_rat = 0.93
                     elif newTransp.type == 'NKCC2A' or newTransp.type == 'NKCC2B' or newTransp.type == 'NKCC2F':
-                        empa_rat = 1.04
+                        if cell.segment == 'mTAL':
+                            empa_rat = 1.27
+                        elif cell.segment == 'cTAL':
+                            empa_rat = 1.15
                     elif newTransp.type == 'NaKATPase':
-                        if cell.segment == 'mTAL' or cell.segment == 'cTAL':
+                        if cell.segment == 'mTAL':
+                            empa_rat = 1.22
+                        elif cell.segment == 'cTAL':
                             empa_rat = 1.20
                     elif newTransp.type == 'NCC':
-                        empa_rat = 1.25
+                        empa_rat = 1.0
                     elif newTransp.type == 'Pendrin':
                         empa_rat = 1.52
                     elif newTransp.type == 'ENaC':
-                        empa_rat = 0.95
+                        empa_rat = 0.93
                     # update activity based on empa change
                     newTransp.act = empa_rat*value/(href*Cref)
 
