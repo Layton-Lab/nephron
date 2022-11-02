@@ -495,13 +495,48 @@ def read_params(cell,filename,j):
 
                 if cell.inhib == 'empa':
                     if cell.segment == 'DCT':
+                        # ROMK
                         if j>0.66*cell.total:
                             #DCT2
-                            empa_rat = 1.02
-                            cell.h[1,0,1] = empa_rat*0.6
+                            empa_rat_ROMK = 1.02
+                            cell.h[1,0,1] = empa_rat_ROMK*0.6
+                        # PCl
+                        empa_rat = 1.21
+                        # lumen LIS
+                        cell.h[2,0,4] = empa_rat*0.5e3 # male PCL
+                        # LIS bath
+                        cell.h[2,4,5] = empa_rat*4200.0 # male PCL
                     elif cell.segment == 'CNT':
-                        empa_rat = 1.02
-                        cell.h[1,0,1] = empa_rat*8.0
+                        empa_rat_ROMK = 1.02
+                        cell.h[1,0,1] = empa_rat_ROMK*8.0
+                        # PCl
+                        empa_rat = 1.21
+                        # lumen LIS
+                        cell.h[2,0,4] = empa_rat*1.2e3 # male PCL
+                        # LIS bath
+                        cell.h[2,4,5] = empa_rat*16e3 # male PCL
+                    elif cell.segment == 'CCD':
+                        # PCl
+                        empa_rat = 1.21
+                        # lumen LIS
+                        cell.h[2,0,4] = empa_rat*1.2e3 # male PCL
+                        # LIS bath
+                        cell.h[2,4,5] = empa_rat*16.0e3 # male PCL
+                    elif cell.segment == 'OMCD':
+                        # PCl
+                        empa_rat = 1.21
+                        # lumen LIS
+                        cell.h[2,0,4] = empa_rat*1.0e3 # male PCL
+                        # LIS baht
+                        cell.h[2,4,5] = empa_rat*5900.0 # male PCL
+                    elif cell.segment == 'IMCD':
+                        # PCl
+                        empa_rat = 1.21
+                        # lumen LIS
+                        cell.h[2,0,4] = empa_rat*1.6e3 # male PCl
+                        # LIS bath
+                        cell.h[2,4,5] = empa_rat*4000.0 # male PCl
+                        
                             
             # Coupled transporters:
             elif compare_string_prefix(id,"coupled"):
@@ -525,6 +560,14 @@ def read_params(cell,filename,j):
                         if cell.segment == 'PT' or cell.segment == 'S3':
                             HT_rat = 0.85
                             newdLA.perm = HT_rat*newdLA.perm
+                
+                # empa
+                if cell.inhib == 'empa':
+                    # NaPi2
+                    if newdLA.solute_id == (0,7):
+                        if cell.segment == 'PT' or cell.segment == 'S3':
+                            empa_rat = 0.88
+                            newdLA.perm = empa_rat*newdLA.perm
 
 
                 cell.dLA.append(newdLA)
