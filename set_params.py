@@ -500,42 +500,19 @@ def read_params(cell,filename,j):
                             #DCT2
                             empa_rat_ROMK = 1.02
                             cell.h[1,0,1] = empa_rat_ROMK*0.6
-                        # PCl
-                        empa_rat = 1.21
-                        # lumen LIS
-                        cell.h[2,0,4] = empa_rat*0.5e3 # male PCL
-                        # LIS bath
-                        cell.h[2,4,5] = empa_rat*4200.0 # male PCL
                     elif cell.segment == 'CNT':
                         empa_rat_ROMK = 1.02
                         cell.h[1,0,1] = empa_rat_ROMK*8.0
-                        # PCl
-                        empa_rat = 1.21
-                        # lumen LIS
-                        cell.h[2,0,4] = empa_rat*1.2e3 # male PCL
-                        # LIS bath
-                        cell.h[2,4,5] = empa_rat*16e3 # male PCL
                     elif cell.segment == 'CCD':
-                        # PCl
+                        # PNaCl
                         empa_rat = 1.21
                         # lumen LIS
                         cell.h[2,0,4] = empa_rat*1.2e3 # male PCL
+                        cell.h[0,0,4] = emp_rat*1.0e3 # male PNa
                         # LIS bath
                         cell.h[2,4,5] = empa_rat*16.0e3 # male PCL
-                    elif cell.segment == 'OMCD':
-                        # PCl
-                        empa_rat = 1.21
-                        # lumen LIS
-                        cell.h[2,0,4] = empa_rat*1.0e3 # male PCL
-                        # LIS baht
-                        cell.h[2,4,5] = empa_rat*5900.0 # male PCL
-                    elif cell.segment == 'IMCD':
-                        # PCl
-                        empa_rat = 1.21
-                        # lumen LIS
-                        cell.h[2,0,4] = empa_rat*1.6e3 # male PCl
-                        # LIS bath
-                        cell.h[2,4,5] = empa_rat*4000.0 # male PCl
+                        cell.h[0,4,5] = emp_rat*12.0e3 # male PNa
+
                         
                             
             # Coupled transporters:
