@@ -511,7 +511,7 @@ def read_params(cell,filename,j):
                         cell.h[0,0,4] = empa_rat*1.0e3 # male PNa
                         # LIS bath
                         cell.h[2,4,5] = empa_rat*16.0e3 # male PCL
-                        cell.h[0,4,5] = emp_rat*12.0e3 # male PNa
+                        cell.h[0,4,5] = empa_rat*12.0e3 # male PNa
 
                         
                             
