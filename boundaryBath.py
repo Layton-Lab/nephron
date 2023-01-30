@@ -1,3 +1,4 @@
+#%%
 from values import *
 import numpy as np
 from defs import *
@@ -108,6 +109,16 @@ def boundaryBath(cell,i):
                 cell.pap[0] = TotSodPap_LP_100NKCCinhib
                 cell.pap[1] = TotPotPap_LP_100NKCCinhib
                 cell.pap[2] = TotCloPap_LP_100NKCCinhib
+                cell.pap[8] = TotureaPap_100NKCCinhib
+        elif cell.inhib == 'NKCC2-99':
+            if cell.preg == 'non':
+                cell.oi[0] = TotSodOI_100NKCCinhib
+                cell.oi[1] = TotPotOI_100NKCCinhib
+                cell.oi[2] = TotCloOI_100NKCCinhib		
+                cell.oi[8] = TotureaOI_100NKCCinhib
+                cell.pap[0] = TotSodPap_100NKCCinhib
+                cell.pap[1] = TotPotPap_100NKCCinhib
+                cell.pap[2] = TotCloPap_100NKCCinhib
                 cell.pap[8] = TotureaPap_100NKCCinhib
         elif cell.inhib == 'SNB-70':
             cell.oi[0] = TotSodOI_70NKCCinhib
@@ -239,11 +250,19 @@ def boundaryBath(cell,i):
         cell.conc[13,5] = cell.cm[12]/(1+fachco2)
         cell.conc[14,5] = cell.cm[14]      
 
-        elecS = 0
-        for j in range(NS):
-            elecS = elecS+zval[j]*cell.conc[j,5]
+        if cell.diabete != 'Non':
+            cell.conc[14,5] = 5*cell.conc[14,5]
 
-        cell.conc[2,5] = cell.conc[2,5]+elecS
+
+        for k in [0,4,5]:
+            elecS = 0
+            for j in range(NS):
+                elecS = elecS+zval[j]*cell.conc[j,k]
+
+            cell.conc[2,k] = cell.conc[2,k]+elecS
+            
+
+
         if cell.sex=='female' and cell.species == 'rat':
             female_conc(cell, i)
 
@@ -307,11 +326,16 @@ def boundaryBath(cell,i):
         cell.conc[13,5] = Hco2totz/(1+fachco2)
         cell.conc[14,5] = cell.cm[14]+(cell.oi[14]-cell.cm[14])*pos
 
-        elecS = 0.0
-        for j in range(NS):
-            elecS = elecS+zval[j]*cell.conc[j,5]
+        if cell.diabete != 'Non':
+            cell.conc[14,5] = 5*cell.conc[14,5]
+            
+        
+        for k in [0,4,5]:
+            elecS = 0
+            for j in range(NS):
+                elecS = elecS+zval[j]*cell.conc[j,k]
 
-        cell.conc[2,5] = cell.conc[2,5]+elecS
+            cell.conc[2,k] = cell.conc[2,k]+elecS
  
         #  Concentrations of K, Cl are lower in female rat.
         if cell.sex=='female' and cell.species=='rat':
@@ -335,6 +359,8 @@ def boundaryBath(cell,i):
             if cell.unx == 'Y':
                 pHplasma = 7.4-0.1
                 phpap = 7.3-0.1
+
+            NPT=0.88*cell.total
 
             cell.pH[5] = pHplasma
 
@@ -373,12 +399,19 @@ def boundaryBath(cell,i):
             cell.conc[13,5] = cell.cm[12]/(1+fachco2)
             cell.conc[14,5] = cell.cm[14]
 
-            elecS = 0
-            for j in range(NS):
-                elecS = elecS+zval[j]*cell.conc[j,5]
+            if cell.diabete != 'Non':
+                cell.conc[14,5] = 5*cell.conc[14,5]
 
-            cell.conc[2,5] = cell.conc[2,5]+elecS
+
+            for k in [0,4,5]:
+                elecS = 0
+                for j in range(NS):
+                    elecS = elecS+zval[j]*cell.conc[j,k]
+
+                cell.conc[2,k] = cell.conc[2,k]+elecS
+
             
+
         else:
             if cell.species == 'hum':
                 NPT=0.9*cell.total
@@ -439,11 +472,17 @@ def boundaryBath(cell,i):
             cell.conc[13,5] = Hco2totz/(1+fachco2)
             cell.conc[14,5] = cell.cm[14]+(cell.oi[14]-cell.cm[14])*pos
 
-            elecS = 0.0
-            for j in range(NS):
-                elecS = elecS+zval[j]*cell.conc[j,5]
 
-            cell.conc[2,5] = cell.conc[2,5]+elecS
+            if cell.diabete != 'Non':
+                cell.conc[14,5] = 5*cell.conc[14,5]
+
+            for k in [0,4,5]:
+                elecS = 0
+                for j in range(NS):
+                    elecS = elecS+zval[j]*cell.conc[j,k]
+
+                cell.conc[2,k] = cell.conc[2,k]+elecS
+
             
         #  Concentrations of K, Cl are lower in female rat.
         if cell.sex=='female' and cell.species=='rat':
@@ -521,11 +560,15 @@ def boundaryBath(cell,i):
         cell.conc[13,5] = Hco2totz/(1+fachco2)
         cell.conc[14,5] = cell.oi[14]+(cell.pap[14]-cell.oi[14])*pos
 
-        elecS = 0.0
-        for j in range(NS):
-            elecS = elecS+zval[j]*cell.conc[j,5]
+        if cell.diabete != 'Non':
+                cell.conc[14,5] = 5*cell.conc[14,5]
 
-        cell.conc[2,5] = cell.conc[2,5]+elecS
+        for k in [0,4,5]:
+            elecS = 0
+            for j in range(NS):
+                elecS = elecS+zval[j]*cell.conc[j,k]
+
+            cell.conc[2,k] = cell.conc[2,k]+elecS
 
         #  Concentrations of K, Cl are lower in female rat.
         if cell.sex=='female' and cell.species=='rat':
@@ -533,3 +576,5 @@ def boundaryBath(cell,i):
 
     else:
         cell.conc[:,5] = cell.conc[:,5]
+
+
