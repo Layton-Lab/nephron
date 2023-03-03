@@ -498,14 +498,14 @@ def read_params(cell,filename,j):
                         # ROMK
                         if j>0.66*cell.total:
                             #DCT2
-                            empa_rat_ROMK = 1.02
+                            empa_rat_ROMK = 1.14 #1.02
                             cell.h[1,0,1] = empa_rat_ROMK*0.6
                     elif cell.segment == 'CNT':
-                        empa_rat_ROMK = 1.02
+                        empa_rat_ROMK = 1.14 #1.02
                         cell.h[1,0,1] = empa_rat_ROMK*8.0
                     elif cell.segment == 'CCD':
                         # PNaCl
-                        empa_rat = 1.21
+                        empa_rat = 1.14 #1.21
                         # lumen LIS
                         cell.h[2,0,4] = empa_rat*1.2e3 # male PCL
                         cell.h[0,0,4] = empa_rat*1.0e3 # male PNa
@@ -769,6 +769,8 @@ def read_params(cell,filename,j):
                         elif cell.segment == 'cTAL':
                             empa_rat = 1.15
                     elif newTransp.type == 'NaKATPase':
+                        if cell.segment == 'PT':
+                            empa_rat = 1.20
                         if cell.segment == 'mTAL':
                             empa_rat = 1.22
                         elif cell.segment == 'cTAL':
