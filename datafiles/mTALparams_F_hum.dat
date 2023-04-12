@@ -164,7 +164,7 @@ conc_glucose	0.68535e-2	5.7065	5.1812	41.67
 #conc_H	0.10175e-3	0.00024	0.00005	0.000397
 #conc_HCO2	3.8037	0.03196	0.50729	0.99772
 #conc_H2CO2	0.13059e-2	0.00017	0.00015	0.00228
-#conc_glucose	0.10625e-1	4.8004	4.0938	41.67
+#conc_glucose	0.10625e-1	4.8004	4.0938	4.167
 #
 #
 # Rates used in HCO3/H2CO3 reaction, default is set to 0
