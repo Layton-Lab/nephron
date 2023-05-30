@@ -53,6 +53,7 @@ Published papers:
 * **human multiple nephron (sex-specific):** [2021 Hu et al. "Sex differences in solute and water handling in the human kidney: Modeling and functional implications"](https://www.sciencedirect.com/science/article/pii/S2589004221006350)
 * **diabetic human (sex-specific):** [2021 Hu et al. "A Computational Model of Kidney Function in a Patient with Diabetes"](https://www.mdpi.com/1422-0067/22/11/5819)
 * **pregnant rat (superficial nephron):** [2022 Stadt and Layton "Adaptive changes in single-nephron GFR, tubular morphology, and transport in a pregnant rat nephron: modeling and analysis"](https://journals.physiology.org/doi/abs/10.1152/ajprenal.00264.2021)
+* **pregnant and hypertensive female rats (multiple nephron):** [2023 Stadt et al. Effect of pregnancy and hypertension on kidney function in female rats: Modeling and functional implications"](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0279785)
 
 ### Previous versions
 Previous versions of this model code are available [here](https://github.com/uwrhu).
