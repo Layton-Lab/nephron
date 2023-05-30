@@ -54,6 +54,7 @@ Published papers:
 * **diabetic human (sex-specific):** [2021 Hu et al. "A Computational Model of Kidney Function in a Patient with Diabetes"](https://www.mdpi.com/1422-0067/22/11/5819)
 * **pregnant rat (superficial nephron):** [2022 Stadt and Layton "Adaptive changes in single-nephron GFR, tubular morphology, and transport in a pregnant rat nephron: modeling and analysis"](https://journals.physiology.org/doi/abs/10.1152/ajprenal.00264.2021)
 * **pregnant and hypertensive female rats (multiple nephron):** [2023 Stadt et al. Effect of pregnancy and hypertension on kidney function in female rats: Modeling and functional implications"](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0279785)
+* **mouse model:** [2022 Stadt and Layton "Sex and species differences in epithelial transport in the rat and mouse kidneys: Modeling and analysis"](https://www.frontiersin.org/articles/10.3389/fphys.2022.991705/full?utm_source=dlvr.it&utm_medium=twitter)
 
 ### Previous versions
 Previous versions of this model code are available [here](https://github.com/uwrhu).
