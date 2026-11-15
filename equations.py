@@ -7,6 +7,8 @@ import copy
 import numpy as np
 
 import os
+DBGON = os.environ.get('NEPH_RECX','0') == '1'
+DBG = None
 EQFORM = os.environ.get('NEPH_EQFORM','0') == '1'   # experimental formate equilibrium rows (default: off)
 
 # parameters
@@ -74,11 +76,11 @@ def conservation_eqs (x,i):
         
         if cell1.segment == 'IMCD':
             if cell1.species == 'rat':
-                coalesce = 0.2*(1-0.95*(i/N)**2)*np.exp(-2.75*i/N)
+                coalesce = 0.2*(1-0.95*(i/cell1.total)**2)*np.exp(-2.75*i/cell1.total)   # was i/N with the global N=200 (values.py): wrong geometry for N != 200
             elif cell1.species == 'mou':
-                coalesce = 0.2*(1-0.95*(i/N)**2)*np.exp(-2.75*i/N)
+                coalesce = 0.2*(1-0.95*(i/cell1.total)**2)*np.exp(-2.75*i/cell1.total)   # was i/N with the global N=200 (values.py): wrong geometry for N != 200
             elif cell1.species == 'hum':
-                coalesce = 0.1*(1-0.95*(i/N)**2)*np.exp(-2.75*i/N)
+                coalesce = 0.1*(1-0.95*(i/cell1.total)**2)*np.exp(-2.75*i/cell1.total)   # was i/N with the global N=200 (values.py): wrong geometry for N != 200
             else:
                 print('cell1.species: ' + str(cell1.species))
                 raise Exception('what is species?')
@@ -717,6 +719,9 @@ def conservation_eqs (x,i):
 
         raise Exception('what is this segment? ' + cell1.segment)
         
+    if DBGON:
+        global DBG
+        DBG = dict(S=S.copy(), fvec=fvec.copy(), Jsol=Jsol1.copy(), Jvol=Jvol1.copy())
     return fvec
 
 

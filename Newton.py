@@ -87,6 +87,7 @@ def broyden(func,x,k,type):
 #   NEPH_POSSAFE=2  same, in every cell (hurts the OMCD, whose valid solution has H2CO2 ~ -1e-4; not recommended)
 import os, time as _time
 STATS = []                                   # one record per newton_rat call
+RECX = os.environ.get('NEPH_RECX','0') == '1'   # also store the solution vector of each call
 STRICT = os.environ.get('NEPH_STRICT','0') == '1'
 POSMODE = int(os.environ.get('NEPH_POSSAFE','1'))   # 0 off, 1 first cell (k==0) only, 2 every cell
 POSSAFE = POSMODE > 0
@@ -96,6 +97,11 @@ POSFRAC = float(os.environ.get('NEPH_POSFRAC','0.1'))
 CHORD = os.environ.get('NEPH_CHORD','0') == '1'       # optional: reuse the Jacobian inverse while the residual keeps falling (FASTSEGS only)
 FASTSEGS = os.environ.get('NEPH_FASTSEGS','CCD,OMCD').split(',')   # segments for the two speed options below
 FASTAMP = os.environ.get('NEPH_FASTAMP','0') == '1'   # optional: undamped Newton once |f|<100 (k>0); validated for mouse/male/Moderate CCD, OMCD
+
+def _dbg(fun,x,k):
+    fun(x,k)
+    d = equations.DBG
+    return dict(S=[float(v) for v in d['S']], fvec=[float(v) for v in d['fvec']], Jsol=d['Jsol'].tolist(), Jvol=d['Jvol'].tolist())
 
 class NewtonNotConverged(Exception):
     pass
@@ -399,7 +405,7 @@ def newton_rat(func,x,k,cell):
         iter+=1
         #print(iter, np.linalg.norm(f))
         TOLpcn = np.max(delta/x)
-    STATS.append(dict(seg=cell.segment, k=int(k), iters=int(iter), resid=float(np.linalg.norm(f)), sec=_time.time()-_t0, nlimited=_nlim, limlog=_lim_log, njac=_njac))
+    STATS.append(dict(seg=cell.segment, k=int(k), iters=int(iter), resid=float(np.linalg.norm(f)), sec=_time.time()-_t0, nlimited=_nlim, limlog=_lim_log, njac=_njac, **({'x': [float(v) for v in x], 'dbg': _dbg(fun,x,k)} if RECX else {})))
     return x
 
 

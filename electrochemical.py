@@ -2,6 +2,9 @@ import numpy as np
 from defs import *
 from values import *
 
+import os
+POSMEAN = os.environ.get('NEPH_POSMEAN','0') == '1'   # experimental: non-negative log-mean in the convective flux
+
 # compute electro-convective-diffusive fluxes
 
 def compute_ecd_fluxes (cell,jvol):
@@ -38,7 +41,13 @@ def compute_ecd_fluxes (cell,jvol):
                 # convective component
                 concdiff = cell.conc[i][k]-cell.conc[i][l]
                 if (abs(concdiff)>1e-6):
-                    concmean=concdiff/np.log(abs(cell.conc[i][k]/cell.conc[i][l]))
+                    if POSMEAN:
+                        # logarithmic mean of the magnitudes: always >= 0, so a concentration of the wrong sign
+                        # can no longer produce a negative convective weight
+                        ak = abs(cell.conc[i][k]); al = abs(cell.conc[i][l])
+                        concmean = ak if abs(ak-al) < 1e-9*max(ak,al,1e-30) else (ak-al)/np.log(ak/al)
+                    else:
+                        concmean=concdiff/np.log(abs(cell.conc[i][k]/cell.conc[i][l]))
                     dimless=(Pfref*Vwbar*Cref)/href
                     convect=(1.0e0-cell.sig[i][k][l])*concmean*jvol[k][l]*dimless
                     jsol[i][k][l]=jsol[i][k][l]+convect
