@@ -3,6 +3,7 @@ from defs import *
 from values import *
 
 import os
+CONVFIX = os.environ.get('NEPH_CONVFIX','1') == '1'   # keep the convective flux when |dC|<=1e-6 (limit (1-sig)*C*Jv); NEPH_CONVFIX=0 restores the old behaviour
 POSMEAN = os.environ.get('NEPH_POSMEAN','0') == '1'   # experimental: non-negative log-mean in the convective flux
 
 # compute electro-convective-diffusive fluxes
@@ -51,6 +52,12 @@ def compute_ecd_fluxes (cell,jvol):
                     dimless=(Pfref*Vwbar*Cref)/href
                     convect=(1.0e0-cell.sig[i][k][l])*concmean*jvol[k][l]*dimless
                     jsol[i][k][l]=jsol[i][k][l]+convect
+                elif CONVFIX:
+                    # |dC| <= 1e-6: the log-mean tends to the common concentration, so the convective flux
+                    # tends to (1-sig)*C*Jv (not 0). Omitting it makes the residual discontinuous.
+                    concmean=0.5e0*(cell.conc[i][k]+cell.conc[i][l])
+                    dimless=(Pfref*Vwbar*Cref)/href
+                    jsol[i][k][l]=jsol[i][k][l]+(1.0e0-cell.sig[i][k][l])*concmean*jvol[k][l]*dimless
 
                 # define driving force for coupled fluxes
                 delmu[i][k][l] = dmu[i][k]-dmu[i][l]
