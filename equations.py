@@ -6,6 +6,9 @@ import flux
 import copy
 import numpy as np
 
+import os
+EQFORM = os.environ.get('NEPH_EQFORM','0') == '1'   # experimental formate equilibrium rows (default: off)
+
 # parameters
 dx = 1e-3
 PI = 3.14159265
@@ -606,6 +609,12 @@ def conservation_eqs (x,i):
             fvec[64] = S[64]+S[69]
             fvec[65] = ph[0]-pKHCO2-np.log(abs(float(cell1.conc[12,0])/float(cell1.conc[13,0])))/np.log(10.0)
             fvec[69] = ph[4]-pKHCO2-np.log(abs(float(cell1.conc[12,4])/float(cell1.conc[13,4])))/np.log(10.0)
+            if EQFORM:
+                # experimental: enforce HCO2-/H2CO2 equilibrium in the cell compartments too
+                # (as is done for HCO3/H2CO3, HPO4/H2PO4 and NH3/NH4); rows 66-68 otherwise
+                # keep H2CO2's own flux balance from the generic loop above.
+                for c_ in (1,2,3):
+                    fvec[65+c_] = ph[c_]-pKHCO2-np.log(abs(float(cell1.conc[12,c_])/float(cell1.conc[13,c_])))/np.log(10.0)
 
     #---------------------------------------------------------------------
     #    For pH

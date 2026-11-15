@@ -78,10 +78,36 @@ def broyden(func,x,k,type):
 #   separate for rat/human, same method with different
 #       damping coefficients
 #=====================================================
+# Diagnostics and robustness switches (environment variables). NEPH_POSSAFE defaults to 1 (CCD only);
+# everything else defaults to the original behaviour.
+#   NEPH_STRICT=1   (default 0) raise instead of silently continuing when the iteration cap is hit
+#   NEPH_POSSAFE=1  (default 1; 0 = original behaviour) limit Newton steps in the FIRST cell of the segments in NEPH_POSSEGS (default CCD) so no
+#                   concentration drops below POSFRAC*old value. Not applied to the OMCD (valid solution has H2CO2
+#                   ~ -1e-4) nor, by default, the IMCD (first-cell solve broke at N=200 with it)
+#   NEPH_POSSAFE=2  same, in every cell (hurts the OMCD, whose valid solution has H2CO2 ~ -1e-4; not recommended)
+import os, time as _time
+STATS = []                                   # one record per newton_rat call
+STRICT = os.environ.get('NEPH_STRICT','0') == '1'
+POSMODE = int(os.environ.get('NEPH_POSSAFE','1'))   # 0 off, 1 first cell (k==0) only, 2 every cell
+POSSAFE = POSMODE > 0
+POSVOL = os.environ.get('NEPH_POSVOL','0') == '1'     # also keep compartment volumes positive
+POSSEGS = os.environ.get('NEPH_POSSEGS','CCD').split(',')   # segments where the first-cell safeguard is active
+POSFRAC = float(os.environ.get('NEPH_POSFRAC','0.1'))
+CHORD = os.environ.get('NEPH_CHORD','0') == '1'       # optional: reuse the Jacobian inverse while the residual keeps falling (FASTSEGS only)
+FASTSEGS = os.environ.get('NEPH_FASTSEGS','CCD,OMCD').split(',')   # segments for the two speed options below
+FASTAMP = os.environ.get('NEPH_FASTAMP','0') == '1'   # optional: undamped Newton once |f|<100 (k>0); validated for mouse/male/Moderate CCD, OMCD
+
+class NewtonNotConverged(Exception):
+    pass
+
 # rat newton solver
 def newton_rat(func,x,k,cell):
     if cell.species != 'rat' and cell.species != 'mou':
         raise Exception('newton_rat only for rat or mouse model')
+    _t0 = _time.time()
+    _nlim = 0
+    _lim_log = []
+    _IJ = None; _since = 0; _nfprev = np.inf; _njac = 0
     fun=equations.conservation_eqs
     f=np.matrix(fun(x,k))
     TOLpcn = 1
@@ -112,17 +138,24 @@ def newton_rat(func,x,k,cell):
                 print('Warning!!: Newton solver did not converge in <'+str(iter)+' iterations in ' + cell.type + ' ' + cell.segment + ' cell number ' + str(k) + '\n')
             print('error size: '+ str(np.linalg.norm(f)))
             print('\n')
-            
+            if STRICT:
+                raise NewtonNotConverged(cell.segment + ' cell ' + str(k) + ' |f|=' + str(np.linalg.norm(f)))
+
         i += 1
-        J = np.matrix(Jac(fun,x,k))
-        IJ = J.I
+        _nf = np.linalg.norm(f)
+        if CHORD and cell.segment in FASTSEGS and _IJ is not None and _since < 6 and _nf < 0.5*_nfprev:
+            IJ = _IJ; _since += 1
+        else:
+            J = np.matrix(Jac(fun,x,k))
+            IJ = J.I; _IJ = IJ; _since = 0; _njac += 1
+        _nfprev = _nf
         F = np.matrix(fun(x,k))
         # PCT
         if cell.segment == 'PT':
             amp = 1.0
         # S3
         elif cell.segment == 'S3':
-            amp = 1.0 
+            amp = 1.0
         # SDL
         elif cell.segment == 'SDL':
             amp = 1.0
@@ -343,14 +376,32 @@ def newton_rat(func,x,k,cell):
         else:
             print('What is this segment?', cell.segment)
             raise Exception('cell.segment is not characterized')
+        if FASTAMP and k > 0 and cell.segment in FASTSEGS and np.linalg.norm(f) < 100:
+            amp = 1.0
         delta = amp*np.array(F*IJ.T)[0]
+        if POSMODE == 2 or (POSMODE == 1 and k == 0 and cell.segment in POSSEGS):
+            # fraction-to-boundary: concentrations are the leading entries of x
+            # (5*NS entries for CNT/CCD/OMCD, 3*NS for the 3-compartment segments)
+            nconc = 75 if len(x) == 86 else 45
+            _idx = np.arange(nconc)
+            if POSVOL:
+                _idx = np.concatenate([_idx, np.arange(nconc, nconc + (5 if len(x) == 86 else 3))])
+            xc = np.asarray(x, dtype=float)[_idx]; dc = delta[_idx]
+            mask = (dc > 0) & (xc > 0)
+            if mask.any():
+                smax = np.min((1.0-POSFRAC)*xc[mask]/dc[mask])
+                if smax < 1.0:
+                    _ib = _idx[np.where(mask)[0][np.argmin((1.0-POSFRAC)*xc[mask]/dc[mask])]]
+                    _lim_log.append((iter, int(_ib), float(xc[_ib]), float(dc[_ib]), float(smax)))
+                    delta = delta*max(smax, 1e-3); _nlim += 1
         x-= delta
         f = np.matrix(fun(x,k))
         iter+=1
         #print(iter, np.linalg.norm(f))
         TOLpcn = np.max(delta/x)
+    STATS.append(dict(seg=cell.segment, k=int(k), iters=int(iter), resid=float(np.linalg.norm(f)), sec=_time.time()-_t0, nlimited=_nlim, limlog=_lim_log, njac=_njac))
     return x
-    
+
 
 
 # human newton solver
