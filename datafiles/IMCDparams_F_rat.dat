@@ -228,10 +228,10 @@ coupled_Cell_LIS_Na_H_male	6.0e-9	1	-1
 coupled_Cell_LIS_Na_H_female	6.0e-9	1	-1
 coupled_Cell_Bath_Na_H_male	6.0e-9	1	-1
 coupled_Cell_Bath_Na_H_female	6.0e-9	1	-1
-coupled_Cell_LIS_Na_HPO4_male 1.0e-9	2	1
-coupled_Cell_LIS_Na_HPO4_female	1.0e-9	2	1
-coupled_Cell_Bath_Na_HPO4_male 1.0e-9	2	1
-coupled_Cell_Bath_Na_HPO4_female	1.0e-9	2	1
+coupled_Cell_LIS_Na_HPO4_male 0.05e-9	2	1
+coupled_Cell_LIS_Na_HPO4_female	0.05e-9	2	1
+coupled_Cell_Bath_Na_HPO4_male 0.05e-9	2	1
+coupled_Cell_Bath_Na_HPO4_female	0.05e-9	2	1
 coupled_Cell_LIS_K_Cl_male	250.0e-9	1	1
 coupled_Cell_LIS_K_Cl_female	300.0e-9	1	1
 coupled_Cell_Bath_K_Cl_male	250.0e-9	1	1
