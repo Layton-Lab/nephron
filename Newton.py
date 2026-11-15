@@ -89,6 +89,7 @@ import os, time as _time
 STATS = []                                   # one record per newton_rat call
 RECX = os.environ.get('NEPH_RECX','0') == '1'   # also store the solution vector of each call
 STRICT = os.environ.get('NEPH_STRICT','0') == '1'
+TRACEK = [int(v) for v in os.environ.get('NEPH_TRACEK','').split(',') if v.strip()]   # cells whose per-iteration |f| is stored in STATS['hist']
 POSMODE = int(os.environ.get('NEPH_POSSAFE','1'))   # 0 off, 1 first cell (k==0) only, 2 every cell
 POSSAFE = POSMODE > 0
 POSVOL = os.environ.get('NEPH_POSVOL','0') == '1'     # also keep compartment volumes positive
@@ -113,6 +114,7 @@ def newton_rat(func,x,k,cell):
     _t0 = _time.time()
     _nlim = 0
     _lim_log = []
+    _hist = []
     _IJ = None; _since = 0; _nfprev = np.inf; _njac = 0
     fun=equations.conservation_eqs
     f=np.matrix(fun(x,k))
@@ -149,6 +151,7 @@ def newton_rat(func,x,k,cell):
 
         i += 1
         _nf = np.linalg.norm(f)
+        if k in TRACEK: _hist.append(float(_nf))
         if CHORD and cell.segment in FASTSEGS and _IJ is not None and _since < 6 and _nf < 0.5*_nfprev:
             IJ = _IJ; _since += 1
         else:
@@ -405,7 +408,7 @@ def newton_rat(func,x,k,cell):
         iter+=1
         #print(iter, np.linalg.norm(f))
         TOLpcn = np.max(delta/x)
-    STATS.append(dict(seg=cell.segment, k=int(k), iters=int(iter), resid=float(np.linalg.norm(f)), sec=_time.time()-_t0, nlimited=_nlim, limlog=_lim_log, njac=_njac, **({'x': [float(v) for v in x], 'dbg': _dbg(fun,x,k)} if RECX else {})))
+    STATS.append(dict(seg=cell.segment, k=int(k), iters=int(iter), resid=float(np.linalg.norm(f)), sec=_time.time()-_t0, nlimited=_nlim, limlog=_lim_log, njac=_njac, **({'hist': _hist} if k in TRACEK else {}), **({'x': [float(v) for v in x], 'dbg': _dbg(fun,x,k)} if RECX else {})))
     return x
 
 
