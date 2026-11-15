@@ -339,6 +339,13 @@ def compute(N,filename,method,sup_or_jux=None,diabete='Non',species = 'human',su
         line_pres = inputfile.readline()
         preslist = line_pres.split(' ')
         cell[0].pres[0] = float(preslist[0])
+        # The IMCD params file has the LIS column equal to the cell column (e.g. K 239 mM), unlike the other
+        # segments, where LIS is close to the bath. Optionally start LIS at the local bath concentrations.
+        if os.environ.get('NEPH_IMCD_LISBATH','0') in ('1','2'):
+            for i in range(N):
+                cell[i].conc[:,4] = cell[i].conc[:,5]
+                if os.environ.get('NEPH_IMCD_LISBATH') == '2':
+                    cell[i].vol[4] = cell[i].volref[4]
 
     # initial guess of unknowns
     for i in range(N-1):
