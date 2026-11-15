@@ -93,7 +93,9 @@ TRACEK = [int(v) for v in os.environ.get('NEPH_TRACEK','').split(',') if v.strip
 POSMODE = int(os.environ.get('NEPH_POSSAFE','1'))   # 0 off, 1 first cell (k==0) only, 2 every cell
 POSSAFE = POSMODE > 0
 POSVOL = os.environ.get('NEPH_POSVOL','0') == '1'     # also keep compartment volumes positive
-POSSEGS = os.environ.get('NEPH_POSSEGS','CCD').split(',')   # segments where the first-cell safeguard is active
+POSSEGS = os.environ.get('NEPH_POSSEGS','CCD').split(',')   # segments where the first-cell safeguard is always active
+POSCHECK = os.environ.get('NEPH_POSCHECK','OMCD').split(',')   # segments where the first cell is re-solved WITH the safeguard only if the plain solve has negative formate
+_POSFORCE = False
 POSFRAC = float(os.environ.get('NEPH_POSFRAC','0.1'))
 CHORD = os.environ.get('NEPH_CHORD','0') == '1'       # optional: reuse the Jacobian inverse while the residual keeps falling (FASTSEGS only)
 FASTSEGS = os.environ.get('NEPH_FASTSEGS','IMCD').split(',')   # segments for the two speed options below
@@ -108,7 +110,7 @@ class NewtonNotConverged(Exception):
     pass
 
 # rat newton solver
-def newton_rat(func,x,k,cell):
+def _newton_rat(func,x,k,cell):
     if cell.species != 'rat' and cell.species != 'mou':
         raise Exception('newton_rat only for rat or mouse model')
     _t0 = _time.time()
@@ -388,7 +390,7 @@ def newton_rat(func,x,k,cell):
         if FASTAMP and k > 0 and cell.segment in FASTSEGS and np.linalg.norm(f) < 100:
             amp = 1.0
         delta = amp*np.array(F*IJ.T)[0]
-        if POSMODE == 2 or (POSMODE == 1 and k == 0 and cell.segment in POSSEGS):
+        if POSMODE == 2 or (POSMODE == 1 and k == 0 and (cell.segment in POSSEGS or _POSFORCE)):
             # fraction-to-boundary: concentrations are the leading entries of x
             # (5*NS entries for CNT/CCD/OMCD, 3*NS for the 3-compartment segments)
             nconc = 75 if len(x) == 86 else 45
@@ -412,6 +414,29 @@ def newton_rat(func,x,k,cell):
     return x
 
 
+
+
+def newton_rat(func,x,k,cell):
+    """First-cell wrapper. In the segments of POSCHECK (default OMCD) the safeguard breaks cases that already work
+    (mouse), but some cases (female rat) land on the negative-formate branch in cell 0 and never leave it. So solve cell 0
+    plainly and, only if any formate concentration (solute 12) is negative in the solution, re-solve it from the same
+    start with the first-step positivity safeguard."""
+    global _POSFORCE
+    if POSMODE == 1 and k == 0 and cell.segment in POSCHECK and cell.segment not in POSSEGS:
+        x0 = np.array(x, copy=True)
+        sol = _newton_rat(func,x,k,cell)
+        # formate is solute 12; 5-compartment layout (CNT/CCD/OMCD) is solute-major x[5*j+c], 3-compartment is compartment-major x[15*c+j]
+        sol_a = np.array(sol, dtype=float)
+        form = sol_a[60:65] if len(sol_a) > 60 else sol_a[[12,27,42]]
+        if form.min() < 0:
+            print('Note: negative formate in the first '+cell.segment+' cell (min %.3g); re-solving it with the positivity safeguard\n' % form.min())
+            _POSFORCE = True
+            try:
+                sol = _newton_rat(func,x0,k,cell)
+            finally:
+                _POSFORCE = False
+        return sol
+    return _newton_rat(func,x,k,cell)
 
 # human newton solver
 def newton_human(func,x,k,cell):
