@@ -96,8 +96,8 @@ POSVOL = os.environ.get('NEPH_POSVOL','0') == '1'     # also keep compartment vo
 POSSEGS = os.environ.get('NEPH_POSSEGS','CCD').split(',')   # segments where the first-cell safeguard is active
 POSFRAC = float(os.environ.get('NEPH_POSFRAC','0.1'))
 CHORD = os.environ.get('NEPH_CHORD','0') == '1'       # optional: reuse the Jacobian inverse while the residual keeps falling (FASTSEGS only)
-FASTSEGS = os.environ.get('NEPH_FASTSEGS','CCD,OMCD').split(',')   # segments for the two speed options below
-FASTAMP = os.environ.get('NEPH_FASTAMP','0') == '1'   # optional: undamped Newton once |f|<100 (k>0); validated for mouse/male/Moderate CCD, OMCD
+FASTSEGS = os.environ.get('NEPH_FASTSEGS','IMCD').split(',')   # segments for the two speed options below
+FASTAMP = os.environ.get('NEPH_FASTAMP','1') == '1'   # undamped Newton once |f|<100 (k>0) in FASTSEGS; default ON for IMCD only (validated mouse/male/Moderate; also validated, opt-in via NEPH_FASTSEGS, for CCD, OMCD)
 
 def _dbg(fun,x,k):
     fun(x,k)
