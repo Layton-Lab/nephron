@@ -60,7 +60,7 @@ def sglt1(cell,ep,memb_id,CT,area):
 
     #Compute the KAT terms and the concentrations of each enzyme state
 
-    A = np.mat([[dk12+dk16+dk61,dk61-dk21,dk61,dk61,dk61],
+    A = np.asmatrix([[dk12+dk16+dk61,dk61-dk21,dk61,dk61,dk61],
                 [-dk12,dk21+dk23+dk25,-dk32,0,-dk52],
                 [0,-dk23,dk32+dk34,-dk43,0],
                 [0,0,-dk34,dk43+dk45,-dk54],
