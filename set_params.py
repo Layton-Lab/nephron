@@ -7,7 +7,8 @@ import time
 # (0,1) for (lumen, cell)
 # Diabetes scaling of SGLT activity. Until now the diabetic factor was applied twice: once here (set_params) and once
 # inside glucose.sglt1/sglt2 (SGLT1 x0.67, SGLT2 x1.38 for any diabete != 'Non'). The glucose.py factors were removed;
-# the numbers below are the PRODUCT of the two former factors, so predictions are unchanged. Re-tune here if desired.
+# the SGLT2 number below is the PRODUCT of the two former factors (predictions unchanged). SGLT1 now follows the papers
+# (x0.67 once, no x3.5): Sangita 2022 Table 1 and Layton 2016. Moderate and Severe diabetes only; the inhibition blocks are unchanged.
 SGLT2_DIAB_GLUCOSE_FACTOR = 1.38    # former glucose.sglt2 factor
 SGLT1_DIAB_GLUCOSE_FACTOR = 0.67    # former glucose.sglt1 factor
 
@@ -591,7 +592,7 @@ def read_params(cell,filename,j):
                         #     if cell.sex == 'female':
                         #         newTransp.act = (1+0.3)*value/(href*Cref)
                         elif newTransp.type == 'SGLT1':
-                            newTransp.act = (1-0.33)*SGLT1_DIAB_GLUCOSE_FACTOR*value/(href*Cref)*3.5
+                            newTransp.act = SGLT1_DIAB_GLUCOSE_FACTOR*value/(href*Cref)  # paper: SGLT1 -33% (Sangita 2022 Table 1; Layton 2016)
                         # elif newTransp.type == 'GLUT1': # optional
                         #     if cell.sex == 'male':
                         #         newTransp.act = 0.5*value/(href*Cref)                        
@@ -645,7 +646,7 @@ def read_params(cell,filename,j):
                             if cell.sex == 'female':
                                 newTransp.act = (1+0.3)*value/(href*Cref)
                         elif newTransp.type == 'SGLT1':
-                            newTransp.act = (1-0.33)*SGLT1_DIAB_GLUCOSE_FACTOR*value/(href*Cref)*3.5
+                            newTransp.act = SGLT1_DIAB_GLUCOSE_FACTOR*value/(href*Cref)  # paper: SGLT1 -33% (Sangita 2022 Table 1; Layton 2016)
                         elif newTransp.type == 'NaKATPase':
                             newTransp.act = 1.1*value/(href*Cref)
                     elif cell.segment == 'mTAL':
