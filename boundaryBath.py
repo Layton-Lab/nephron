@@ -8,7 +8,7 @@ def diab_plasma_glucose(cell):
     glucose, which must agree (freely filtered). The bath used to be 5x healthy (25 mM) for every species and state,
     while the Moderate PT inlet was 8.6 mM."""
     if cell.diabete == 'Moderate':
-        return 8.6
+        return 8.6 if cell.species == 'hum' else 15.0   # human 8.6 mM (Sangita 2022); rat/mouse 15 mM
     if cell.diabete == 'Severe':
         return 20.0 if cell.species == 'hum' else 25.0
     return 5.0
