@@ -23,9 +23,6 @@ import numpy as np
 
 def sglt1(cell,ep,memb_id,CT,area):
 
-    if cell.diabete != 'Non':
-        CT = CT*0.67
-
     # if cell.segment == 'PT':
     #     sglt1 = 0.0
     # elif cell.segment == 'S3':
@@ -97,9 +94,6 @@ def sglt1(cell,ep,memb_id,CT,area):
 #   returns:      solute IDs and corresponding fluxes
 #
 def sglt2(cell,ep,memb_id,CT,area):
-
-    if cell.diabete != 'Non':
-        CT = CT*1.38
 
     zeta = F*EPref*(ep[memb_id[0]]-ep[memb_id[1]])/RT
     affglu=4.90e0

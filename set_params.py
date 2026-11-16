@@ -5,6 +5,18 @@ import time
 
 # pick out compartment IDs. E.g. given label=Area_Lumen_Cell, it would return
 # (0,1) for (lumen, cell)
+# Diabetes scaling of SGLT activity. Until now the diabetic factor was applied twice: once here (set_params) and once
+# inside glucose.sglt1/sglt2 (SGLT1 x0.67, SGLT2 x1.38 for any diabete != 'Non'). The glucose.py factors were removed;
+# the numbers below are the PRODUCT of the two former factors, so predictions are unchanged. Re-tune here if desired.
+SGLT2_DIAB_GLUCOSE_FACTOR = 1.38    # former glucose.sglt2 factor
+SGLT1_DIAB_GLUCOSE_FACTOR = 0.67    # former glucose.sglt1 factor
+
+def sglt_diab_factor(cell, ttype):
+    """former glucose.py factor (kept only for the branches that overwrite the activity: SGLT2 inhibition, empagliflozin)"""
+    if cell.diabete == 'Non':
+        return 1.0
+    return SGLT2_DIAB_GLUCOSE_FACTOR if ttype == 'SGLT2' else (SGLT1_DIAB_GLUCOSE_FACTOR if ttype == 'SGLT1' else 1.0)
+
 def get_interface_id(label):
     tmp = (label).split('_')
     if len(tmp)==3:  # only have two compartment IDs
@@ -570,16 +582,16 @@ def read_params(cell,filename,j):
                     if cell.segment == 'PT' or cell.segment == 'S3':
                         if newTransp.type == 'SGLT2':
                             if cell.sex == 'male':
-                                newTransp.act = (1+0.38)*value/(href*Cref)
+                                newTransp.act = (1+0.38)*SGLT2_DIAB_GLUCOSE_FACTOR*value/(href*Cref)
                             elif cell.sex == 'female':
-                                newTransp.act = (1+0.38)*value/(href*Cref)
+                                newTransp.act = (1+0.38)*SGLT2_DIAB_GLUCOSE_FACTOR*value/(href*Cref)
                         # elif newTransp.type == 'GLUT2': # optional
                         #     if cell.sex == 'male':
                         #         newTransp.act = (1+0.5)*value/(href*Cref)
                         #     if cell.sex == 'female':
                         #         newTransp.act = (1+0.3)*value/(href*Cref)
                         elif newTransp.type == 'SGLT1':
-                            newTransp.act = (1-0.33)*value/(href*Cref)*3.5
+                            newTransp.act = (1-0.33)*SGLT1_DIAB_GLUCOSE_FACTOR*value/(href*Cref)*3.5
                         # elif newTransp.type == 'GLUT1': # optional
                         #     if cell.sex == 'male':
                         #         newTransp.act = 0.5*value/(href*Cref)                        
@@ -624,16 +636,16 @@ def read_params(cell,filename,j):
                     if cell.segment == 'PT' or cell.segment == 'S3':
                         if newTransp.type == 'SGLT2':
                             if cell.sex == 'male':
-                                newTransp.act = (1+0.38)*value/(href*Cref)
+                                newTransp.act = (1+0.38)*SGLT2_DIAB_GLUCOSE_FACTOR*value/(href*Cref)
                             elif cell.sex == 'female':
-                                newTransp.act = (1+0.28)*value/(href*Cref)
+                                newTransp.act = (1+0.28)*SGLT2_DIAB_GLUCOSE_FACTOR*value/(href*Cref)
                         elif newTransp.type == 'GLUT2':
                             if cell.sex == 'male':
                                 newTransp.act = (1+0.5)*value/(href*Cref)
                             if cell.sex == 'female':
                                 newTransp.act = (1+0.3)*value/(href*Cref)
                         elif newTransp.type == 'SGLT1':
-                            newTransp.act = (1-0.33)*value/(href*Cref)*3.5
+                            newTransp.act = (1-0.33)*SGLT1_DIAB_GLUCOSE_FACTOR*value/(href*Cref)*3.5
                         elif newTransp.type == 'NaKATPase':
                             newTransp.act = 1.1*value/(href*Cref)
                     elif cell.segment == 'mTAL':
@@ -748,9 +760,9 @@ def read_params(cell,filename,j):
                 
                 if cell.inhib == 'SGLT2':
                     if newTransp.type == 'SGLT2':
-                        newTransp.act = value/(href*Cref)*0.2
+                        newTransp.act = value/(href*Cref)*0.2*sglt_diab_factor(cell,'SGLT2')
                     if newTransp.type == 'SGLT1':
-                        newTransp.act = value/(href*Cref)*3.5
+                        newTransp.act = value/(href*Cref)*3.5*sglt_diab_factor(cell,'SGLT1')
 
                 if cell.inhib == 'empa':
                     empa_rat = 1.0
@@ -782,7 +794,7 @@ def read_params(cell,filename,j):
                     elif newTransp.type == 'ENaC':
                         empa_rat = 0.93
                     # update activity based on empa change
-                    newTransp.act = empa_rat*value/(href*Cref)
+                    newTransp.act = empa_rat*value/(href*Cref)*sglt_diab_factor(cell,newTransp.type)
 
                 
                 if cell.unx == 'Y':
