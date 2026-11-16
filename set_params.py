@@ -9,7 +9,7 @@ import time
 # inside glucose.sglt1/sglt2 (SGLT1 x0.67, SGLT2 x1.38 for any diabete != 'Non'). The glucose.py factors were removed;
 # the SGLT2 number below is the PRODUCT of the two former factors (predictions unchanged). SGLT1 is now unchanged in
 # diabetes (x1.0, no x3.5). The inhibition/empagliflozin blocks multiply by this helper, so SGLT1 there is 3.5x baseline.
-SGLT2_DIAB_GLUCOSE_FACTOR = 1.38    # former glucose.sglt2 factor
+SGLT2_DIAB_GLUCOSE_FACTOR = 1.47    # re-tuned (was 1.38) so rat PT+S3 glucose flow matches the old model once SGLT1 went to x1.0; mouse stays ~+11%
 SGLT1_DIAB_GLUCOSE_FACTOR = 1.0     # SGLT1 unchanged in diabetes (evidence mixed; -33% rests on one Akita-mouse study)
 
 def sglt_diab_factor(cell, ttype):
