@@ -16,9 +16,11 @@ import os as _os
 SGLT2_DIAB_GLUCOSE_FACTOR_DEFAULT = float(_os.environ.get('NEPH_SGLT2_DIAB','1.0'))   # extra diabetic SGLT2 factor (rodents), env for scans
 # Extra diabetic SGLT2 factor (rodents, Moderate, 25 mM plasma glucose), on top of the paper's x1.38.
 # Tuned so ~18% of filtered glucose leaves S3 (Layton, Vallon & Edwards 2016: FEG 17.9% at 25 mM, SNGFR +50%).
-SGLT2_DIAB_GLUCOSE_FACTOR_BY = {}   # (extra diabetic SGLT2 factor: scan via NEPH_SGLT2_DIAB)
+# Extra diabetic SGLT2 factor (rodents, Moderate, 25 mM plasma glucose) on top of the paper's x1.38, with the torque reference at the
+# healthy inflow and PT/S3 diameter x1.2. Tuned so ~20% of the filtered glucose leaves S3 (Layton, Vallon & Edwards 2016: FEG 17.9%).
+SGLT2_DIAB_GLUCOSE_FACTOR_BY = {('rat','male'): 4.2, ('rat','female'): 3.4, ('mou','male'): 4.9, ('mou','female'): 3.55}
 
-TORQ_HEALTHY_REF = _os.environ.get('NEPH_TORQ_HEALTHYREF','0') == '1'
+TORQ_HEALTHY_REF = _os.environ.get('NEPH_TORQ_HEALTHYREF','1') == '1'
 def torq_ref_vol(cell):
     """PT/S3 inlet flow that defines the reference microvillous torque (TM0). Paper (Layton 2016): reference = healthy SNGFR, so
     diabetic hyperfiltration raises transporter density through torque. Default (0): legacy behaviour, reference = the cell's own
@@ -180,7 +182,7 @@ def read_params(cell,filename,j):
                         cell.diam = value*1.02 #slight increase in juxt diam size
                 elif cell.diabete == 'Moderate':
                     if cell.segment == 'PT' or cell.segment == 'S3':
-                        cell.diam = value*float(_os.environ.get('NEPH_PTDIAM','1.1'))
+                        cell.diam = value*float(_os.environ.get('NEPH_PTDIAM','1.2'))
                     elif cell.segment == 'SDL' or cell.segment == 'mTAL' or cell.segment == 'cTAL' or cell.segment == 'DCT' or cell.segment == 'CNT' or cell.segment == 'CCD' or cell.segment == 'OMCD':
                         cell.diam = value*1.18
                     else:
