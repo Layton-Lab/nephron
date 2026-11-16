@@ -10,11 +10,13 @@ from boundaryBath import diab_plasma_glucose
 # inside glucose.sglt1/sglt2 (SGLT1 x0.67, SGLT2 x1.38 for any diabete != 'Non'). The glucose.py factors were removed;
 # the SGLT2 number below is the PRODUCT of the two former factors (predictions unchanged). SGLT1 is now unchanged in
 # diabetes (x1.0, no x3.5). The inhibition/empagliflozin blocks multiply by this helper, so SGLT1 there is 3.5x baseline.
-# Rodents (Moderate, plasma glucose 15 mM): the paper's SGLT2 +38% is sufficient, no extra amplification (helper = 1.0).
-# With bath = PT inlet glucose the old amplification (1.47-2.08, which compensated the 25 mM bath) is no longer needed.
+# Rodents (Moderate, plasma glucose 25 mM = bath = PT inlet): extra per-(species,sex) factor below, retuned to FEG ~18% (see BY table).
 # Human keeps its legacy 1.38 (not re-tuned). Table entries are per (species, sex) if a rodent needs its own value.
-SGLT2_DIAB_GLUCOSE_FACTOR_DEFAULT = 1.0
-SGLT2_DIAB_GLUCOSE_FACTOR_BY = {}
+import os as _os
+SGLT2_DIAB_GLUCOSE_FACTOR_DEFAULT = float(_os.environ.get('NEPH_SGLT2_DIAB','1.0'))   # extra diabetic SGLT2 factor (rodents), env for scans
+# Extra diabetic SGLT2 factor (rodents, Moderate, 25 mM plasma glucose), on top of the paper's x1.38.
+# Tuned so ~18% of filtered glucose leaves S3 (Layton, Vallon & Edwards 2016: FEG 17.9% at 25 mM, SNGFR +50%).
+SGLT2_DIAB_GLUCOSE_FACTOR_BY = {('rat','male'): 7.0, ('rat','female'): 8.2, ('mou','male'): 7.4, ('mou','female'): 5.6}
 def sglt2_diab_glucose_factor(cell):
     if cell.species == 'hum':
         return 1.38   # human: legacy value, not re-tuned
