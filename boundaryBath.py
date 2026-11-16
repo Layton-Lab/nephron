@@ -4,11 +4,16 @@ import numpy as np
 from defs import *
 
 import os as _os
-GLU_ND = float(_os.environ.get('NEPH_GLU_ND','0'))   # test hook: plasma glucose (mM) for the NON-diabetic case
+GLU_ND = float(_os.environ.get('NEPH_GLU_ND','0'))   # test hook (default off): plasma glucose in mM for the NON-diabetic case
 def diab_plasma_glucose(cell):
-    """Plasma glucose (mM) of a diabetic state. Used for BOTH the PT inlet (filtrate) glucose and the bath/interstitial
-    glucose, which must agree (freely filtered). The bath used to be 5x healthy (25 mM) for every species and state,
-    while the Moderate PT inlet was 8.6 mM."""
+    """Plasma glucose (mM) of the cell's diabetic state.
+
+    Single source of truth for BOTH the PT inlet (filtrate) glucose (set_params.read_params) and the bath/interstitial glucose
+    (boundaryBath, which scales the healthy 5 mM profile by value/5), because glucose is freely filtered.
+        Non:       5 mM (or the NEPH_GLU_ND test value)
+        Moderate:  rat, mouse 25 mM (Layton, Vallon & Edwards 2016); human 8.6 mM
+        Severe:    rat, mouse 25 mM; human 20 mM
+    (Before this helper the bath was 5x healthy = 25 mM for every species and state while the Moderate PT inlet was 8.6 mM.)"""
     if cell.diabete == 'Non' and GLU_ND:
         return GLU_ND
     if cell.diabete == 'Moderate':

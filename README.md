@@ -42,6 +42,11 @@ The unit of flow is **pmol/min**.
 
 **/plot/** contains some example scripts for plotting output
 
+## Rodent diabetes and sex-difference updates
+See [`docs/DIABETES_AND_SEX_NOTES.md`](docs/DIABETES_AND_SEX_NOTES.md) for the changes to the collecting-duct solver, the diabetic SGLT2 / glucose / SNGFR /
+torque / diameter parameters, the baseline sex differences in PT SGLT2, the environment switches, reference results and open issues
+(rat and mouse, non-diabetic and Moderate diabetes only; other cases not re-validated).
+
 ## Related Work
 Please cite appropriate paper(s) when using this model.
 

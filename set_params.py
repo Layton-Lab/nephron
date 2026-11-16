@@ -6,31 +6,46 @@ from boundaryBath import diab_plasma_glucose
 
 # pick out compartment IDs. E.g. given label=Area_Lumen_Cell, it would return
 # (0,1) for (lumen, cell)
-# Diabetes scaling of SGLT activity. Until now the diabetic factor was applied twice: once here (set_params) and once
-# inside glucose.sglt1/sglt2 (SGLT1 x0.67, SGLT2 x1.38 for any diabete != 'Non'). The glucose.py factors were removed;
-# the SGLT2 number below is the PRODUCT of the two former factors (predictions unchanged). SGLT1 is now unchanged in
-# diabetes (x1.0, no x3.5). The inhibition/empagliflozin blocks multiply by this helper, so SGLT1 there is 3.5x baseline.
-# Rodents (Moderate, plasma glucose 25 mM = bath = PT inlet): extra per-(species,sex) factor below, retuned to FEG ~18% (see BY table).
-# Human keeps its legacy 1.38 (not re-tuned). Table entries are per (species, sex) if a rodent needs its own value.
+# =====================================================================================================================
+# DIABETES-RELATED PARAMETERS (rat, mouse; human kept at its legacy values)
+# Full rationale, provenance and test results: docs/DIABETES_AND_SEX_NOTES.md
+#
+#  * Plasma glucose of a diabetic state      -> boundaryBath.diab_plasma_glucose (used for BOTH the PT inlet and the bath)
+#  * Single-nephron GFR (PT inlet flow)      -> "vol" branch of read_params (rat: resulting superficial inflow 45 nl/min male, 36 female vs 30.7/24 healthy; mouse: healthy x MOUSE_DIAB_SNGFR_FACTOR)
+#  * PT/S3 luminal diameter                  -> "Diameter" branch of read_params (Moderate x1.2 = 25 -> 30 um, Layton 2016; override NEPH_PTDIAM)
+#  * Microvillous-torque reference           -> torq_ref_vol() below (healthy inflow, so hyperfiltration raises transporter density)
+#  * SGLT1/SGLT2 activity in Moderate/Severe -> helpers below + the Moderate/Severe PT/S3 branches of read_params
+#
+# SGLT2 (rodents, Moderate/Severe PT and S3):  activity = (1+0.38) * SGLT2_DIAB_GLUCOSE_FACTOR_BY[(species,sex)] * baseline
+#   (1+0.38) is the +38% of Layton, Vallon & Edwards 2016; the extra per-(species,sex) factor was tuned so that ~20% of the filtered
+#   glucose is excreted at 25 mM plasma glucose (paper: 17.9%).  Procedure: run PT+S3 with NEPH_SGLT2_DIAB=<f> and read the
+#   glucose flow at the S3 outlet / (25 mM x PT inflow); see the notes file.
+# SGLT1 (rodents): unchanged in diabetes (factor 1.0).  Human: legacy (1-0.33)*0.67*3.5 in the Moderate/Severe branches.
+# History: the diabetic SGLT factors used to be applied twice (here and inside glucose.sglt1/sglt2).  The glucose.py copies
+#   were removed; the human values below reproduce the former product exactly.
+# =====================================================================================================================
 import os as _os
-SGLT2_DIAB_GLUCOSE_FACTOR_DEFAULT = float(_os.environ.get('NEPH_SGLT2_DIAB','1.0'))   # extra diabetic SGLT2 factor (rodents), env for scans
-# Extra diabetic SGLT2 factor (rodents, Moderate, 25 mM plasma glucose), on top of the paper's x1.38.
-# Tuned so ~18% of filtered glucose leaves S3 (Layton, Vallon & Edwards 2016: FEG 17.9% at 25 mM, SNGFR +50%).
-# Extra diabetic SGLT2 factor (rodents, Moderate, 25 mM plasma glucose) on top of the paper's x1.38, with the torque reference at the
-# healthy inflow and PT/S3 diameter x1.2. Tuned so ~20% of the filtered glucose leaves S3 (Layton, Vallon & Edwards 2016: FEG 17.9%).
+
+# Extra diabetic SGLT2 factor for rodents on top of (1+0.38).  Keys are (cell.species, cell.sex); species is 'rat'/'mou'.
+# Tuned with torq_ref_vol (healthy reference), PT/S3 diameter x1.2 and 25 mM glucose.  NEPH_SGLT2_DIAB sets the value used for any
+# (species, sex) NOT in the table (default 1.0) -- empty the table to scan it.
+SGLT2_DIAB_GLUCOSE_FACTOR_DEFAULT = float(_os.environ.get('NEPH_SGLT2_DIAB','1.0'))
 SGLT2_DIAB_GLUCOSE_FACTOR_BY = {('rat','male'): 4.2, ('rat','female'): 3.4, ('mou','male'): 4.9, ('mou','female'): 3.55}
 
+# Torque reference.  PT/S3 apical fluxes are scaled by 1+TS*scaleT*(Torque/TM0-1) (flux.py, equations.py).  TM0 is the torque at the
+# reference flow.  With NEPH_TORQ_HEALTHYREF=1 (default) that reference is the HEALTHY inlet flow (cell.vol_torq0), as in the model
+# papers, so a diabetic nephron with higher SNGFR gets proportionally more transporter density.  NEPH_TORQ_HEALTHYREF=0 restores the
+# legacy behaviour (reference = the cell's own, diabetic, inlet flow, which cancelled the effect).  Human: unchanged (volref).
 TORQ_HEALTHY_REF = _os.environ.get('NEPH_TORQ_HEALTHYREF','1') == '1'
 def torq_ref_vol(cell):
-    """PT/S3 inlet flow that defines the reference microvillous torque (TM0). Paper (Layton 2016): reference = healthy SNGFR, so
-    diabetic hyperfiltration raises transporter density through torque. Default (0): legacy behaviour, reference = the cell's own
-    (diabetic) inflow, which cancels the hyperfiltration effect."""
+    """Inlet flow (model units) that defines the reference microvillous torque TM0 for the PT/S3."""
     if TORQ_HEALTHY_REF and cell.vol_torq0 is not None and cell.species != 'hum':
         return cell.vol_torq0
     return cell.vol_init[0]
 def sglt2_diab_glucose_factor(cell):
+    """Extra diabetic SGLT2 factor (on top of 1+0.38).  Human: legacy 1.38 (not re-tuned)."""
     if cell.species == 'hum':
-        return 1.38   # human: legacy value, not re-tuned
+        return 1.38
     return SGLT2_DIAB_GLUCOSE_FACTOR_BY.get((cell.species, cell.sex), SGLT2_DIAB_GLUCOSE_FACTOR_DEFAULT)
 MOUSE_DIAB_SNGFR_FACTOR = 1.25      # diabetic mouse SNGFR relative to healthy (Akita GFR +25%; micropuncture SNGFR +11%, both male)
 SGLT1_DIAB_GLUCOSE_FACTOR = 1.0     # rodents: SGLT1 unchanged in diabetes (evidence mixed; -33% rests on one Akita-mouse study)
@@ -44,7 +59,9 @@ def sglt1_diab_branch_factor(cell):
     return sglt1_diab_glucose_factor(cell)
 
 def sglt_diab_factor(cell, ttype):
-    """former glucose.py factor (kept only for the branches that overwrite the activity: SGLT2 inhibition, empagliflozin)"""
+    """Diabetic SGLT factor for the branches that OVERWRITE the transporter activity (SGLT2 inhibition, empagliflozin), which would
+    otherwise drop the diabetic scaling.  NOTE: with the rodent factors above, the inhibition/empagliflozin cases in diabetes are
+    untested."""
     if cell.diabete == 'Non':
         return 1.0
     return sglt2_diab_glucose_factor(cell) if ttype == 'SGLT2' else (sglt1_diab_glucose_factor(cell) if ttype == 'SGLT1' else 1.0)
