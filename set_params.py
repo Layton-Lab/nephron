@@ -15,6 +15,7 @@ SGLT2_DIAB_GLUCOSE_FACTOR_DEFAULT = 1.47
 SGLT2_DIAB_GLUCOSE_FACTOR_BY = {('mou','male'): 1.80, ('mou','female'): 2.08}
 def sglt2_diab_glucose_factor(cell):
     return SGLT2_DIAB_GLUCOSE_FACTOR_BY.get((cell.species, cell.sex), SGLT2_DIAB_GLUCOSE_FACTOR_DEFAULT)
+MOUSE_DIAB_SNGFR_FACTOR = 1.25      # diabetic mouse SNGFR relative to healthy (Akita GFR +25%; micropuncture SNGFR +11%, both male)
 SGLT1_DIAB_GLUCOSE_FACTOR = 1.0     # SGLT1 unchanged in diabetes (evidence mixed; -33% rests on one Akita-mouse study)
 
 def sglt_diab_factor(cell, ttype):
@@ -979,20 +980,15 @@ def read_params(cell,filename,j):
                             cell.vol_init[0] = cell.vol[0]
 
                 if cell.diabete != 'Non' and cell.species == 'mou':
-                    if cell.sex == 'male':
-                        if cell.segment == 'PT' and cell.type == 'sup':
-                            cell.vol[0] = 0.0075
-                            cell.vol_init[0] = cell.vol[0]
-                        if cell.segment == 'PT' and cell.type != 'sup':
-                            cell.vol[0] = 0.008775
-                            cell.vol_init[0] = cell.vol[0]
-                    elif cell.sex == 'female':
-                        if cell.segment == 'PT' and cell.type == 'sup':
-                            cell.vol[0] = 0.0075
-                            cell.vol_init[0] = cell.vol[0]
-                        if cell.segment == 'PT' and cell.type != 'sup':
-                            cell.vol[0] = 0.008775
-                            cell.vol_init[0] = cell.vol[0]
+                    # Diabetic hyperfiltration: PT inlet volume (SNGFR proxy) = healthy mouse value x MOUSE_DIAB_SNGFR_FACTOR.
+                    # (This block used to hold the RAT values 0.0075/0.008775, i.e. x4.4-5.5 the healthy mouse.)
+                    # Healthy values: sup 0.0017 (male) / 0.00136 (female); jux 0.00204 / 0.001632 (see above).
+                    if cell.segment == 'PT':
+                        if cell.type == 'sup':
+                            cell.vol[0] = MOUSE_DIAB_SNGFR_FACTOR*(0.0017 if cell.sex == 'male' else 0.00136)
+                        else:
+                            cell.vol[0] = MOUSE_DIAB_SNGFR_FACTOR*(0.00204 if cell.sex == 'male' else 0.001632)
+                        cell.vol_init[0] = cell.vol[0]
 
                 if cell.diabete == 'Moderate' and cell.species == 'hum':
                     if compart_id[tmp[1]] == 0:
