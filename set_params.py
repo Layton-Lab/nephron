@@ -9,14 +9,19 @@ import time
 # inside glucose.sglt1/sglt2 (SGLT1 x0.67, SGLT2 x1.38 for any diabete != 'Non'). The glucose.py factors were removed;
 # the SGLT2 number below is the PRODUCT of the two former factors (predictions unchanged). SGLT1 is now unchanged in
 # diabetes (x1.0, no x3.5). The inhibition/empagliflozin blocks multiply by this helper, so SGLT1 there is 3.5x baseline.
-SGLT2_DIAB_GLUCOSE_FACTOR = 1.47    # re-tuned (was 1.38) so rat PT+S3 glucose flow matches the old model once SGLT1 went to x1.0; mouse stays ~+11%
+# Re-tuned (was 1.38) so PT+S3 outflow (glucose, water) matches the old model once SGLT1 went to x1.0 (tuned on PT+S3, Moderate).
+# Rat value 1.47 (also the default for other species); mouse needs more because its S3 holds more of the glucose handling.
+SGLT2_DIAB_GLUCOSE_FACTOR_DEFAULT = 1.47
+SGLT2_DIAB_GLUCOSE_FACTOR_BY = {('mou','male'): 1.80, ('mou','female'): 2.08}
+def sglt2_diab_glucose_factor(cell):
+    return SGLT2_DIAB_GLUCOSE_FACTOR_BY.get((cell.species, cell.sex), SGLT2_DIAB_GLUCOSE_FACTOR_DEFAULT)
 SGLT1_DIAB_GLUCOSE_FACTOR = 1.0     # SGLT1 unchanged in diabetes (evidence mixed; -33% rests on one Akita-mouse study)
 
 def sglt_diab_factor(cell, ttype):
     """former glucose.py factor (kept only for the branches that overwrite the activity: SGLT2 inhibition, empagliflozin)"""
     if cell.diabete == 'Non':
         return 1.0
-    return SGLT2_DIAB_GLUCOSE_FACTOR if ttype == 'SGLT2' else (SGLT1_DIAB_GLUCOSE_FACTOR if ttype == 'SGLT1' else 1.0)
+    return sglt2_diab_glucose_factor(cell) if ttype == 'SGLT2' else (SGLT1_DIAB_GLUCOSE_FACTOR if ttype == 'SGLT1' else 1.0)
 
 def get_interface_id(label):
     tmp = (label).split('_')
@@ -583,9 +588,9 @@ def read_params(cell,filename,j):
                     if cell.segment == 'PT' or cell.segment == 'S3':
                         if newTransp.type == 'SGLT2':
                             if cell.sex == 'male':
-                                newTransp.act = (1+0.38)*SGLT2_DIAB_GLUCOSE_FACTOR*value/(href*Cref)
+                                newTransp.act = (1+0.38)*sglt2_diab_glucose_factor(cell)*value/(href*Cref)
                             elif cell.sex == 'female':
-                                newTransp.act = (1+0.38)*SGLT2_DIAB_GLUCOSE_FACTOR*value/(href*Cref)
+                                newTransp.act = (1+0.38)*sglt2_diab_glucose_factor(cell)*value/(href*Cref)
                         # elif newTransp.type == 'GLUT2': # optional
                         #     if cell.sex == 'male':
                         #         newTransp.act = (1+0.5)*value/(href*Cref)
@@ -637,9 +642,9 @@ def read_params(cell,filename,j):
                     if cell.segment == 'PT' or cell.segment == 'S3':
                         if newTransp.type == 'SGLT2':
                             if cell.sex == 'male':
-                                newTransp.act = (1+0.38)*SGLT2_DIAB_GLUCOSE_FACTOR*value/(href*Cref)
+                                newTransp.act = (1+0.38)*sglt2_diab_glucose_factor(cell)*value/(href*Cref)
                             elif cell.sex == 'female':
-                                newTransp.act = (1+0.28)*SGLT2_DIAB_GLUCOSE_FACTOR*value/(href*Cref)
+                                newTransp.act = (1+0.28)*sglt2_diab_glucose_factor(cell)*value/(href*Cref)
                         elif newTransp.type == 'GLUT2':
                             if cell.sex == 'male':
                                 newTransp.act = (1+0.5)*value/(href*Cref)
