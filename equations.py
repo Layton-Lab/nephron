@@ -1,6 +1,6 @@
 from defs import *
 from values import *
-from set_params import set_torq_params
+from set_params import set_torq_params, torq_ref_vol
 import math
 import flux
 import copy
@@ -250,9 +250,9 @@ def conservation_eqs (x,i):
             if cell1.species == 'hum':
                 fac1 = 8.0*visc*(cell1.volref[0]*Vref)*torqL/(Radref**2) 
             elif cell1.species == 'rat':
-                fac1 = 8.0*visc*(cell1.vol_init[0]*Vref)*torqL/(Radref**2)
+                fac1 = 8.0*visc*(torq_ref_vol(cell1)*Vref)*torqL/(Radref**2)
             elif cell1.species == 'mou':
-                fac1 = 8.0*visc*(cell1.vol_init[0]*Vref)*torqL/(Radref**2)
+                fac1 = 8.0*visc*(torq_ref_vol(cell1)*Vref)*torqL/(Radref**2)
             else:
                 print('cell1.species: ' + str(cell1.species))
                 raise Exception('what is species?')

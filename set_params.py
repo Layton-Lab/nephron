@@ -16,7 +16,16 @@ import os as _os
 SGLT2_DIAB_GLUCOSE_FACTOR_DEFAULT = float(_os.environ.get('NEPH_SGLT2_DIAB','1.0'))   # extra diabetic SGLT2 factor (rodents), env for scans
 # Extra diabetic SGLT2 factor (rodents, Moderate, 25 mM plasma glucose), on top of the paper's x1.38.
 # Tuned so ~18% of filtered glucose leaves S3 (Layton, Vallon & Edwards 2016: FEG 17.9% at 25 mM, SNGFR +50%).
-SGLT2_DIAB_GLUCOSE_FACTOR_BY = {('rat','male'): 7.0, ('rat','female'): 8.2, ('mou','male'): 7.4, ('mou','female'): 5.6}
+SGLT2_DIAB_GLUCOSE_FACTOR_BY = {}   # (extra diabetic SGLT2 factor: scan via NEPH_SGLT2_DIAB)
+
+TORQ_HEALTHY_REF = _os.environ.get('NEPH_TORQ_HEALTHYREF','0') == '1'
+def torq_ref_vol(cell):
+    """PT/S3 inlet flow that defines the reference microvillous torque (TM0). Paper (Layton 2016): reference = healthy SNGFR, so
+    diabetic hyperfiltration raises transporter density through torque. Default (0): legacy behaviour, reference = the cell's own
+    (diabetic) inflow, which cancels the hyperfiltration effect."""
+    if TORQ_HEALTHY_REF and cell.vol_torq0 is not None and cell.species != 'hum':
+        return cell.vol_torq0
+    return cell.vol_init[0]
 def sglt2_diab_glucose_factor(cell):
     if cell.species == 'hum':
         return 1.38   # human: legacy value, not re-tuned
@@ -171,7 +180,7 @@ def read_params(cell,filename,j):
                         cell.diam = value*1.02 #slight increase in juxt diam size
                 elif cell.diabete == 'Moderate':
                     if cell.segment == 'PT' or cell.segment == 'S3':
-                        cell.diam = value*1.1
+                        cell.diam = value*float(_os.environ.get('NEPH_PTDIAM','1.1'))
                     elif cell.segment == 'SDL' or cell.segment == 'mTAL' or cell.segment == 'cTAL' or cell.segment == 'DCT' or cell.segment == 'CNT' or cell.segment == 'CCD' or cell.segment == 'OMCD':
                         cell.diam = value*1.18
                     else:
@@ -874,7 +883,7 @@ def read_params(cell,filename,j):
                     cell.conc[solute_id[tmp[1]]][2] = float(num[4])
                     if len(num) > 5:
                         cell.conc[solute_id[tmp[1]]][3] = float(num[5])
-                if cell.diabete != 'Non' and cell.segment == 'PT':
+                if (cell.diabete != 'Non' or _os.environ.get('NEPH_GLU_ND','0') != '0') and cell.segment == 'PT':
                     cell.conc[14,0] = diab_plasma_glucose(cell)   # filtrate glucose = plasma (bath) glucose
 
             # Reference impermeat concentration (for cell)
@@ -969,6 +978,8 @@ def read_params(cell,filename,j):
                     cell.vol[compart_id[tmp[1]]] = float(num[0])
                     cell.vol_init[compart_id[tmp[1]]] = float(num[0])
 
+                if compart_id[tmp[1]] == 0:
+                    cell.vol_torq0 = cell.vol_init[0]   # healthy inflow = torque reference
                 if cell.diabete != 'Non' and cell.species == 'rat':
                     if cell.sex == 'male':
                         if cell.segment == 'PT' and cell.type == 'sup':

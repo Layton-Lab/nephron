@@ -103,6 +103,7 @@ class membrane:
         self.vol = np.zeros(NC)
         # initial volume
         self.vol_init = np.zeros(NC)
+        self.vol_torq0 = None   # healthy PT inlet flow used as the torque reference (set in set_params for diabetic rodents)
         # initial pH
         self.pH = np.zeros(NC)
 

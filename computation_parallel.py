@@ -10,7 +10,7 @@ import os
 import argparse
 import multiprocessing
 import output
-from set_params import set_torq_params
+from set_params import set_torq_params, torq_ref_vol
 import re
 
 solute = ['Na','K','Cl','HCO3','H2CO3','CO2','HPO4','H2PO4','urea','NH3','NH4','H','HCO2','H2CO2','glu']
@@ -121,9 +121,9 @@ def compute_one_segment(sup_or_jux, segment, sex,species,sup_or_multi,diabete,in
             Radref,torqR,torqvm,PbloodPT,torqL,torqd = set_torq_params(pt[j].species,pt[j].sex,pt[j].preg)
                                         
             if pt[j].species == 'rat':
-                fac1 = 8.0*visc*(pt[j].vol_init[0]*Vref)*torqL/(Radref**2)
+                fac1 = 8.0*visc*(torq_ref_vol(pt[j])*Vref)*torqL/(Radref**2)
             elif pt[j].species == 'mou':
-                fac1 = 8.0*visc*(pt[j].vol_init[0]*Vref)*torqL/(Radref**2)
+                fac1 = 8.0*visc*(torq_ref_vol(pt[j])*Vref)*torqL/(Radref**2)
             elif pt[j].species == 'hum':
                 fac1 = 8.0*visc*(pt[j].volref[0]*Vref)*torqL/(Radref**2)
             else:
@@ -185,9 +185,9 @@ def compute_one_segment(sup_or_jux, segment, sex,species,sup_or_multi,diabete,in
             Radref,torqR,torqvm,PbloodPT,torqL,torqd = set_torq_params(s3[j].species,s3[j].sex,s3[j].preg)
                         
             if s3[j].species == 'rat':
-                fac1 = 8.0*visc*(s3[j].vol_init[0]*Vref)*torqL/(Radref**2)
+                fac1 = 8.0*visc*(torq_ref_vol(s3[j])*Vref)*torqL/(Radref**2)
             elif s3[j].species == 'mou':
-                fac1 = 8.0*visc*(s3[j].vol_init[0]*Vref)*torqL/(Radref**2)
+                fac1 = 8.0*visc*(torq_ref_vol(s3[j])*Vref)*torqL/(Radref**2)
             elif s3[j].species == 'hum':
                 fac1 = 8.0*visc*(s3[j].volref[0]*Vref)*torqL/(Radref**2) 
             else:

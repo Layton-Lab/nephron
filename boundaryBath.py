@@ -3,10 +3,14 @@ from values import *
 import numpy as np
 from defs import *
 
+import os as _os
+GLU_ND = float(_os.environ.get('NEPH_GLU_ND','0'))   # test hook: plasma glucose (mM) for the NON-diabetic case
 def diab_plasma_glucose(cell):
     """Plasma glucose (mM) of a diabetic state. Used for BOTH the PT inlet (filtrate) glucose and the bath/interstitial
     glucose, which must agree (freely filtered). The bath used to be 5x healthy (25 mM) for every species and state,
     while the Moderate PT inlet was 8.6 mM."""
+    if cell.diabete == 'Non' and GLU_ND:
+        return GLU_ND
     if cell.diabete == 'Moderate':
         return 8.6 if cell.species == 'hum' else 25.0   # rodents: 25 mM (Layton 2016 diabetic rat)
     if cell.diabete == 'Severe':
@@ -260,7 +264,7 @@ def boundaryBath(cell,i):
         cell.conc[13,5] = cell.cm[12]/(1+fachco2)
         cell.conc[14,5] = cell.cm[14]      
 
-        if cell.diabete != 'Non':
+        if cell.diabete != 'Non' or GLU_ND:
             cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
 
 
@@ -336,7 +340,7 @@ def boundaryBath(cell,i):
         cell.conc[13,5] = Hco2totz/(1+fachco2)
         cell.conc[14,5] = cell.cm[14]+(cell.oi[14]-cell.cm[14])*pos
 
-        if cell.diabete != 'Non':
+        if cell.diabete != 'Non' or GLU_ND:
             cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
             
         
@@ -409,7 +413,7 @@ def boundaryBath(cell,i):
             cell.conc[13,5] = cell.cm[12]/(1+fachco2)
             cell.conc[14,5] = cell.cm[14]
 
-            if cell.diabete != 'Non':
+            if cell.diabete != 'Non' or GLU_ND:
                 cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
 
 
@@ -483,7 +487,7 @@ def boundaryBath(cell,i):
             cell.conc[14,5] = cell.cm[14]+(cell.oi[14]-cell.cm[14])*pos
 
 
-            if cell.diabete != 'Non':
+            if cell.diabete != 'Non' or GLU_ND:
                 cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
 
             for k in [0,4,5]:
@@ -570,7 +574,7 @@ def boundaryBath(cell,i):
         cell.conc[13,5] = Hco2totz/(1+fachco2)
         cell.conc[14,5] = cell.oi[14]+(cell.pap[14]-cell.oi[14])*pos
 
-        if cell.diabete != 'Non':
+        if cell.diabete != 'Non' or GLU_ND:
                 cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
 
         for k in [0,4,5]:

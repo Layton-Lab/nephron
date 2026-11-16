@@ -1,7 +1,7 @@
 import numpy as np
 from defs import *
 from values import *
-from set_params import set_torq_params
+from set_params import set_torq_params, torq_ref_vol
 import electrochemical 
 import water
 import glucose
@@ -129,9 +129,9 @@ def compute_fluxes (cell,j):
         Radref,torqR,torqvm,PbloodPT,torqL,torqd = set_torq_params(cell.species,cell.sex,cell.preg)
 
         if cell.species == 'rat':
-            fac1 = 8.0*visc*(cell.vol_init[0]*Vref)*torqL/(Radref**2)
+            fac1 = 8.0*visc*(torq_ref_vol(cell)*Vref)*torqL/(Radref**2)
         elif cell.species == 'mou':
-            fac1 = 8.0*visc*(cell.vol_init[0]*Vref)*torqL/(Radref**2)
+            fac1 = 8.0*visc*(torq_ref_vol(cell)*Vref)*torqL/(Radref**2)
         elif cell.species == 'hum':
             fac1 = 8.0*visc*(cell.volref[0]*Vref)*torqL/(Radref**2)
         else:
