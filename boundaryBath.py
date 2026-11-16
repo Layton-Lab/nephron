@@ -3,6 +3,16 @@ from values import *
 import numpy as np
 from defs import *
 
+def diab_plasma_glucose(cell):
+    """Plasma glucose (mM) of a diabetic state. Used for BOTH the PT inlet (filtrate) glucose and the bath/interstitial
+    glucose, which must agree (freely filtered). The bath used to be 5x healthy (25 mM) for every species and state,
+    while the Moderate PT inlet was 8.6 mM."""
+    if cell.diabete == 'Moderate':
+        return 8.6
+    if cell.diabete == 'Severe':
+        return 20.0 if cell.species == 'hum' else 25.0
+    return 5.0
+
 def female_conc(cell, i):
     # Concentrations of K, Cl are lower in female rat.
     cell.conc[1,5]=cell.conc[1,5]-1
@@ -251,7 +261,7 @@ def boundaryBath(cell,i):
         cell.conc[14,5] = cell.cm[14]      
 
         if cell.diabete != 'Non':
-            cell.conc[14,5] = 5*cell.conc[14,5]
+            cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
 
 
         for k in [0,4,5]:
@@ -327,7 +337,7 @@ def boundaryBath(cell,i):
         cell.conc[14,5] = cell.cm[14]+(cell.oi[14]-cell.cm[14])*pos
 
         if cell.diabete != 'Non':
-            cell.conc[14,5] = 5*cell.conc[14,5]
+            cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
             
         
         for k in [0,4,5]:
@@ -400,7 +410,7 @@ def boundaryBath(cell,i):
             cell.conc[14,5] = cell.cm[14]
 
             if cell.diabete != 'Non':
-                cell.conc[14,5] = 5*cell.conc[14,5]
+                cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
 
 
             for k in [0,4,5]:
@@ -474,7 +484,7 @@ def boundaryBath(cell,i):
 
 
             if cell.diabete != 'Non':
-                cell.conc[14,5] = 5*cell.conc[14,5]
+                cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
 
             for k in [0,4,5]:
                 elecS = 0
@@ -561,7 +571,7 @@ def boundaryBath(cell,i):
         cell.conc[14,5] = cell.oi[14]+(cell.pap[14]-cell.oi[14])*pos
 
         if cell.diabete != 'Non':
-                cell.conc[14,5] = 5*cell.conc[14,5]
+                cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
 
         for k in [0,4,5]:
             elecS = 0

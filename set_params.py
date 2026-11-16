@@ -2,6 +2,7 @@ import re
 from defs import *
 from values import *
 import time
+from boundaryBath import diab_plasma_glucose
 
 # pick out compartment IDs. E.g. given label=Area_Lumen_Cell, it would return
 # (0,1) for (lumen, cell)
@@ -860,16 +861,8 @@ def read_params(cell,filename,j):
                     cell.conc[solute_id[tmp[1]]][2] = float(num[4])
                     if len(num) > 5:
                         cell.conc[solute_id[tmp[1]]][3] = float(num[5])
-                if cell.diabete == 'Moderate':
-                    if cell.segment == 'PT':
-                        cell.conc[14,0] = 8.6
-                elif cell.diabete == 'Severe':
-                    if cell.segment == 'PT' and cell.species == 'hum':
-                        cell.conc[14,0] = 20.0
-                    elif cell.segment == 'PT' and cell.species == 'rat':
-                        cell.conc[14,0] = 25.0
-                    elif cell.segment == 'PT' and cell.species == 'mou':
-                        cell.conc[14,0] = 25.0
+                if cell.diabete != 'Non' and cell.segment == 'PT':
+                    cell.conc[14,0] = diab_plasma_glucose(cell)   # filtrate glucose = plasma (bath) glucose
 
             # Reference impermeat concentration (for cell)
             # or oncotic pressure for lumen/LIS/bath
