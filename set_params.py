@@ -7,10 +7,10 @@ import time
 # (0,1) for (lumen, cell)
 # Diabetes scaling of SGLT activity. Until now the diabetic factor was applied twice: once here (set_params) and once
 # inside glucose.sglt1/sglt2 (SGLT1 x0.67, SGLT2 x1.38 for any diabete != 'Non'). The glucose.py factors were removed;
-# the SGLT2 number below is the PRODUCT of the two former factors (predictions unchanged). SGLT1 now follows the papers
-# (x0.67 once, no x3.5): Sangita 2022 Table 1 and Layton 2016. Moderate and Severe diabetes only; the inhibition blocks are unchanged.
+# the SGLT2 number below is the PRODUCT of the two former factors (predictions unchanged). SGLT1 is now unchanged in
+# diabetes (x1.0, no x3.5). The inhibition/empagliflozin blocks multiply by this helper, so SGLT1 there is 3.5x baseline.
 SGLT2_DIAB_GLUCOSE_FACTOR = 1.38    # former glucose.sglt2 factor
-SGLT1_DIAB_GLUCOSE_FACTOR = 0.67    # former glucose.sglt1 factor
+SGLT1_DIAB_GLUCOSE_FACTOR = 1.0     # SGLT1 unchanged in diabetes (evidence mixed; -33% rests on one Akita-mouse study)
 
 def sglt_diab_factor(cell, ttype):
     """former glucose.py factor (kept only for the branches that overwrite the activity: SGLT2 inhibition, empagliflozin)"""
@@ -592,7 +592,7 @@ def read_params(cell,filename,j):
                         #     if cell.sex == 'female':
                         #         newTransp.act = (1+0.3)*value/(href*Cref)
                         elif newTransp.type == 'SGLT1':
-                            newTransp.act = SGLT1_DIAB_GLUCOSE_FACTOR*value/(href*Cref)  # paper: SGLT1 -33% (Sangita 2022 Table 1; Layton 2016)
+                            newTransp.act = SGLT1_DIAB_GLUCOSE_FACTOR*value/(href*Cref)
                         # elif newTransp.type == 'GLUT1': # optional
                         #     if cell.sex == 'male':
                         #         newTransp.act = 0.5*value/(href*Cref)                        
@@ -646,7 +646,7 @@ def read_params(cell,filename,j):
                             if cell.sex == 'female':
                                 newTransp.act = (1+0.3)*value/(href*Cref)
                         elif newTransp.type == 'SGLT1':
-                            newTransp.act = SGLT1_DIAB_GLUCOSE_FACTOR*value/(href*Cref)  # paper: SGLT1 -33% (Sangita 2022 Table 1; Layton 2016)
+                            newTransp.act = SGLT1_DIAB_GLUCOSE_FACTOR*value/(href*Cref)
                         elif newTransp.type == 'NaKATPase':
                             newTransp.act = 1.1*value/(href*Cref)
                     elif cell.segment == 'mTAL':
