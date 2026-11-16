@@ -214,7 +214,7 @@ coupled_Cell_LIS_Na_HCO3_Cl	35.0e-9	1	2	-1
 #  specific transporters, specify activity
 #
 #transport_Lumen_Cell_SGLT1	0.00833333333e-5
-transport_Lumen_Cell_SGLT2	0.52e-9 #1.3e-9
+transport_Lumen_Cell_SGLT2	0.988e-9  # was 0.52e-9 (=male); now x1.9 male so female PT glucose profile matches male (spilled 12.8% before) #1.3e-9
 #transport_Cell_Bath_GLUT1	0.3e-5
 transport_Cell_Bath_GLUT2	0.1625e-5
 transport_Cell_LIS_GLUT2	0.1625e-5
