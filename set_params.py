@@ -10,20 +10,31 @@ from boundaryBath import diab_plasma_glucose
 # inside glucose.sglt1/sglt2 (SGLT1 x0.67, SGLT2 x1.38 for any diabete != 'Non'). The glucose.py factors were removed;
 # the SGLT2 number below is the PRODUCT of the two former factors (predictions unchanged). SGLT1 is now unchanged in
 # diabetes (x1.0, no x3.5). The inhibition/empagliflozin blocks multiply by this helper, so SGLT1 there is 3.5x baseline.
-# Re-tuned (was 1.38) so PT+S3 outflow (glucose, water) matches the old model once SGLT1 went to x1.0 (tuned on PT+S3, Moderate).
-# Rat value 1.47 (also the default for other species); mouse needs more because its S3 holds more of the glucose handling.
-SGLT2_DIAB_GLUCOSE_FACTOR_DEFAULT = 1.47
-SGLT2_DIAB_GLUCOSE_FACTOR_BY = {('mou','male'): 1.80, ('mou','female'): 2.08}
+# Rodents (Moderate, plasma glucose 15 mM): the paper's SGLT2 +38% is sufficient, no extra amplification (helper = 1.0).
+# With bath = PT inlet glucose the old amplification (1.47-2.08, which compensated the 25 mM bath) is no longer needed.
+# Human keeps its legacy 1.38 (not re-tuned). Table entries are per (species, sex) if a rodent needs its own value.
+SGLT2_DIAB_GLUCOSE_FACTOR_DEFAULT = 1.0
+SGLT2_DIAB_GLUCOSE_FACTOR_BY = {}
 def sglt2_diab_glucose_factor(cell):
+    if cell.species == 'hum':
+        return 1.38   # human: legacy value, not re-tuned
     return SGLT2_DIAB_GLUCOSE_FACTOR_BY.get((cell.species, cell.sex), SGLT2_DIAB_GLUCOSE_FACTOR_DEFAULT)
 MOUSE_DIAB_SNGFR_FACTOR = 1.25      # diabetic mouse SNGFR relative to healthy (Akita GFR +25%; micropuncture SNGFR +11%, both male)
-SGLT1_DIAB_GLUCOSE_FACTOR = 1.0     # SGLT1 unchanged in diabetes (evidence mixed; -33% rests on one Akita-mouse study)
+SGLT1_DIAB_GLUCOSE_FACTOR = 1.0     # rodents: SGLT1 unchanged in diabetes (evidence mixed; -33% rests on one Akita-mouse study)
+SGLT1_DIAB_GLUCOSE_FACTOR_HUMAN = 0.67   # human: legacy value, not re-tuned
+def sglt1_diab_glucose_factor(cell):
+    return SGLT1_DIAB_GLUCOSE_FACTOR_HUMAN if cell.species == 'hum' else SGLT1_DIAB_GLUCOSE_FACTOR
+def sglt1_diab_branch_factor(cell):
+    """activity factor in the Moderate/Severe PT/S3 branches. Human: legacy (1-0.33)*0.67*3.5; rodents: x1.0"""
+    if cell.species == 'hum':
+        return (1-0.33)*sglt1_diab_glucose_factor(cell)*3.5
+    return sglt1_diab_glucose_factor(cell)
 
 def sglt_diab_factor(cell, ttype):
     """former glucose.py factor (kept only for the branches that overwrite the activity: SGLT2 inhibition, empagliflozin)"""
     if cell.diabete == 'Non':
         return 1.0
-    return sglt2_diab_glucose_factor(cell) if ttype == 'SGLT2' else (SGLT1_DIAB_GLUCOSE_FACTOR if ttype == 'SGLT1' else 1.0)
+    return sglt2_diab_glucose_factor(cell) if ttype == 'SGLT2' else (sglt1_diab_glucose_factor(cell) if ttype == 'SGLT1' else 1.0)
 
 def get_interface_id(label):
     tmp = (label).split('_')
@@ -599,7 +610,7 @@ def read_params(cell,filename,j):
                         #     if cell.sex == 'female':
                         #         newTransp.act = (1+0.3)*value/(href*Cref)
                         elif newTransp.type == 'SGLT1':
-                            newTransp.act = SGLT1_DIAB_GLUCOSE_FACTOR*value/(href*Cref)
+                            newTransp.act = sglt1_diab_branch_factor(cell)*value/(href*Cref)
                         # elif newTransp.type == 'GLUT1': # optional
                         #     if cell.sex == 'male':
                         #         newTransp.act = 0.5*value/(href*Cref)                        
@@ -653,7 +664,7 @@ def read_params(cell,filename,j):
                             if cell.sex == 'female':
                                 newTransp.act = (1+0.3)*value/(href*Cref)
                         elif newTransp.type == 'SGLT1':
-                            newTransp.act = SGLT1_DIAB_GLUCOSE_FACTOR*value/(href*Cref)
+                            newTransp.act = sglt1_diab_branch_factor(cell)*value/(href*Cref)
                         elif newTransp.type == 'NaKATPase':
                             newTransp.act = 1.1*value/(href*Cref)
                     elif cell.segment == 'mTAL':
