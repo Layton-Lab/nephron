@@ -32,21 +32,24 @@ import os as _os
 SGLT2_DIAB_GLUCOSE_FACTOR_DEFAULT = float(_os.environ.get('NEPH_SGLT2_DIAB','1.0'))
 SGLT2_DIAB_GLUCOSE_FACTOR_BY = {('rat','male'): 4.2, ('rat','female'): 3.4, ('mou','male'): 4.9, ('mou','female'): 3.55}
 
-# CNT ENaC flow dependence (ENaC.py): facFv = max(0.01, 1+3*(flow/NaMPq0 - 1)), NaMPq0 = CNT INLET volume - reference flow
-# (mouse 1.6, rat 2.0 nl/min).  The reference flow was tuned for the HEALTHY CNT inlet flow.  The diabetic mouse CNT inlet flow is only
-# 0.60-0.64 x healthy (more upstream reabsorption), i.e. 1.12 nl/min < 1.6 nl/min: NaMPq0 < 0, the factor sits at the 0.01 floor along the
-# whole CNT, ENaC is effectively off and the CNT becomes a net (paracellular) Na secretor.  In diabetes the reference flow is therefore
-# multiplied by (diabetic/healthy CNT inlet flow), which gives the same factor profile as the healthy nephron (same value at the inlet).
-# Rat: CNT inlet flow ~unchanged in diabetes (ratio 0.96-1.02) -> 1.0.  Human: not re-tuned (1.0).
-# NEPH_ENAC_CNT_DIAB_SCALE overrides every rodent entry (1.0 = legacy behaviour).  Ratios: reference/segment_water_flows.csv (CNT inflow Mod/Non).
-ENAC_CNT_DIAB_FLOWREF_SCALE_BY = {('rat','male'): 1.0, ('rat','female'): 1.0, ('mou','male'): 0.60, ('mou','female'): 0.64}
-def enac_cnt_flowref_scale(cell):
-    if cell.diabete == 'Non' or cell.species == 'hum':
-        return 1.0
-    ov = _os.environ.get('NEPH_ENAC_CNT_DIAB_SCALE')
-    if ov is not None:
-        return float(ov)
-    return ENAC_CNT_DIAB_FLOWREF_SCALE_BY.get((cell.species, cell.sex), 1.0)
+# CNT ENaC flow dependence (ENaC.py): facFv = max(floor, 1+3*(flow/NaMPq0 - 1)), NaMPq0 = CNT inlet volume - reference flow
+# (mouse 1.6, rat 2.0 nl/min).  Healthy: NaMPq0 = healthy CNT inlet - 1.6 nl/min (mouse male 1.86 -> 0.26 nl/min), factor ~19.5 at the inlet, ~5 at the outlet.
+# The diabetic mouse CNT inlet is much lower (1.12 male / 1.30 female nl/min, i.e. < 1.6), so with the run's OWN inlet NaMPq0 < 0, the factor
+# sat at the 0.01 floor everywhere, ENaC was effectively off and the CNT became a net (paracellular) Na secretor.
+# Fix (diabetic mouse only): the denominator is the HEALTHY one (healthy CNT inlet - reference flow), a fixed positive number, so the factor is a function
+# of the absolute CNT flow exactly as in the healthy nephron (ENaC rises with flow); and the floor is raised to ENAC_CNT_DIAB_FLOOR (healthy factor never
+# goes below ~5) so ENaC cannot switch off completely at low flow.  Healthy, rat (CNT inlet unchanged in diabetes) and human: legacy behaviour.
+# Healthy CNT inlet flows (nl/min, from reference/segment_water_flows.csv); NEPH_ENAC_CNT_LEGACY=1 restores the legacy formula; NEPH_ENAC_CNT_FLOOR sets the floor.
+ENAC_CNT_HEALTHY_INLET_NL_MIN = {('mou','male'): 1.860, ('mou','female'): 2.023}
+ENAC_CNT_DIAB_FLOOR = float(_os.environ.get('NEPH_ENAC_CNT_FLOOR','1.0'))
+def enac_cnt_healthy_inlet_vol(cell):
+    """Healthy CNT inlet volume (model units) to use in NaMPq0, or None for the legacy formula (own inlet volume)."""
+    if cell.diabete == 'Non' or _os.environ.get('NEPH_ENAC_CNT_LEGACY','0') == '1':
+        return None
+    v = ENAC_CNT_HEALTHY_INLET_NL_MIN.get((cell.species, cell.sex))
+    return None if v is None else v/6000.0
+def enac_cnt_floor(cell):
+    return 0.01 if enac_cnt_healthy_inlet_vol(cell) is None else ENAC_CNT_DIAB_FLOOR
 
 # Torque reference.  PT/S3 apical fluxes are scaled by 1+TS*scaleT*(Torque/TM0-1) (flux.py, equations.py).  TM0 is the torque at the
 # reference flow.  With NEPH_TORQ_HEALTHYREF=1 (default) that reference is the HEALTHY inlet flow (cell.vol_torq0), as in the model
