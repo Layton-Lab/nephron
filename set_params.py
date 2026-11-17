@@ -48,6 +48,13 @@ def enac_cnt_healthy_inlet_vol(cell):
         return None
     v = ENAC_CNT_HEALTHY_INLET_NL_MIN.get((cell.species, cell.sex))
     return None if v is None else v/6000.0
+ENAC_CNT_DIAB_CAP_ON = _os.environ.get('NEPH_ENAC_CNT_CAP','1') == '1'
+def enac_cnt_cap(cell, ref_nl_min):
+    """Upper limit of the CNT flow factor for the diabetic mouse: the healthy value at the healthy inlet, 1+3*ref/(inlet-ref).  None = no cap."""
+    v = enac_cnt_healthy_inlet_vol(cell)
+    if v is None or not ENAC_CNT_DIAB_CAP_ON:
+        return None
+    return 1.0 + 3.0*ref_nl_min/(v*6000.0 - ref_nl_min)
 def enac_cnt_floor(cell):
     return 0.01 if enac_cnt_healthy_inlet_vol(cell) is None else ENAC_CNT_DIAB_FLOOR
 

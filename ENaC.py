@@ -1,7 +1,7 @@
 import numpy as np
 from values import *
 from defs import *
-from set_params import enac_cnt_healthy_inlet_vol, enac_cnt_floor
+from set_params import enac_cnt_healthy_inlet_vol, enac_cnt_floor, enac_cnt_cap
 
 def ENaC(cell,i,memb_id,hNaMP,area,jvol):
 # hNaMP is the activity of ENaC from .dat file
@@ -42,6 +42,10 @@ def ENaC(cell,i,memb_id,hNaMP,area,jvol):
         elif cell.species == 'hum':
             NaMPq0=vin-(2.0e-6)/60/Vref
         facFvMP=max(enac_cnt_floor(cell),1+3*((cell.vol[0]/NaMPq0)-1))
+        if cell.species == 'mou':
+            cap = enac_cnt_cap(cell, 1.6e-6/60/Vref*6000.0)
+            if cap is not None:
+                facFvMP=min(facFvMP,cap)
         
         # # tracking
         # fname = 'tracking_all.txt'

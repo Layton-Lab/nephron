@@ -113,6 +113,9 @@ and the CNT secreted Na paracellularly (20.0 -> 38.6 pmol/min, male).
 Fix (diabetic mouse only; `set_params.enac_cnt_healthy_inlet_vol`, `enac_cnt_floor`): NaMPq0 uses the HEALTHY CNT inlet (1.860 male / 2.023 female nl/min), a fixed
 positive denominator, so the factor depends on the absolute CNT flow as in the healthy nephron; the floor is raised from 0.01 to 1.0 (healthy factor never goes below ~5), so
 ENaC cannot switch off at low flow.  Healthy, rat (CNT inlet unchanged in diabetes) and human: legacy.  `NEPH_ENAC_CNT_LEGACY=1` restores the old formula, `NEPH_ENAC_CNT_FLOOR` sets the floor.
+Cap: the diabetic-mouse factor is also limited to its healthy value at the healthy inlet, 1+3*1.6/(inlet-1.6) = 19.5 male / 12.3 female (`NEPH_ENAC_CNT_CAP=0` disables).  Without it the
+high CNT flows of the SGLT2-inhibitor runs (3.4-4.6 nl/min) gave factors of 35-50, drove CNT lumen Na down to 1.8 mM (empagliflozin run) and the CCD Newton solve then diverged at cell 1.
+The cap never binds for CNT inlet flows below ~2 nl/min (baseline unchanged).
 An earlier attempt (reference flow x fixed 0.60) was dropped: it only works if the diabetic inlet is ~0.6 x healthy; A4/A6 (inlet 0.12/0.69 nl/min) secreted Na again.
 CNT-only results (mouse male, Moderate, Na pmol/min in -> out): baseline 20.0 -> 2.8 (was 38.6; healthy mouse 47.1 -> 5.6); A6 (Na-K-ATPase x2) 14.7 -> 4.0 (was 32.5);
 A4 (SGLT2 x2, inlet 0.12 nl/min, outlier) 7.1 -> 3.8 (was 18.3); B1 (SGLT2 inhibited) 96.6 -> 20.5 (was 53.6).  Full-chain urine with this version not yet rerun
