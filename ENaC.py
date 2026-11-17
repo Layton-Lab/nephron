@@ -1,6 +1,7 @@
 import numpy as np
 from values import *
 from defs import *
+from set_params import enac_cnt_flowref_scale
 
 def ENaC(cell,i,memb_id,hNaMP,area,jvol):
 # hNaMP is the activity of ENaC from .dat file
@@ -28,14 +29,17 @@ def ENaC(cell,i,memb_id,hNaMP,area,jvol):
         #Dependence of Lumen-Cell permeability to Na (ENac) on Na concentrations and on flow
         facCaMP=1.0
         facphMP=1.0
+        # NaMPq0 = (CNT inlet volume) - (reference flow).  In diabetes the reference flow is scaled with the lower CNT inlet flow
+        # (enac_cnt_flowref_scale, set_params.py); otherwise NaMPq0 < 0 and the factor is stuck at its floor.
+        fscale = enac_cnt_flowref_scale(cell)
         if cell.species == 'rat':
             flow_ref = 2.0e-6
 
-            NaMPq0=cell.vol_init[0]-(flow_ref)/60/Vref
+            NaMPq0=cell.vol_init[0]-fscale*(flow_ref)/60/Vref
         elif cell.species == 'mou':
-            NaMPq0=cell.vol_init[0]-(1.6e-6)/60/Vref 
+            NaMPq0=cell.vol_init[0]-fscale*(1.6e-6)/60/Vref
         elif cell.species == 'hum':
-            NaMPq0=cell.vol_init[0]-(2.0e-6)/60/Vref
+            NaMPq0=cell.vol_init[0]-fscale*(2.0e-6)/60/Vref
         facFvMP=max(0.01,1+3*((cell.vol[0]/NaMPq0)-1))
         
         # # tracking

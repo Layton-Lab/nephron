@@ -104,3 +104,13 @@ For a single-segment chain (what was used for the numbers above), call `compute_
 `results/`; the segments run in the order PT, S3, SDL, mTAL, cTAL, DCT, CNT and the outlet of each is written to `outlets/`.
 The collecting duct (CCD, OMCD, IMCD) is then run with `driver.compute(N, 'datafiles/<SEG>params_<M|F>_<rat|mou>.dat', 'Newton', ...)`.
 Outlet files hold 15 solute concentrations (rows 0–14, glucose = 14), then volume (row 15; ×6000 gives nl/min), electrical potential (16) and pressure (17).
+
+## CNT ENaC flow dependence in diabetes (mouse)
+`ENaC.py` (CNT): `facFv = max(0.01, 1+3*(flow/NaMPq0 - 1))`, `NaMPq0 = CNT inlet volume - reference flow` (mouse 1.6, rat 2.0 nl/min).
+The reference flow was tuned on the healthy CNT inlet (mouse male 1.86 nl/min -> factor 19.5 at the inlet, ~5 at the outlet).  The Moderate mouse CNT
+inlet is only 1.12 (male) / 1.30 (female) nl/min, below 1.6, so `NaMPq0 < 0`: the factor was pinned at the 0.01 floor everywhere, ENaC was effectively
+off and the CNT secreted Na by the paracellular route (20.0 -> 38.6 pmol/min, male).  Fix: `set_params.enac_cnt_flowref_scale` multiplies the reference
+flow by (diabetic/healthy CNT inlet flow) = 0.60 (male), 0.64 (female); rat 1.0 (inlet flow unchanged in diabetes); human 1.0.  Factor profile becomes
+19.3 -> 9.9 (healthy 19.5 -> 5.2).  Result (male, CNT only): Na 20.0 -> 1.9 pmol/min (healthy mouse: 47.1 -> 5.6; 88% reabsorbed vs 91%); scale 0.55 gives 2.6, so it is
+not knife-edge, though the factor is sensitive to the denominator when scale -> 0.7.  Full chain, Moderate mouse: urine 0.154 (was 0.158) male, 0.145 (0.149) female;
+IMCD Na 62.1 (69.1) / 65.6 (77.2) mM.  `NEPH_ENAC_CNT_DIAB_SCALE=1` restores the legacy behaviour.  The CCD uses the same form (ref 0.08 nl/min-type constant) and was not changed.
