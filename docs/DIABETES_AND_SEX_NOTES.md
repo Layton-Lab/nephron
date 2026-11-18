@@ -12,7 +12,7 @@ pregnancy, unilateral nephrectomy. The human case keeps its legacy parameters (s
 |---|---|---|
 | First-cell positivity safeguard, per-cell solver statistics (`Newton.STATS`) | `Newton.py` | CCD first cell stalled/diverged; need per-cell diagnostics |
 | OMCD first cell re-solved with the safeguard only if the plain solve has negative formate | `Newton.py` | valid OMCD solutions have tiny negative H2CO2, so the safeguard cannot be always on there |
-| Undamped Newton near the solution (`NEPH_FASTAMP`, IMCD only) | `Newton.py` | IMCD solve speed |
+| Undamped Newton near the solution (IMCD, built into `_damping`) | `Newton.py` | IMCD solve speed |
 | Convective flux kept when `|dC| <= 1e-6` (`NEPH_CONVFIX`) | `electrochemical.py` | log-mean → common concentration, so the flux tends to `(1-sig)*C*Jv`, not 0; omitting it made the residual discontinuous |
 | IMCD basolateral Na–HPO4 cotransport ×0.05 (rat and mouse, M and F) | `datafiles/IMCDparams_*` | non-physical IMCD roots |
 | IMCD LIS concentrations start at bath values (`NEPH_IMCD_LISBATH`, default 1) | `driver.py` | IMCD params file has LIS = cell column |
@@ -51,10 +51,9 @@ at the PT outlet stay close to the previous values.
 | `NEPH_SGLT2_DIAB` | 1.0 | extra SGLT2 factor for (species, sex) pairs not in the table (use for scans after emptying the table) |
 | `NEPH_GLU_ND` | 0 (off) | test hook: plasma glucose (mM) of the *non-diabetic* case, e.g. 25 |
 | `NEPH_CONVFIX` | 1 | convective-flux continuity fix (0 = old) |
-| `NEPH_POSSAFE` / `NEPH_POSSEGS` / `NEPH_POSFRAC` / `NEPH_POSVOL` | 1 / CCD / 0.1 / 0 | first-cell positivity safeguard; `NEPH_POSVOL=1` also keeps compartment volumes positive (was needed once for the rat female Moderate CCD with the older settings) |
+| `NEPH_POSSAFE` | 1 | positivity safeguard of the Newton step (0 = off); the segments it applies to are the constants `POS_FIRST_CELL` (CCD, S3), `POS_EVERY_CELL` (CCD), `POS_IF_NEG_FORMATE` (OMCD) in `Newton.py` |
 | `NEPH_IMCD_LISBATH` | 1 | IMCD LIS starts at bath |
-| `NEPH_FASTAMP` / `NEPH_FASTSEGS` | 1 / IMCD | undamped Newton near the solution |
-| `NEPH_STRICT`, `NEPH_TRACEK`, `NEPH_RECX` | 0 | diagnostics |
+| `NEPH_STRICT` | 0 | raise instead of continuing when the Newton iteration cap is reached |
 
 ## 3. Results at the committed settings (superficial nephron, 200 cells/segment, PT → IMCD)
 No errors and no non-converged cells in any of the eight runs below.
@@ -125,9 +124,17 @@ A4 (SGLT2 x2, inlet 0.12 nl/min, outlier) 7.1 -> 3.8 (was 18.3); B1 (SGLT2 inhib
 Two solver failures in the parameter-sensitivity runs, both caused by a full Newton step driving a very small concentration (~3e-5 mM) negative:
 * S3, halved PT Na-K-ATPase (`naka=0.5`): OverflowError in `ATPase.hatpase` in the FIRST S3 cell (the PT outlet composition is far from the S3 file's non-lumen start values).
 * CCD, SGLT2 inhibition + NHE3 x0.35 (CNT inlet flow 4.6 nl/min): divergence at cell 1 (|f| 252 -> 7e4 at iteration 3, minimum concentration negative).
-Fix (`Newton.py`): the fraction-to-boundary step limit (NEPH_POSSAFE=1) is now also applied in the first cell of the S3 (`NEPH_POSSEGS` default `CCD,S3`) and in every CCD cell
-(`NEPH_POSALLCELLS` default `CCD`).  Where a case already solved the results are identical (checked: baseline and healthy mouse S3, baseline CCD: same flow, Na, iteration counts).
+Fix (`Newton.py`): the fraction-to-boundary step limit (NEPH_POSSAFE=1) is now also applied in the first cell of the S3 (`POS_FIRST_CELL` = CCD, S3) and in every CCD cell
+(`POS_EVERY_CELL` = CCD).  Where a case already solved the results are identical (checked: baseline and healthy mouse S3, baseline CCD: same flow, Na, iteration counts).
 Results now: A5 (naka 0.5) urine 0.301 nl/min, B3 0.734 nl/min, both 0 non-converged.  Still failing: A4 (sglt2 x2; CCD diverges in its first cell, CNT inflow 0.12 nl/min).
 B4 (empagliflozin) completes with CCD up to 290 iterations and 2 non-converged OMCD cells (CNT outlet lumen Na only 2.1 mM).
 NOTE: a CNT-only diagnostic must pass the same `inhibition` as the full run: empagliflozin changes ROMK (DCT/CNT), paracellular permeabilities (CNT), AQP2, NHE3, NKCC2 ... in
 several segments, which is why a CNT-only test without it predicted 19.4 instead of 5.1 pmol/min Na for B4.
+
+## Newton.py clean-up (no change in results)
+The rat/mouse solver was rewritten for readability: the per-segment damping if-chain (with ~100 lines of dead or commented-out branches: the unreachable IMCD `male` branch, LDL `iter>100`, duplicate
+mTAL branches, a commented-out 70-line CNT schedule) is now one function `_damping(segment, k, iter, residual)`; the positivity safeguard is configured by three segment sets instead of five environment
+variables; unused experiments (`NEPH_CHORD`, `NEPH_RECX`/`NEPH_TRACEK` debug recording, `NEPH_POSVOL`, `NEPH_FASTAMP`/`NEPH_FASTSEGS`, `NEPH_POSSAFE=2`) and unused variables were removed.  The damping VALUES are
+unchanged (hand-tuned per segment).  Checks: (1) `_damping` equals the old if-chain on 4.3 million combinations of segment, sex, cell type, cell index, iteration (0-319) and residual norm (every threshold +-1e-9);
+(2) full PT->IMCD re-runs of rat male Moderate, mouse male `Non`, B3 (SGLT2 inhibition + NHE3 x0.35) and A5 (Na-K-ATPase x0.5) give bit-identical summaries (all outlet values, flows, iteration counts) to the previous code.
+`newton_human` and `Newton_preg.py` were not touched (no human or pregnancy validation was run).

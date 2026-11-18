@@ -7,8 +7,6 @@ import copy
 import numpy as np
 
 import os
-DBGON = os.environ.get('NEPH_RECX','0') == '1'
-DBG = None
 EQFORM = os.environ.get('NEPH_EQFORM','0') == '1'   # experimental formate equilibrium rows (default: off)
 
 # parameters
@@ -719,9 +717,6 @@ def conservation_eqs (x,i):
 
         raise Exception('what is this segment? ' + cell1.segment)
         
-    if DBGON:
-        global DBG
-        DBG = dict(S=S.copy(), fvec=fvec.copy(), Jsol=Jsol1.copy(), Jvol=Jvol1.copy())
     return fvec
 
 
