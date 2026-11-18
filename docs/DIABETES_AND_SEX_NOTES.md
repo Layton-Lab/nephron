@@ -120,3 +120,14 @@ An earlier attempt (reference flow x fixed 0.60) was dropped: it only works if t
 CNT-only results (mouse male, Moderate, Na pmol/min in -> out): baseline 20.0 -> 2.8 (was 38.6; healthy mouse 47.1 -> 5.6); A6 (Na-K-ATPase x2) 14.7 -> 4.0 (was 32.5);
 A4 (SGLT2 x2, inlet 0.12 nl/min, outlier) 7.1 -> 3.8 (was 18.3); B1 (SGLT2 inhibited) 96.6 -> 20.5 (was 53.6).  Full-chain urine with this version not yet rerun
 (with the earlier 0.60 version: 0.154 male / 0.145 female nl/min vs 0.158 / 0.149 before).  CCD uses the same formula and was not changed.
+
+## Newton positivity safeguard: S3 first cell and every CCD cell (mouse, Moderate)
+Two solver failures in the parameter-sensitivity runs, both caused by a full Newton step driving a very small concentration (~3e-5 mM) negative:
+* S3, halved PT Na-K-ATPase (`naka=0.5`): OverflowError in `ATPase.hatpase` in the FIRST S3 cell (the PT outlet composition is far from the S3 file's non-lumen start values).
+* CCD, SGLT2 inhibition + NHE3 x0.35 (CNT inlet flow 4.6 nl/min): divergence at cell 1 (|f| 252 -> 7e4 at iteration 3, minimum concentration negative).
+Fix (`Newton.py`): the fraction-to-boundary step limit (NEPH_POSSAFE=1) is now also applied in the first cell of the S3 (`NEPH_POSSEGS` default `CCD,S3`) and in every CCD cell
+(`NEPH_POSALLCELLS` default `CCD`).  Where a case already solved the results are identical (checked: baseline and healthy mouse S3, baseline CCD: same flow, Na, iteration counts).
+Results now: A5 (naka 0.5) urine 0.301 nl/min, B3 0.734 nl/min, both 0 non-converged.  Still failing: A4 (sglt2 x2; CCD diverges in its first cell, CNT inflow 0.12 nl/min).
+B4 (empagliflozin) completes with CCD up to 290 iterations and 2 non-converged OMCD cells (CNT outlet lumen Na only 2.1 mM).
+NOTE: a CNT-only diagnostic must pass the same `inhibition` as the full run: empagliflozin changes ROMK (DCT/CNT), paracellular permeabilities (CNT), AQP2, NHE3, NKCC2 ... in
+several segments, which is why a CNT-only test without it predicted 19.4 instead of 5.1 pmol/min Na for B4.

@@ -84,7 +84,10 @@ def broyden(func,x,k,type):
 #   NEPH_POSSAFE=1  (default 1; 0 = original behaviour) limit Newton steps in the FIRST cell of the segments in NEPH_POSSEGS (default CCD) so no
 #                   concentration drops below POSFRAC*old value. Not applied to the OMCD (valid solution has H2CO2
 #                   ~ -1e-4) nor, by default, the IMCD (first-cell solve broke at N=200 with it)
-#   NEPH_POSSAFE=2  same, in every cell (hurts the OMCD, whose valid solution has H2CO2 ~ -1e-4; not recommended)
+#   (default NEPH_POSSEGS = CCD,S3: the S3 first cell diverged with an OverflowError in ATPase.hatpase for a halved PT Na-K-ATPase (mouse, Moderate); results unchanged otherwise)
+#   NEPH_POSALLCELLS (default CCD)  segments where the safeguard is applied in EVERY cell, not just the first (the CCD of high-flow diabetic mouse runs,
+#                   e.g. SGLT2 inhibition + NHE3 down, diverged at cell 1 when a small concentration was stepped negative; NEPH_POSALLCELLS= restores first-cell-only)
+#   NEPH_POSSAFE=2  same, in every cell of ALL segments (hurts the OMCD, whose valid solution has H2CO2 ~ -1e-4; not recommended)
 import os, time as _time
 STATS = []                                   # one record per newton_rat call
 RECX = os.environ.get('NEPH_RECX','0') == '1'   # also store the solution vector of each call
@@ -93,7 +96,8 @@ TRACEK = [int(v) for v in os.environ.get('NEPH_TRACEK','').split(',') if v.strip
 POSMODE = int(os.environ.get('NEPH_POSSAFE','1'))   # 0 off, 1 first cell (k==0) only, 2 every cell
 POSSAFE = POSMODE > 0
 POSVOL = os.environ.get('NEPH_POSVOL','0') == '1'     # also keep compartment volumes positive
-POSSEGS = os.environ.get('NEPH_POSSEGS','CCD').split(',')   # segments where the first-cell safeguard is always active
+POSSEGS = os.environ.get('NEPH_POSSEGS','CCD,S3').split(',')
+POSALLCELLS = os.environ.get('NEPH_POSALLCELLS','CCD').split(',')   # segments where the positivity safeguard is active in EVERY cell (needed for the CCD of high-flow diabetic mouse cases, e.g. SGLT2 inhibition + NHE3 down)   # segments where the first-cell safeguard is always active
 POSCHECK = os.environ.get('NEPH_POSCHECK','OMCD').split(',')   # segments where the first cell is re-solved WITH the safeguard only if the plain solve has negative formate
 _POSFORCE = False
 POSFRAC = float(os.environ.get('NEPH_POSFRAC','0.1'))
@@ -390,7 +394,7 @@ def _newton_rat(func,x,k,cell):
         if FASTAMP and k > 0 and cell.segment in FASTSEGS and np.linalg.norm(f) < 100:
             amp = 1.0
         delta = amp*np.array(F*IJ.T)[0]
-        if POSMODE == 2 or (POSMODE == 1 and k == 0 and (cell.segment in POSSEGS or _POSFORCE)):
+        if POSMODE == 2 or (POSMODE == 1 and ((k == 0 and (cell.segment in POSSEGS or _POSFORCE)) or cell.segment in POSALLCELLS)):
             # fraction-to-boundary: concentrations are the leading entries of x
             # (5*NS entries for CNT/CCD/OMCD, 3*NS for the 3-compartment segments)
             nconc = 75 if len(x) == 86 else 45
