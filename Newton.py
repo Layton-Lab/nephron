@@ -94,6 +94,14 @@ POSFRAC = 0.1
 POS_FIRST_CELL = {'CCD', 'S3'}
 POS_EVERY_CELL = {'CCD'}
 POS_IF_NEG_FORMATE = {'OMCD'}
+# Solver choice.  'adaptive' (default): step size adapts to the residual and a generic retry cascade replaces the hand-tuned,
+# segment- and species-specific damping tables; 'tables': the previous tuned damping (_damping), kept for reference/regression.
+SOLVER = os.environ.get('NEPH_SOLVER','adaptive')
+AD_UP, AD_DOWN, AD_MIN = 1.5, 0.5, 0.05          # step grows x1.5 when |f| fell, halves when it rose, never below 0.05, never above 1
+AD_FIRST_STEPS = (1.0, 0.3, 0.12, 0.04)           # start step of the successive attempts for the first cell of a segment
+AD_NEXT_STEPS = (1.0, 0.3, 0.1)                   # ... and for every later cell (which starts from the previous cell's solution)
+AD_TRY_ITERS = 80                                 # iteration budget of a non-final attempt
+AD_NEGTOL = 0.05                                  # a solution with a concentration below -AD_NEGTOL is an unphysical root: retry
 CD_SEGMENTS = ('CCD', 'OMCD', 'IMCD')   # segments whose error messages do not name the nephron type
 
 class NewtonNotConverged(Exception):
@@ -158,14 +166,14 @@ def _limit_step(x, delta):
             delta = delta*max(smax, 1e-3)
     return delta
 
-def _newton_rat(func, x, k, cell, force_safeguard=False):
+def _newton_rat(func, x, k, cell, force_safeguard=False, first_amp=None, maxiter_override=None, strict=False):
     if cell.species != 'rat' and cell.species != 'mou':
         raise Exception('newton_rat only for rat or mouse model')
     _t0 = _time.time()
     fun = equations.conservation_eqs
     f = np.matrix(fun(x,k))
     iter = 0
-    maxiter = 300 if k == 0 else 150
+    maxiter = maxiter_override or (300 if k == 0 else 150)
     safeguard = POSSAFE and ((k == 0 and (cell.segment in POS_FIRST_CELL or force_safeguard)) or cell.segment in POS_EVERY_CELL)
 
     if np.isnan(np.linalg.norm(f)):
@@ -179,13 +187,22 @@ def _newton_rat(func, x, k, cell, force_safeguard=False):
             print('Warning!!: Newton solver did not converge in <'+str(iter)+' iterations in ' + _where(cell) + ' cell number ' + str(k) + '\n')
             print('error size: '+ str(nf))
             print('\n')
-            if STRICT:
+            if STRICT or strict:
                 raise NewtonNotConverged(cell.segment + ' cell ' + str(k) + ' |f|=' + str(nf))
 
         J = np.matrix(Jac(fun,x,k))
         IJ = J.I
         F = np.matrix(fun(x,k))     # re-evaluated on purpose: conservation_eqs keeps state in the cell objects, and Jac leaves it at the last perturbation
-        amp = _damping(cell.segment, k, iter, nf)
+        if SOLVER == 'adaptive':
+            if iter == 0:
+                amp = first_amp if first_amp is not None else 1.0
+            elif nf < nf_prev:
+                amp = min(1.0, amp*AD_UP)
+            else:
+                amp = max(AD_MIN, amp*AD_DOWN)
+            nf_prev = nf
+        else:
+            amp = _damping(cell.segment, k, iter, nf)
         delta = amp*np.array(F*IJ.T)[0]
         if safeguard:
             delta = _limit_step(x, delta)
@@ -195,7 +212,29 @@ def _newton_rat(func, x, k, cell, force_safeguard=False):
     STATS.append(dict(seg=cell.segment, k=int(k), iters=int(iter), resid=float(np.linalg.norm(f)), sec=_time.time()-_t0))
     return x
 
+def _newton_rat_adaptive(func,x,k,cell):
+    """Try the boldest start step first; if a solve diverges, produces NaN, does not converge within a short budget or lands on an
+    unphysical root (negative concentration), retry from the same start with a more cautious first step.  The last attempt is
+    accepted as it is, with the full iteration budget."""
+    steps = AD_FIRST_STEPS if k == 0 else AD_NEXT_STEPS
+    x0 = np.array(x, copy=True); last = None
+    for i, a0 in enumerate(steps):
+        final = (i == len(steps)-1)
+        try:
+            sol = _newton_rat(func,np.array(x0, copy=True),k,cell,first_amp=a0,maxiter_override=None if final else AD_TRY_ITERS,strict=not final)
+            nconc = 75 if len(sol) == 86 else 45
+            if np.all(np.isfinite(sol)) and (final or np.min(np.asarray(sol, dtype=float)[:nconc]) > -AD_NEGTOL):
+                if i:
+                    print('Note: '+_where(cell)+' cell '+str(k)+' solved with initial step '+str(a0)+'\n')
+                x[:] = sol
+                return x
+        except Exception as e:
+            last = e
+    raise last
+
 def newton_rat(func,x,k,cell):
+    if SOLVER == 'adaptive':
+        return _newton_rat_adaptive(func,x,k,cell)
     """First-cell wrapper for the segments of POS_IF_NEG_FORMATE: solve cell 0 plainly and, only if any formate concentration
     (solute 12) is negative in the solution, re-solve it from the same start with the positivity safeguard."""
     if POSSAFE and k == 0 and cell.segment in POS_IF_NEG_FORMATE and cell.segment not in POS_FIRST_CELL:

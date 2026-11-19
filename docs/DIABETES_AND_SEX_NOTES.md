@@ -138,3 +138,23 @@ variables; unused experiments (`NEPH_CHORD`, `NEPH_RECX`/`NEPH_TRACEK` debug rec
 unchanged (hand-tuned per segment).  Checks: (1) `_damping` equals the old if-chain on 4.3 million combinations of segment, sex, cell type, cell index, iteration (0-319) and residual norm (every threshold +-1e-9);
 (2) full PT->IMCD re-runs of rat male Moderate, mouse male `Non`, B3 (SGLT2 inhibition + NHE3 x0.35) and A5 (Na-K-ATPase x0.5) give bit-identical summaries (all outlet values, flows, iteration counts) to the previous code.
 `newton_human` and `Newton_preg.py` were not touched (no human or pregnancy validation was run).
+
+## Newton.py: adaptive damping replaces the hand-tuned tables (rat / mouse)
+
+`NEPH_SOLVER=adaptive` is now the default for `newton_rat`; `NEPH_SOLVER=tables` restores the previous per-segment, per-species
+damping (`_damping`) for comparison.  The damped step is `x -= amp * J^-1 F` as before; only `amp` changes:
+
+* the step grows x1.5 when ||f|| fell since the previous iteration, halves when it rose (bounds 0.05 ... 1); no extra function evaluations;
+* retry cascade instead of segment tables: the first attempt starts with a full step; if a solve diverges, gives NaN, does not converge
+  within 80 iterations, or ends on an unphysical root (a concentration below -0.05), the cell is re-solved from the same start with a
+  smaller first step (first cell 1.0, 0.3, 0.12, 0.04; later cells 1.0, 0.3, 0.1).  The last attempt gets the full budget.
+  Over the 8 reference cases and the 12 stress cases the cascade was needed for only a handful of cells (mTAL/cTAL/DCT first cell, a few CNT cells).
+* A monotone Armijo line search on ||f|| was tried and does NOT work here: in the CCD it stalls at local minima of ||f||.  The unphysical-root
+  check matters: without it the rat male non-diabetic OMCD converges (to 1e-9) to a root with glucose down to -55 mM.
+* The positivity safeguards (POS_* sets) are unchanged.
+
+Validation (urine = IMCD outlet, against the validated table-damping runs): the 8 reference cases (mouse/rat x M/F x Non/Moderate) agree to <= 1.1e-4
+in urine flow and solute concentrations, 0 non-converged cells; mouse Moderate sensitivity runs A1-A8 and B1-B3 reproduce the previous outlet flows
+(4 digits), B4 (empagliflozin) is unchanged (the same 2 non-converged OMCD cells), A4 (the known outlier) now runs through.  Iterations drop strongly
+(IMCD max ~165 -> 8-34, OMCD 33 -> 9-12) and the OMCD takes less than half the time.  Results are not bit-identical to the table solver.
+Not validated with it: Severe diabetes, human (`newton_human` is unchanged), `Newton_preg.py`.
