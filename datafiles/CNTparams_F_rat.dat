@@ -76,6 +76,7 @@ sig_H_LIS_Bath	0.0
 sig_HCO2_LIS_Bath	0.0
 sig_H2CO2_LIS_Bath	0.0
 sig_glucose_LIS_Bath	0.0
+sig_Ca_LIS_Bath		0.0
 #
 #  solute permeabilities, apical interface (in 1e-5cm/s)
 #  default permeability = 0
@@ -96,6 +97,7 @@ perm_H_Lumen_Cell	2000.0
 perm_HCO2_Lumen_Cell	0.0
 perm_H2CO2_Lumen_Cell	0.0
 perm_glucose_Lumen_Cell	0.0
+perm_Ca_Lumen_Cell	0.0
 #
 #  solute permeabilities, Cell-LIS interface (in 1e-5cm/s)
 #  default permeability = 0
@@ -115,6 +117,7 @@ perm_H_Cell_LIS	2000.0
 perm_HCO2_Cell_LIS	1.0e-4
 perm_H2CO2_Cell_LIS	1.0e-4
 perm_glucose_Cell_LIS	1.0e-4
+perm_Ca_Cell_LIS		0.0
 #
 #  solute permeabilities, Lumen-ICA interface (in 1e-5cm/s)
 #  default permeability = 0
@@ -134,6 +137,7 @@ perm_H_Lumen_ICA	0.0
 perm_HCO2_Lumen_ICA	0.0
 perm_H2CO2_Lumen_ICA	0.0
 perm_glucose_Lumen_ICA	0.0
+perm_Ca_Lumen_ICA	0.0
 #
 #  solute permeabilities, ICA-LIS interface (in 1e-5cm/s)
 #  default permeability = 0
@@ -153,6 +157,7 @@ perm_H_ICA_LIS	9.0
 perm_HCO2_ICA_LIS	1.0e-4
 perm_H2CO2_ICA_LIS	1.0e-4
 perm_glucose_ICA_LIS	1.0e-4
+perm_Ca_ICA_LIS		0.0
 #
 #  solute permeabilities, Lumen-ICB interface (in 1e-5cm/s)
 #  default permeability = 0
@@ -172,6 +177,7 @@ perm_H_Lumen_ICB	0.0
 perm_HCO2_Lumen_ICB	0.0
 perm_H2CO2_Lumen_ICB	0.0
 perm_glucose_Lumen_ICB	0.0
+perm_Ca_Lumen_ICB	0.0
 #
 #  solute permeabilities, ICB-LIS interface (in 1e-5cm/s)
 #  default permeability = 0
@@ -191,6 +197,7 @@ perm_H_ICB_LIS	6.0
 perm_HCO2_ICB_LIS	1.0e-4
 perm_H2CO2_ICB_LIS	1.0e-4
 perm_glucose_ICB_LIS	1.0e-4
+perm_Ca_ICB_LIS		0.0
 #
 #  solute permeabilities, Lumen-LIS interface (in 1e-5cm/s)
 #  default permeability = 0
@@ -212,6 +219,7 @@ perm_H_Lumen_LIS	10.0e3
 perm_HCO2_Lumen_LIS	10.0
 perm_H2CO2_Lumen_LIS	10.0
 perm_glucose_Lumen_LIS	10.0
+perm_Ca_Lumen_LIS	0.0
 #
 #  solute permeabilities, LIS-Bath interface (in 1e-5cm/s)
 #  default permeability = 0
@@ -231,6 +239,7 @@ perm_H_LIS_Bath		8.0e5
 perm_HCO2_LIS_Bath	200.0
 perm_H2CO2_LIS_Bath	200.0
 perm_glucose_LIS_Bath	200.0
+perm_Ca_LIS_Bath		7154
 #
 #  solute concentrations
 #  solute   <luminal conc>  <cell conc>  <LIS conc>  <bath conc> [optional: <IC A conc>  <IC B conc>]
@@ -250,6 +259,7 @@ conc_H	0.51464e-3	0.00003	0.00006	0.47534e-4	0.00004	0.00004
 conc_HCO2	3.5244	0.01266	0.22582	0.99973	0.16446	0.09277
 conc_H2CO2	0.10437e-1	0.00011	0.00008	0.27345e-3	0.00014	0.0001
 conc_glucose	0.2582e-1	5.0	5.0	5.0	5.0	5.0
+conc_Ca		1.172		100e-6		1.165	1.7	100e-6	100e-6
 #
 # Rates used in HCO3/H2CO3 reaction, default is set to 0
 #
@@ -348,7 +358,12 @@ transport_Lumen_ICB_Pendrin	0.57e-9
 transport_ICA_LIS_AE1	150.0e-9
 transport_ICA_Bath_AE1	150.0e-9
 transport_Lumen_Cell_ENaC_female	18.2e-8
-#	Na		K		Cl		HCO3	H2CO3		CO2		HPO4	H2PO4	urea	NH3		NH4		H	HCO2	H2CO2	glucose
-cm 	144.0	4.9		116.17	25.0	4.41e-3		1.5		3.9		0.0		8.0		1.0		0.0		0.0	1.0		0.0		5.0
-oi	299.0	10.0	279.94	25.0	4.41e-3		1.5		3.9		0.0		60.0	3.9		0.0		0.0	1.0		0.0		8.33
-pap	349.0	20.0	344.92	25.0	4.41e-3		1.5		3.9		0.0		200.0	8.95	0.0		0.0	1.0		0.0		8.5
+transport_Lumen_Cell_TRPV5		8.75e-2
+transport_Cell_Bath_CaATPase		4.5e-9
+transport_Cell_LIS_CaATPase		4.5e-9
+transport_Cell_Bath_NCX1			2750e-9
+transport_Cell_LIS_NCX1			2750e-9
+#	Na		K		Cl		HCO3	H2CO3		CO2		HPO4	H2PO4	urea	NH3		NH4		H	HCO2	H2CO2	glucose				Ca
+cm 	144.0	4.9		116.17	25.0	4.41e-3		1.5		3.9		0.0		8.0		1.0		0.0		0.0	1.0		0.0		5.0	1.25
+oi	299.0	10.0	279.94	25.0	4.41e-3		1.5		3.9		0.0		60.0	3.9		0.0		0.0	1.0		0.0		8.33			2.5
+pap	349.0	20.0	344.92	25.0	4.41e-3		1.5		3.9		0.0		200.0	8.95	0.0		0.0	1.0		0.0		8.5				4.0

@@ -196,6 +196,9 @@ def read_params(cell,filename,j):
         terms = line.split(' ')
         if line[0][0]!='#':
             id = terms[0] #re.findall(r'[A-Za-z_]+', line)
+            if (not CALCIUM) and ('_Ca_' in id or id == 'conc_Ca' or id.endswith(('_TRPV5','_CaATPase','_NCX1'))):
+                line = file.readline()      # calcium parameters are ignored when the model runs without Ca
+                continue
             sex = id.split('_')[-1].lower()
             if compare_sex(sex, cell):
                 id = id.replace('_male', '')
@@ -740,6 +743,14 @@ def read_params(cell,filename,j):
                                 newTransp.act = 1.1*value/(href*Cref)
                             elif cell.sex == 'female':
                                 newTransp.act = 1.05*value/(href*Cref)
+
+                        # Ca2+ transporters in Severe diabetes (streptozotocin rat: increased TRPV5, NCX1 and Ca-ATPase abundance; Lee et al. 2006)
+                        if newTransp.type == 'TRPV5':
+                            newTransp.act = 2.1*value/(href*Cref)
+                        if newTransp.type == 'CaATPase' and cell.segment == 'CNT':
+                            newTransp.act = 2.2*value
+                        if newTransp.type == 'NCX1':
+                            newTransp.act = 2.2*value
                     elif cell.segment == 'OMCD':
                         if newTransp.type == 'NaKATPase':
                             if cell.sex == 'male':
@@ -807,6 +818,12 @@ def read_params(cell,filename,j):
                 elif cell.inhib == 'ENaC-100':
                     if newTransp.type == 'ENaC':
                         newTransp.act = (1-1)*value/(href*Cref)
+                    if newTransp.type == 'TRPV5':
+                        newTransp.act = (1-0.1)*value/(href*Cref)
+                elif cell.inhib == 'NKCC2-99':
+                    if cell.segment == 'mTAL' or cell.segment == 'cTAL':
+                        if newTransp.type == 'NKCC2A' or newTransp.type == 'NKCC2B' or newTransp.type == 'NKCC2F':
+                            newTransp.act = (1-0.999)*value/(href*Cref)
                 elif cell.inhib == 'SNB-70':
                     if cell.segment == 'mTAL' or cell.segment == 'cTAL':
                         if newTransp.type == 'NKCC2A' or newTransp.type == 'NKCC2B' or newTransp.type == 'NKCC2F':
@@ -914,6 +931,26 @@ def read_params(cell,filename,j):
                     elif newTransp.type == 'ENaC':
                         HT_rat = 1.45
                         newTransp.act = HT_rat*value/(href*Cref)
+
+                if CALCIUM:
+                    # Ca2+ specific inhibitions
+                    if cell.inhib == 'TRPV5-99' and newTransp.type == 'TRPV5':
+                        newTransp.act = value/(href*Cref)*(1-0.999)
+                    if cell.inhib == 'NCX1-99' and newTransp.type == 'NCX1':
+                        newTransp.act = value/(href*Cref)*(1-0.999)
+
+                    # CaSR inhibits NKCC2 and activates NCC (Edwards 2014; Hakimi et al. 2023)
+                    EC_50_Ca = 1.25
+                    if newTransp.type == 'NKCC2A' or newTransp.type == 'NKCC2B' or newTransp.type == 'NKCC2F':
+                        alpha_nkcc2 = -0.5
+                        newTransp.act = newTransp.act*(1+alpha_nkcc2*(cell.conc[15,5]**4)/(cell.conc[15,5]**4+EC_50_Ca**4))
+                    if newTransp.type == 'NCC':
+                        alpha_ncc = 0.5
+                        newTransp.act = newTransp.act*(1+alpha_ncc*(cell.conc[15,0]**4)/(cell.conc[15,0]**4+EC_50_Ca**4))
+
+                    # no transcellular Ca2+ transport in the early DCT (DCT1)
+                    if (cell.segment == 'DCT') and (j<2.0/3.0*cell.total) and newTransp.type in ('TRPV5','NCX1','CaATPase'):
+                        newTransp.act = 0
 
                 cell.trans.append(newTransp)
 
@@ -1204,15 +1241,15 @@ def read_params(cell,filename,j):
             # Interstitial concentration parameters
             elif compare_string_prefix(id,'cm'):
                 cell.cm = []
-                for i in num:
+                for i in num[:NS]:
                     cell.cm.append(float(i))
             elif compare_string_prefix(id,'oi'):
                 cell.oi = []
-                for i in num:
+                for i in num[:NS]:
                     cell.oi.append(float(i))
             elif compare_string_prefix(id,'pap'):
                 cell.pap = []
-                for i in num:
+                for i in num[:NS]:
                     cell.pap.append(float(i))
                         
             # invalue keyword

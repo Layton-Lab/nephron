@@ -12,8 +12,10 @@ import ENaC
 import Pendrin
 import AE1
 import NHE1
+import NCX1
+import TRPV5
 
-solute = ['Na','K','Cl','HCO3','H2CO3','CO2','HPO4','H2PO4','urea','NH3','NH4','H','HCO2','H2CO2','glu']
+solute = SOLUTE_NAMES
 compart = ['Lumen','Cell','ICA','ICB','LIS','Bath']
 cw=Vref*60e6
 
@@ -265,6 +267,19 @@ def output_segment_results(cell,sup_or_jux,Scaletorq,file_to_save,N):
                 elif transporter_type == 'NKCC1':
                     jsol,delmu = electrochemical.compute_ecd_fluxes(cell[j],jvol)
                     solute_id,fluxs=NKCC.nkcc1(cell[j],memb_id,cell[j].trans[i].act,delmu)
+                    for k in range(len(solute_id)):
+                        file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
+                        file.write(str(fluxs[k]*Scaletorq[j])+'\n')
+                elif transporter_type in ('CaATPase','NCX1','TRPV5'):
+                    if transporter_type == 'CaATPase':
+                        if cell[0].segment == 'PT' or cell[0].segment == 'S3':
+                            solute_id,fluxs=ATPase.calatapse(cell[j],cell[j].ep,memb_id,cell[j].trans[i].act,cell[j].area)
+                        else:
+                            solute_id,fluxs=ATPase.calatapse_mtal(cell[j],j,cell[j].ep,memb_id,cell[j].trans[i].act,cell[j].area)
+                    elif transporter_type == 'NCX1':
+                        solute_id,fluxs=NCX1.ncx1(cell[j],j,cell[j].ep,memb_id,cell[j].trans[i].act,cell[j].area)
+                    else:
+                        solute_id,fluxs=TRPV5.trpv5(cell[j],j,cell[j].ep,memb_id,cell[j].trans[i].act,cell[j].area)
                     for k in range(len(solute_id)):
                         file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')

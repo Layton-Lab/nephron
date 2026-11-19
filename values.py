@@ -212,3 +212,18 @@ TotHCO3OI_LP = 25.0*0.95
 TotHCO3Pap_noinhib = 25.0
 TotHCO3Pap_MP = 25.0*0.95
 TotHCO3Pap_LP = 25.0*0.9645
+
+# Ca2+ (interstitial concentrations at the corticomedullary border / outer-inner medulla / papilla, mM; from the calcium model)
+TotcaOI_noinhib = 2.5
+TotcaOI_70NKCCinhib = 1.875
+TotcaOI_100NKCCinhib = 1.25
+
+TotcaPap_noinhib = 4.0
+TotcaPap_70NKCCinhib = 2.625
+TotcaPap_100NKCCinhib = 1.25
+
+TotcaOI_50inhib = TotcaOI_noinhib
+TotcaPap_50inhib = 3.0
+
+TotcaOI_80inhib = TotcaOI_noinhib
+TotcaPap_80inhib = 3.0

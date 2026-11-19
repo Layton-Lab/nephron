@@ -14,6 +14,8 @@ import NCC
 import ENaC
 import Pendrin
 import AE1
+import TRPV5
+import NCX1
 import NHE1
 import math
 
@@ -108,6 +110,22 @@ def compute_fluxes (cell,j):
             solute_id,fluxnakcl2=NKCC.nkcc1(cell,memb_id,cell.trans[i].act,delmu)
             for i in range(len(solute_id)):
                 jsol[solute_id[i]][memb_id[0]][memb_id[1]] +=fluxnakcl2[i]
+        # Ca2+ transporters (calcium model, rat only)
+        elif transporter_type == 'CaATPase':
+            if cell.segment == 'PT' or cell.segment == 'S3':
+                solute_id,fluxcaatpase=ATPase.calatapse(cell,cell.ep,memb_id,cell.trans[i].act,cell.area)
+            else:
+                solute_id,fluxcaatpase=ATPase.calatapse_mtal(cell,j,cell.ep,memb_id,cell.trans[i].act,cell.area)
+            for i in range(len(solute_id)):
+                jsol[solute_id[i]][memb_id[0]][memb_id[1]] += fluxcaatpase[i]
+        elif transporter_type == 'TRPV5':
+            solute_id,fluxtrpv5=TRPV5.trpv5(cell,j,cell.ep,memb_id,cell.trans[i].act,cell.area)
+            for i in range(len(solute_id)):
+                jsol[solute_id[i]][memb_id[0]][memb_id[1]] += fluxtrpv5[i]
+        elif transporter_type == 'NCX1':
+            solute_id,fluxncx1=NCX1.ncx1(cell,j,cell.ep,memb_id,cell.trans[i].act,cell.area)
+            for i in range(len(solute_id)):
+                jsol[solute_id[i]][memb_id[0]][memb_id[1]] += fluxncx1[i]
         else:
             print('What is this?',transporter_type)
             

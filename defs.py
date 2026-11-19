@@ -1,5 +1,12 @@
 import numpy as np
 import collections
+import os, sys
+
+# Calcium (solute 15) is part of the model for the rat only (the Ca parameters exist for the rat).  NEPH_CALCIUM=1/0 forces it on/off;
+# when unset it is on iff 'rat' is one of the command-line arguments (e.g. '--species rat' or 'Male rat Moderate') and the run is not a
+# pregnancy run (the pregnancy parameter reader / Newton_preg are not extended to calcium).
+_ca = os.environ.get('NEPH_CALCIUM')
+CALCIUM = (_ca == '1') if _ca in ('0','1') else ('rat' in sys.argv and not ('mid' in sys.argv or 'late' in sys.argv))
 
 solute_id = {
     'Na'    : 0,
@@ -18,6 +25,8 @@ solute_id = {
     'H2CO2' : 13,
     'glucose' : 14
     }
+if CALCIUM:
+    solute_id['Ca'] = 15
 
 # valence
 solute_val = collections.OrderedDict()
@@ -36,6 +45,8 @@ solute_val['H'] = 1
 solute_val['HCO2'] = -1
 solute_val['H2CO2'] = 0
 solute_val['glucose'] = 0
+if CALCIUM:
+    solute_val['Ca'] = 2
 
 # extract valence values only as an array for convenience
 zval = np.asarray(list(solute_val.values()))
@@ -159,3 +170,6 @@ class membrane:
         self.pap = []
         
         
+
+# solute names used for output file names ('glu' for glucose)
+SOLUTE_NAMES = ['Na','K','Cl','HCO3','H2CO3','CO2','HPO4','H2PO4','urea','NH3','NH4','H','HCO2','H2CO2','glu'] + (['Ca'] if CALCIUM else [])

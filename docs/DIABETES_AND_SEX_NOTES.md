@@ -158,3 +158,20 @@ in urine flow and solute concentrations, 0 non-converged cells; mouse Moderate s
 (4 digits), B4 (empagliflozin) is unchanged (the same 2 non-converged OMCD cells), A4 (the known outlier) now runs through.  Iterations drop strongly
 (IMCD max ~165 -> 8-34, OMCD 33 -> 9-12) and the OMCD takes less than half the time.  Results are not bit-identical to the table solver.
 Not validated with it: Severe diabetes, human (`newton_human` is unchanged), `Newton_preg.py`.
+
+## Calcium (rat only)
+
+Ca (solute 15, valence +2) is ported from the Hakimi et al. calcium version: TRPV5, NCX1, Ca-ATPase, paracellular Ca, CaSR effects (TAL paracellular Ca/ROMK, NKCC2, NCC, IMCD water, OMCD H-ATPase, CNT ENaC) and interstitial Ca gradients.
+
+* Switch: `NEPH_CALCIUM=1/0`; default is on iff `rat` is on the command line and the run is not a pregnancy run. Mouse/human (no Ca parameters) and pregnancy (parameter reader and `Newton_preg.py` not extended) run with Ca off, identical to before.
+* Segments without transcellular Ca (PT/S3/SDL, early DCT, TAL, LDL/LAL, MD, IMCD, and some CNT/CCD/OMCD compartments) keep the unknown in the vector but pinned (`x - x0 = 0`); the solution equals deleting it.
+* The adaptive Newton cascade and diabetes setup are unchanged; `Newton.py` now uses `NS` instead of hard-coded sizes, and remembers the last successful step per segment.
+* Magnesium is NOT implemented: the supplied code only has parameters and commented-out equations (the 2024 pregnancy paper would be needed).
+
+Validation: with Ca on, rat Non matches the reference Ca code through the CNT to ~2e-5; Ca off reproduces previous results (mouse and rat).
+
+Known limitations
+* CCD cells 96-97 may fail to converge with Ca (also with the old tuned damping, so not solver-related).
+* Diabetic rat: outlet Ca can come out slightly negative (female Moderate about -0.03 mM; male Moderate about -0.5 to -1.4 mM along CCD to IMCD), i.e. Ca is over-reabsorbed. Needs investigation.
+* Male Moderate with Ca is slow (about 1900 s to the end of CNT).
+* Untested: Severe diabetes Ca scalings, inhibition options, unx, flux-decomposition outputs (not ported).

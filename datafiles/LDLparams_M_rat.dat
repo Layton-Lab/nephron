@@ -84,6 +84,7 @@ sig_H_LIS_Bath	0.0
 sig_HCO2_LIS_Bath	0.0
 sig_H2CO2_LIS_Bath	0.0
 sig_glucose_LIS_Bath	0.0
+sig_Ca_LIS_Bath		0.0
 #
 #  solute permeabilities, apical interface (in 1e-5cm/s)
 #  default permeability = 0
@@ -105,6 +106,7 @@ perm_H_Lumen_Cell	850  # 3.06d4/36
 perm_HCO2_Lumen_Cell	0.0
 perm_H2CO2_Lumen_Cell	0.0
 perm_glucose_Lumen_Cell	0.0
+perm_Ca_Lumen_Cell	0.0
 #
 #  solute permeabilities, basolateral interface (in 1e-5cm/s)
 #  default permeability = 0
@@ -124,6 +126,7 @@ perm_H_Cell_Bath	100000
 perm_HCO2_Cell_Bath	100000
 perm_H2CO2_Cell_Bath	100000
 perm_glucose_Cell_Bath	100000
+perm_Ca_Cell_Bath	100000
 #
 #  solute permeabilities, lumen-LIS interface (in 1e-5cm/s)
 #  default permeability = 0
@@ -143,6 +146,7 @@ perm_H_Lumen_LIS	850  # 3.06d4/36
 perm_HCO2_Lumen_LIS	0.0
 perm_H2CO2_Lumen_LIS	0.0
 perm_glucose_Lumen_LIS	0.0
+perm_Ca_Lumen_LIS	2500 #0.0
 #
 #  solute permeabilities, LIS-Bath interface (in 1e-5cm/s)
 #  default permeability = 0
@@ -162,6 +166,7 @@ perm_H_LIS_Bath		100000
 perm_HCO2_LIS_Bath	100000
 perm_H2CO2_LIS_Bath	100000
 perm_glucose_LIS_Bath	100000
+perm_Ca_LIS_Bath		100000
 #
 #  No coupled transporters
 #
@@ -183,6 +188,7 @@ conc_H		0.74527e-4	0.47991E-04	0.53956E-04	0.00005
 conc_HCO2	0.32762e+1	0.9		0.99383		0.99971
 conc_H2CO2	1.13386e-3	0.13840E-04	0.16408E-04	0.00029
 conc_glucose	0.90242e-02 	6.0		6.0		6.0
+conc_Ca		2		100e-6		1.25		1.25
 #
 # Rates used in HCO3/H2CO3 reaction, default is set to 0
 #
@@ -214,7 +220,7 @@ ep_Lumen	0.32872
 ep_Cell	-0.001
 ep_LIS	-0.001
 ep_Bath -0.001
-#	Na		K		Cl		HCO3	H2CO3		CO2		HPO4	H2PO4	urea	NH3		NH4		H	HCO2	H2CO2	glucose
-cm 	144.0	4.9		116.17	25.0	4.41e-3		1.5		3.9		0.0		8.0		1.0		0.0		0.0	1.0		0.0		5.0
-oi	299.0	10.0	279.94	25.0	4.41e-3		1.5		3.9		0.0		60.0	3.9		0.0		0.0	1.0		0.0		8.33
-pap	349.0	20.0	344.92	25.0	4.41e-3		1.5		3.9		0.0		200.0	8.95	0.0		0.0	1.0		0.0		8.5
+#	Na		K		Cl		HCO3	H2CO3		CO2		HPO4	H2PO4	urea	NH3		NH4		H	HCO2	H2CO2	glucose				Ca
+cm 	144.0	4.9		116.17	25.0	4.41e-3		1.5		3.9		0.0		8.0		1.0		0.0		0.0	1.0		0.0		5.0	1.25
+oi	299.0	10.0	279.94	25.0	4.41e-3		1.5		3.9		0.0		60.0	3.9		0.0		0.0	1.0		0.0		8.33			2.5
+pap	349.0	20.0	344.92	25.0	4.41e-3		1.5		3.9		0.0		200.0	8.95	0.0		0.0	1.0		0.0		8.5				4.0

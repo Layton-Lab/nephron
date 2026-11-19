@@ -26,6 +26,14 @@ def compute_water_fluxes (cell):
     jvol = np.zeros(NC*NC).reshape((NC,NC))
 
     PM=cell.pres[0]
+
+    if CALCIUM and cell.segment == 'IMCD':
+        # CaSR effect on the apical water permeability of the IMCD (Edwards 2013; calcium model, Hakimi et al. 2023)
+        base_apical_perm = cell.dLPV[0,1]
+        alpha_imcd = -3/8
+        EC_50_Ca = 1.25
+        cell.dLPV[0,1] = base_apical_perm*(1+alpha_imcd*(cell.conc[15,0]**4)/(cell.conc[15,0]**4+EC_50_Ca**4))
+        cell.dLPV[1,0] = cell.dLPV[0,1]
   
     
     if cell.segment == 'PT' or cell.segment == 'S3':
@@ -67,6 +75,11 @@ def compute_water_fluxes (cell):
             # if (cell.flag==2) and (i==0) and (j==4):
             #     print(cell.area[i][j] * cell.dLPV[i][j],'\t',PRES[i]-PRES[j],'\t',-ONC[i]+ONC[j],'\t',-osm)
             #     print('\n')
+
+    if CALCIUM and cell.segment == 'IMCD':
+        # reset for the next call
+        cell.dLPV[0,1] = base_apical_perm
+        cell.dLPV[1,0] = cell.dLPV[0,1]
 
     return jvol
 

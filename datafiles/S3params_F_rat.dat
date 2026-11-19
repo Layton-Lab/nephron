@@ -61,6 +61,7 @@ sig_H_Lumen_LIS		0.2
 sig_HCO2_Lumen_LIS	0.3
 sig_H2CO2_Lumen_LIS	0.7
 sig_glucose_Lumen_LIS	1.0
+sig_Ca_Lumen_LIS 	0.89
 #
 #  solute permeabilities, apical interface (in 1e-5cm/s)
 #  default permeability = 0
@@ -81,6 +82,7 @@ perm_H_Lumen_Cell	850
 perm_HCO2_Lumen_Cell	0.0
 perm_H2CO2_Lumen_Cell	0.05e5
 perm_glucose_Lumen_Cell	0.0
+perm_Ca_Lumen_Cell	0.03
 #
 #  solute permeabilities, basolateral interface (in 1e-5cm/s)
 #  default permeability = 0
@@ -100,6 +102,7 @@ perm_H_Cell_Bath	850.0
 perm_HCO2_Cell_Bath	0.019
 perm_H2CO2_Cell_Bath	6.0e3
 perm_glucose_Cell_Bath	0.0
+perm_Ca_Cell_Bath	0.0
 #
 #  solute permeabilities, lumen-LIS interface (in 1e-5cm/s)
 #  default permeability = 0
@@ -121,6 +124,7 @@ perm_H_Lumen_LIS	600.0e3
 perm_HCO2_Lumen_LIS	14.0e3
 perm_H2CO2_Lumen_LIS	28.0e3
 perm_glucose_Lumen_LIS	0.31e3
+perm_Ca_Lumen_LIS	100e3
 #
 #  solute permeabilities, LIS-Bath interface (in 1e-5cm/s)
 #  default permeability = 0
@@ -140,6 +144,7 @@ perm_H_LIS_Bath		300.0e4
 perm_HCO2_LIS_Bath	5.0e3
 perm_H2CO2_LIS_Bath	9.0e3
 perm_glucose_LIS_Bath	3.0e3
+perm_Ca_LIS_Bath		2.981e3
 #
 #  solute concentrations
 #  solute   <luminal conc>  <cell conc>  <LIS conc>  <bath conc> [optional: <IC A conc>  <IC B conc>]
@@ -159,6 +164,7 @@ conc_H	4.75335226E-05	4.91049140737E-05	4.8610062762E-05	4.753352E-05
 conc_HCO2	0.99977	0.59594353151	1.01427493486	1.0
 conc_H2CO2	0.000273452076	 0.000168395339061 	 0.000283714723953 	0.00027345208
 conc_glucose	5.0	4.96317185232	4.9045100702	5.0
+conc_Ca		1.25		100e-6		1.18		1.25
 #
 # Rates used in HCO3/H2CO3 reaction, default is set to 0
 #
@@ -216,7 +222,9 @@ transport_Lumen_Cell_NHE3_female	2.3055555e-08
 transport_Cell_Bath_NaKATPase	300e-9
 transport_Cell_LIS_NaKATPase	300e-9
 transport_Lumen_Cell_HATPase	 50e-9
-#	Na		K		Cl		HCO3	H2CO3		CO2		HPO4	H2PO4	urea	NH3		NH4		H	HCO2	H2CO2	glucose
-cm 	144.0	4.9		116.17	25.0	4.41e-3		1.5		3.9		0.0		8.0		1.0		0.0		0.0	1.0		0.0		5.0
-oi	299.0	10.0	279.94	25.0	4.41e-3		1.5		3.9		0.0		60.0	3.9		0.0		0.0	1.0		0.0		8.33
-pap	349.0	20.0	344.92	25.0	4.41e-3		1.5		3.9		0.0		200.0	8.95	0.0		0.0	1.0		0.0		8.5
+transport_Cell_Bath_CaATPase		2.5e-9
+transport_Cell_LIS_CaATPase		2.5e-9
+#	Na		K		Cl		HCO3	H2CO3		CO2		HPO4	H2PO4	urea	NH3		NH4		H	HCO2	H2CO2	glucose				Ca
+cm 	144.0	4.9		116.17	25.0	4.41e-3		1.5		3.9		0.0		8.0		1.0		0.0		0.0	1.0		0.0		5.0	1.25
+oi	299.0	10.0	279.94	25.0	4.41e-3		1.5		3.9		0.0		60.0	3.9		0.0		0.0	1.0		0.0		8.33			2.5
+pap	349.0	20.0	344.92	25.0	4.41e-3		1.5		3.9		0.0		200.0	8.95	0.0		0.0	1.0		0.0		8.5				4.0

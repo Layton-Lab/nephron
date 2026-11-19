@@ -60,29 +60,35 @@ def boundaryBath(cell,i):
             cell.oi[1] = TotPotOI_noinhib
             cell.oi[2] = TotCloOI_noinhib
             cell.oi[8] = TotureaOI_50inhib
+            if CALCIUM: cell.oi[15] = TotcaOI_50inhib
             cell.pap[0] = TotSodPap_50inhib
             cell.pap[1] = TotPotPap_noinhib
             cell.pap[2] = TotCloPap_50inhib
             cell.pap[8] = TotureaPap_50inhib
+            if CALCIUM: cell.pap[15] = TotcaPap_50inhib
         elif cell.inhib == 'NHE3-80':
             cell.oi[0] = TotSodOI_noinhib
             cell.oi[1] = TotPotOI_noinhib
             cell.oi[2] = TotCloOI_noinhib		
             cell.oi[8] = TotureaOI_80inhib
+            if CALCIUM: cell.oi[15] = TotcaOI_80inhib
             cell.pap[0] = TotSodPap_80inhib
             cell.pap[1] = TotPotPap_80inhib
             cell.pap[2] = TotCloPap_80inhib
             cell.pap[8] = TotureaPap_80inhib
+            if CALCIUM: cell.pap[15] = TotcaPap_80inhib
         elif cell.inhib == 'NKCC2-70':
             if cell.preg == 'non':
                 cell.oi[0] = TotSodOI_70NKCCinhib
                 cell.oi[1] = TotPotOI_70NKCCinhib
                 cell.oi[2] = TotCloOI_70NKCCinhib		
                 cell.oi[8] = TotureaOI_70NKCCinhib
+                if CALCIUM: cell.oi[15] = TotcaOI_70NKCCinhib
                 cell.pap[0] = TotSodPap_70NKCCinhib
                 cell.pap[1] = TotPotPap_70NKCCinhib
                 cell.pap[2] = TotCloPap_70NKCCinhib
                 cell.pap[8] = TotureaPap_70NKCCinhib
+                if CALCIUM: cell.pap[15] = TotcaPap_70NKCCinhib
             elif cell.preg == 'mid':
                 cell.oi[0] = TotSodOI_MP_70NKCCinhib
                 cell.oi[1] = TotPotOI_MP_70NKCCinhib
@@ -107,10 +113,12 @@ def boundaryBath(cell,i):
                 cell.oi[1] = TotPotOI_100NKCCinhib
                 cell.oi[2] = TotCloOI_100NKCCinhib		
                 cell.oi[8] = TotureaOI_100NKCCinhib
+                if CALCIUM: cell.oi[15] = TotcaOI_100NKCCinhib
                 cell.pap[0] = TotSodPap_100NKCCinhib
                 cell.pap[1] = TotPotPap_100NKCCinhib
                 cell.pap[2] = TotCloPap_100NKCCinhib
                 cell.pap[8] = TotureaPap_100NKCCinhib
+                if CALCIUM: cell.pap[15] = TotcaPap_100NKCCinhib
             elif cell.preg == 'mid':
                 cell.oi[0] = TotSodOI_MP_100NKCCinhib
                 cell.oi[1] = TotPotOI_MP_100NKCCinhib
@@ -271,6 +279,17 @@ def boundaryBath(cell,i):
 
         if cell.diabete != 'Non' or GLU_ND:
             cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
+        if CALCIUM: cell.conc[15,5] = cell.cm[15]
+        if CALCIUM and cell.segment in ('cTAL','mTAL'):
+                # CaSR effect on TAL paracellular Ca permeability and ROMK activity (Edwards, Am J Physiol Renal 2014; Hakimi et al. 2023)
+                base_value_par_Ca = 12e3*1.0e-5/href   # TAL permeability in the absence of Ca2+
+                alpha_tal = -4/7
+                EC_50_Ca = 1.25
+                cell.h[15][0,4] = base_value_par_Ca*(1+alpha_tal*(cell.conc[15,5]**4)/(cell.conc[15,5]**4 + EC_50_Ca**4))
+                cell.h[15][4,0] = cell.h[15][0,4]
+                alpha_romk = -0.8
+                cell.h[1][0,1] = cell.h[1][0,1]*(1+alpha_romk*(cell.conc[15,5]**4)/(cell.conc[15,5]**4 + EC_50_Ca**4))
+                cell.h[1][1,0] = cell.h[1][0,1]
 
 
         for k in [0,4,5]:
@@ -347,6 +366,17 @@ def boundaryBath(cell,i):
 
         if cell.diabete != 'Non' or GLU_ND:
             cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
+        if CALCIUM: cell.conc[15,5] = cell.cm[15]+(cell.oi[15]-cell.cm[15])*pos
+        if CALCIUM and cell.segment in ('cTAL','mTAL'):
+                # CaSR effect on TAL paracellular Ca permeability and ROMK activity (Edwards, Am J Physiol Renal 2014; Hakimi et al. 2023)
+                base_value_par_Ca = 12e3*1.0e-5/href   # TAL permeability in the absence of Ca2+
+                alpha_tal = -4/7
+                EC_50_Ca = 1.25
+                cell.h[15][0,4] = base_value_par_Ca*(1+alpha_tal*(cell.conc[15,5]**4)/(cell.conc[15,5]**4 + EC_50_Ca**4))
+                cell.h[15][4,0] = cell.h[15][0,4]
+                alpha_romk = -0.8
+                cell.h[1][0,1] = cell.h[1][0,1]*(1+alpha_romk*(cell.conc[15,5]**4)/(cell.conc[15,5]**4 + EC_50_Ca**4))
+                cell.h[1][1,0] = cell.h[1][0,1]
             
         
         for k in [0,4,5]:
@@ -420,6 +450,7 @@ def boundaryBath(cell,i):
 
             if cell.diabete != 'Non' or GLU_ND:
                 cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
+            if CALCIUM: cell.conc[15,5] = cell.cm[15]+(cell.oi[15]-cell.cm[15])*(0.3*(i))/(1*cell.total-NPT)
 
 
             for k in [0,4,5]:
@@ -494,6 +525,7 @@ def boundaryBath(cell,i):
 
             if cell.diabete != 'Non' or GLU_ND:
                 cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
+            if CALCIUM: cell.conc[15,5] = cell.cm[15]+(cell.oi[15]-cell.cm[15])*(0.3*(i))/(1*cell.total-NPT)
 
             for k in [0,4,5]:
                 elecS = 0
@@ -581,6 +613,7 @@ def boundaryBath(cell,i):
 
         if cell.diabete != 'Non' or GLU_ND:
                 cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
+        if CALCIUM: cell.conc[15,5] = cell.oi[15]+(cell.pap[15]-cell.oi[15])*pos
 
         for k in [0,4,5]:
             elecS = 0

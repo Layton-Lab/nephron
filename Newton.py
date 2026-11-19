@@ -1,5 +1,6 @@
 #from numba import jit
 import equations
+from defs import NS
 import math
 import numpy as np
 
@@ -154,10 +155,14 @@ def _damping(seg, k, it, nf):
         return 1.0 if nf < 100 else 0.5   # undamped once close to the solution
     raise Exception('cell.segment is not characterized: ' + seg)
 
+def _nconc(x):
+    """number of leading concentration entries of the unknown vector: 5*NS (CNT/CCD/OMCD) or 3*NS (three-compartment segments)"""
+    return 5*NS if len(x) == 5*NS+11 else 3*NS
+
 def _limit_step(x, delta):
     """Fraction-to-boundary: scale the step so that no concentration (the leading entries of x: 5*NS for CNT/CCD/OMCD, 3*NS for the
     three-compartment segments) falls below POSFRAC of its current value."""
-    nconc = 75 if len(x) == 86 else 45
+    nconc = _nconc(x)
     xc = np.asarray(x, dtype=float)[:nconc]; dc = delta[:nconc]
     mask = (dc > 0) & (xc > 0)
     if mask.any():
@@ -212,20 +217,34 @@ def _newton_rat(func, x, k, cell, force_safeguard=False, first_amp=None, maxiter
     STATS.append(dict(seg=cell.segment, k=int(k), iters=int(iter), resid=float(np.linalg.norm(f)), sec=_time.time()-_t0))
     return x
 
+_LAST_STEP = {}      # segment -> start step that solved the previous cell; tried first for the next cell
+
 def _newton_rat_adaptive(func,x,k,cell):
     """Try the boldest start step first; if a solve diverges, produces NaN, does not converge within a short budget or lands on an
     unphysical root (negative concentration), retry from the same start with a more cautious first step.  The last attempt is
-    accepted as it is, with the full iteration budget."""
-    steps = AD_FIRST_STEPS if k == 0 else AD_NEXT_STEPS
+    accepted as it is, with the full iteration budget.  Later cells of a segment start with the step that worked for the previous
+    cell (the bold step is retried every 20 cells), so a stretch of difficult cells is not paid for twice per cell."""
+    steps = list(AD_FIRST_STEPS if k == 0 else AD_NEXT_STEPS)
+    if k == 0:
+        _LAST_STEP.pop(cell.segment, None)
+    last_ok = _LAST_STEP.get(cell.segment)
+    if k > 0 and last_ok is not None and last_ok != steps[0] and k % 20 != 0:
+        steps = [last_ok] + [a for a in steps if a != last_ok]
+    # attempts: (start step, is_final).  The cautious (smallest) step is final and gets the full budget; a remembered cautious step
+    # that comes first also gets the full budget so that a stretch of hard cells costs one solve per cell.
+    attempts = [(a0, False) for a0 in steps]
+    smallest = min(steps)
+    attempts = [(a0, a0 == smallest and (i == 0 or i == len(steps)-1)) for i, a0 in enumerate(steps)]
     x0 = np.array(x, copy=True); last = None
-    for i, a0 in enumerate(steps):
-        final = (i == len(steps)-1)
+    for i, (a0, final) in enumerate(attempts):
         try:
             sol = _newton_rat(func,np.array(x0, copy=True),k,cell,first_amp=a0,maxiter_override=None if final else AD_TRY_ITERS,strict=not final)
-            nconc = 75 if len(sol) == 86 else 45
-            if np.all(np.isfinite(sol)) and (final or np.min(np.asarray(sol, dtype=float)[:nconc]) > -AD_NEGTOL):
+            nconc = _nconc(sol)
+            if np.all(np.isfinite(sol)) and (i == len(attempts)-1 or np.min(np.asarray(sol, dtype=float)[:nconc]) > -AD_NEGTOL):
                 if i:
                     print('Note: '+_where(cell)+' cell '+str(k)+' solved with initial step '+str(a0)+'\n')
+                if k > 0:
+                    _LAST_STEP[cell.segment] = a0
                 x[:] = sol
                 return x
         except Exception as e:
@@ -242,7 +261,7 @@ def newton_rat(func,x,k,cell):
         sol = _newton_rat(func,x,k,cell)
         # formate is solute 12; 5-compartment layout (CNT/CCD/OMCD) is solute-major x[5*j+c], 3-compartment is compartment-major x[15*c+j]
         sol_a = np.array(sol, dtype=float)
-        form = sol_a[60:65] if len(sol_a) > 60 else sol_a[[12,27,42]]
+        form = sol_a[60:65] if len(sol_a) == 5*NS+11 else sol_a[[12,NS+12,2*NS+12]]
         if form.min() < 0:
             print('Note: negative formate in the first '+cell.segment+' cell (min %.3g); re-solving it with the positivity safeguard\n' % form.min())
             sol = _newton_rat(func,x0,k,cell,force_safeguard=True)

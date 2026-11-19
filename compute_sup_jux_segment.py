@@ -20,7 +20,7 @@ import flux
 import output
 
 def compute_segment(sup_or_jux,sex,species,sup_or_multi,diabete,inhib,unx,preg,HT,file_to_save):
-    solute = ['Na','K','Cl','HCO3','H2CO3','CO2','HPO4','H2PO4','urea','NH3','NH4','H','HCO2','H2CO2','glu']
+    solute = SOLUTE_NAMES
     compart = ['Lumen','Cell','ICA','ICB','LIS','Bath']
     cw=Vref*60e6
     #========================================================

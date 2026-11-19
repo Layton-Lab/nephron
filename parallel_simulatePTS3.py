@@ -22,7 +22,7 @@ import multiprocessing
 from set_params import set_torq_params, torq_ref_vol
 import output
 
-solute = ['Na','K','Cl','HCO3','H2CO3','CO2','HPO4','H2PO4','urea','NH3','NH4','H','HCO2','H2CO2','glu']
+solute = SOLUTE_NAMES
 compart = ['Lumen','Cell','ICA','ICB','LIS','Bath']
 cw=Vref*60e6
 
@@ -79,7 +79,7 @@ else:
     parts = ['sup','jux1','jux2','jux3','jux4','jux5']
 
 def compute_segmentPTS3(sup_or_jux,sex,species,sup_or_multi,diabete,inhib,unx,preg,file_to_save):
-    solute = ['Na','K','Cl','HCO3','H2CO3','CO2','HPO4','H2PO4','urea','NH3','NH4','H','HCO2','H2CO2','glu']
+    solute = SOLUTE_NAMES
     compart = ['Lumen','Cell','ICA','ICB','LIS','Bath']
     cw=Vref*60e6
     #========================================================

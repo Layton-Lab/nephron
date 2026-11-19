@@ -42,6 +42,11 @@ def ENaC(cell,i,memb_id,hNaMP,area,jvol):
         elif cell.species == 'hum':
             NaMPq0=vin-(2.0e-6)/60/Vref
         facFvMP=max(enac_cnt_floor(cell),1+3*((cell.vol[0]/NaMPq0)-1))
+
+        if CALCIUM:
+            # calcium model (Hakimi et al. 2023): pH dependence of CNT ENaC, from intracellular pH
+            phi = -np.log(abs(cell.conc[11][1])/1e3)/np.log(10.0)
+            facphMP = (1/(0.5+np.exp(-2.6*(phi-7.20))))
         if cell.species == 'mou':
             cap = enac_cnt_cap(cell, 1.6e-6/60/Vref*6000.0)
             if cap is not None:

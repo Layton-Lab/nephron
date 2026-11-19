@@ -376,7 +376,7 @@ def compute(N,filename,method,sup_or_jux=None,diabete='Non',species = 'human',su
 
         elif cell[0].segment == 'CNT' or cell[0].segment == 'CCD' or cell[0].segment == 'OMCD':
             x=np.zeros(5*NS+11)
-            for j in range(15):
+            for j in range(NS):
                 x[5*j]=cell[i].conc[j,0]
                 x[5*j+1]=cell[i].conc[j,1]
                 x[5*j+2]=cell[i].conc[j,2]
@@ -391,6 +391,11 @@ def compute(N,filename,method,sup_or_jux=None,diabete='Non',species = 'human',su
             raise Exception('cell.segment:' + cell[0].segment +' is not set up')
         #print(x)
         #input('pausing...')
+        if CALCIUM:
+            # pinned Ca2+ compartments start (and stay) at the next cell's initial value
+            _xi, _ei = equations.ca_held(cell[0].segment, i, cell[0].total)
+            for ix in _xi:
+                x[ix] = cell[i+1].conc[15, (ix-5*15) if len(x) == 5*NS+11 else 1]
         # set up nonlinear system
         equations.conservation_init (cell[i],cell[i+1],celln,dx)
         fvec = equations.conservation_eqs (x,i)
@@ -430,7 +435,7 @@ def compute(N,filename,method,sup_or_jux=None,diabete='Non',species = 'human',su
     
             cell[i+1].pres[0] = sol[3*NS+6]
         elif cell[0].segment == 'CNT' or cell[0].segment == 'CCD' or cell[0].segment == 'OMCD':
-            for j in range(15):
+            for j in range(NS):
                 cell[i+1].conc[j,0] = sol[5*j]
                 cell[i+1].conc[j,1] = sol[5*j+1] 
                 cell[i+1].conc[j,2] = sol[5*j+2]
@@ -557,7 +562,7 @@ def compute(N,filename,method,sup_or_jux=None,diabete='Non',species = 'human',su
     
 
     number_of_cell = [i for i in range(1,200)]
-    solute = ['Na','K','Cl','HCO3','H2CO3','CO2','HPO4','H2PO4','urea','NH3','NH4','H','HCO2','H2CO2','glu']
+    solute = SOLUTE_NAMES
     compart = ['Lumen','Cell','ICA','ICB','LIS','Bath']
 
     stop=timeit.default_timer()

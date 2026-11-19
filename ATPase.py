@@ -98,6 +98,11 @@ def hatpase(cell,ep,memb_id,act,area):
         fluxHATPase=area[memb_id[0]][memb_id[1]]*act/DactH
     else:
         fluxHATPase=-area[memb_id[0]][memb_id[1]]*act/DactH
+    if CALCIUM and memb_id[0]==0 and memb_id[1]==2 and cell.segment == 'OMCD':
+        # CaSR effect on the OMCD apical H-ATPase (calcium model, Hakimi et al. 2023)
+        alpha_omcd = +2
+        EC_50 = 1.25
+        fluxHATPase = fluxHATPase*(1+alpha_omcd*(cell.conc[15,0]**4)/(cell.conc[15,0]**4+EC_50**4))
     return [11],[fluxHATPase]
 #------------------------------------------------------------------------
 #    H-K-ATPase
@@ -215,3 +220,25 @@ def fatpase(n,hkconc):
     Amat[13,13] = dkf11
     
     return Amat
+
+
+#---------------------------------------------------------------------72
+#     Ca-ATPase (calcium model, Hakimi et al. 2023)
+#---------------------------------------------------------------------72
+
+def calatapse(cell,ep,memb_id,act,area):
+
+    AffCa = 75.6e-6
+    actCa = cell.conc[15][memb_id[0]]/(cell.conc[15][memb_id[0]]+AffCa)
+    fluxCa = area[memb_id[0]][memb_id[1]]*act*actCa
+    return [15], [fluxCa]
+
+
+def calatapse_mtal(cell,i,ep,memb_id,act,area):
+
+    AffCa = 42.6e-6
+    actCa = cell.conc[15][memb_id[0]]/(cell.conc[15][memb_id[0]]+AffCa)
+    fluxCa = area[memb_id[0]][memb_id[1]]*act*actCa
+    if (cell.segment == 'DCT') and (i < 2.0/3.0*cell.total):
+        fluxCa = 0
+    return [15], [fluxCa]
