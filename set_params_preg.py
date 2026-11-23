@@ -68,6 +68,9 @@ def read_params_preg(cell,filename,j):
         terms = line.split(' ')
         if line[0][0]!='#':
             id = terms[0] #re.findall(r'[A-Za-z_]+', line)
+            if (not CALCIUM) and ('_Ca_' in id or id == 'conc_Ca' or id.endswith(('_TRPV5','_CaATPase','_NCX1'))):
+                line = file.readline()      # calcium parameters are ignored when the model runs without Ca
+                continue
             sex = id.split('_')[-1].lower()
             if compare_sex(sex, cell):
                 id = id.replace('_male', '')
@@ -748,15 +751,15 @@ def read_params_preg(cell,filename,j):
             # changes for altered concentrations (i.e., in pregnancy) are made in boundaryBath
             elif compare_string_prefix(id,'cm'):
                 cell.cm = []
-                for i in num:
+                for i in num[:NS]:
                     cell.cm.append(float(i))
             elif compare_string_prefix(id,'oi'):
                 cell.oi = []
-                for i in num:
+                for i in num[:NS]:
                     cell.oi.append(float(i))
             elif compare_string_prefix(id,'pap'):
                 cell.pap = []
-                for i in num:
+                for i in num[:NS]:
                     cell.pap.append(float(i))
                         
             # invalue keyword
