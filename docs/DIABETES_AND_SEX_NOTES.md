@@ -159,19 +159,23 @@ in urine flow and solute concentrations, 0 non-converged cells; mouse Moderate s
 (IMCD max ~165 -> 8-34, OMCD 33 -> 9-12) and the OMCD takes less than half the time.  Results are not bit-identical to the table solver.
 Not validated with it: Severe diabetes, human (`newton_human` is unchanged), `Newton_preg.py`.
 
-## Calcium (rat only)
+## Calcium and magnesium (rat only)
 
-Ca (solute 15, valence +2) is ported from the Hakimi et al. calcium version: TRPV5, NCX1, Ca-ATPase, paracellular Ca, CaSR effects (TAL paracellular Ca/ROMK, NKCC2, NCC, IMCD water, OMCD H-ATPase, CNT ENaC) and interstitial Ca gradients.
+Ca (solute 15) and Mg (solute 16), both valence +2, are ported from the Hakimi et al. calcium/magnesium code (2024, renal Ca and Mg handling in pregnancy): TRPV5, NCX1, PMCA (Ca-ATPase), TRPM6, NaMgX (Na:Mg 2:1), paracellular Ca/Mg, CaSR effects (TAL paracellular Ca/Mg permeability, ROMK, NKCC2, NCC, IMCD water permeability; CNT ENaC), interstitial Ca/Mg gradients.
 
-* Switch: `NEPH_CALCIUM=1/0`; default is on iff `rat` is on the command line and the run is not a pregnancy run. Mouse/human (no Ca parameters) and pregnancy (parameter reader and `Newton_preg.py` not extended) run with Ca off, identical to before.
-* Segments without transcellular Ca (PT/S3/SDL, early DCT, TAL, LDL/LAL, MD, IMCD, and some CNT/CCD/OMCD compartments) keep the unknown in the vector but pinned (`x - x0 = 0`); the solution equals deleting it.
-* The adaptive Newton cascade and diabetes setup are unchanged; `Newton.py` now uses `NS` instead of hard-coded sizes, and remembers the last successful step per segment.
-* Magnesium is NOT implemented: the supplied code only has parameters and commented-out equations (the 2024 pregnancy paper would be needed).
+* Switches: `NEPH_CALCIUM=1/0`, `NEPH_MAGNESIUM=1/0`; default on iff `rat` is on the command line. Mouse/human run with both off, as before. `NEPH_CASR_OMCD_HATPASE=1` enables the OMCD H-ATPase CaSR branch (dead code in the reference, default off).
+* Segments without transcellular transport of a divalent keep the unknown in the vector but pinned (`x - x0 = 0`), which equals deleting it. Mg: whole DCT solves cell Mg (TRPM6); other cells pinned.
+* Pregnancy: `set_params_preg.py` applies the Hakimi 2024 Table 1 style ratios (PMCA/NCX1 1.4/1.3, TRPV5, TRPM6, NaMgX superficial and juxtamedullary, PT/S3 apical Ca permeability 1.4/1.2). `NEPH_PREG_TABLE1=1` replaces the code ratios by the published Table 1 values (default off). Pregnancy runs use the adaptive Newton solver (`NEPH_SOLVER=tables` restores `Newton_preg`).
+* Known reference quirks kept: TRPM6 uses cell pH[0] which is never updated (constant); our S3params_F_rat.dat has a duplicate NHE3_female line that the Mg repo removed.
 
-Validation: with Ca on, rat Non matches the reference Ca code through the CNT to ~2e-5; Ca off reproduces previous results (mouse and rat).
+Validation
+* Virgin female rat Ca+Mg vs the original Mg code: within 0.7% through cTAL, 2-4% in DCT/CNT.
+* Ca/Mg off reproduces previous results (mouse regression).
+* Mid pregnancy vs the original Mg code (change MP/virgin in segment net reabsorption): PT Ca +25% (ref +28%, paper +33%), PT Mg +18% (+20%, +25%), mTAL Ca -13% (-18%, paper -11%), cTAL Ca -19% (-22%, -19%), cTAL Mg +15% (+15%, +18%), DCT Ca +22% (+34%), DCT Mg +96% (+102%). DCT/CNT concentrations differ from the reference run by 12-46%; parameters were verified identical and the difference starts at 1-3% in cTAL (PT outflow +1.1%), so it is likely solver/convergence path (the reference has unconverged CNT cells), not unresolved physics.
+* Not validated: late pregnancy, CCD/OMCD/IMCD Ca/Mg in pregnancy, diabetes with Mg, inhibition options, unx, juxtamedullary nephrons, flux-decomposition outputs.
+
+Pregnancy vs Stadt & Layton 2022: PT inlet loads match; distal and urinary values differ (e.g. NP urine Na 41 vs 32, MP 54 vs 34; PT Na reabsorption 54% vs 58%). The pristine upstream code shows the same differences (it has since gained glucose/SGLT etc.), and applying Table 1 values does not remove them. PT Na transport agrees with Hakimi 2024 (virgin 44.7, MP 53.8 umol/min per kidney).
 
 Known limitations
-* CCD cells 96-97 may fail to converge with Ca (also with the old tuned damping, so not solver-related).
-* Diabetic rat: outlet Ca can come out slightly negative (female Moderate about -0.03 mM; male Moderate about -0.5 to -1.4 mM along CCD to IMCD), i.e. Ca is over-reabsorbed. Needs investigation.
-* Male Moderate with Ca is slow (about 1900 s to the end of CNT).
-* Untested: Severe diabetes Ca scalings, inhibition options, unx, flux-decomposition outputs (not ported).
+* CCD cells may fail to converge with Ca (also with the old tuned damping).
+* Diabetic rat: outlet Ca can come out slightly negative (over-reabsorption); needs investigation.

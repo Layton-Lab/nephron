@@ -7,6 +7,15 @@ def nkcc2(cell,memb_id,xNKCC2,area,isoform):
 		if cell.segment == 'mTAL':
 			xNKCC2 = xNKCC2*1.1
 
+	if CALCIUM:
+		# CaSR inhibits NKCC2 (Hakimi et al. 2024: Ca2+ and, with 0.4 weight, Mg2+ in the interstitium)
+		alpha_nkcc2 = -0.4
+		EC_50_Ca = 1.25
+		xNKCC2 = xNKCC2 * (1 + alpha_nkcc2 * (cell.conc[15, 5] ** 4) / (cell.conc[15, 5] ** 4 + EC_50_Ca ** 4))
+		if MAGNESIUM:
+			EC_50_Mg = 2.5
+			xNKCC2 = xNKCC2 * (1 + 0.4 * alpha_nkcc2 * (cell.conc[16, 5] ** 4) / (cell.conc[16, 5] ** 4 + EC_50_Mg ** 4))
+
 	bn2_dic = {'F':bn2F,'A':bn2A,'B':bn2B}
 	bc2_dic = {'F':bc2F,'A':bc2A,'B':bc2B}
 	bk2_dic = {'F':bk2F,'A':bk2A,'B':bk2B}

@@ -16,6 +16,8 @@ import Pendrin
 import AE1
 import TRPV5
 import NCX1
+import TRPM6
+import NaMgX
 import NHE1
 import math
 
@@ -126,6 +128,15 @@ def compute_fluxes (cell,j):
             solute_id,fluxncx1=NCX1.ncx1(cell,j,cell.ep,memb_id,cell.trans[i].act,cell.area)
             for i in range(len(solute_id)):
                 jsol[solute_id[i]][memb_id[0]][memb_id[1]] += fluxncx1[i]
+        # Mg2+ transporters (Hakimi et al. 2024)
+        elif transporter_type == 'TRPM6':
+            solute_id,fluxTRPM6=TRPM6.trpm6(cell,cell.ep,memb_id,cell.trans[i].act,cell.area)
+            for i in range(len(solute_id)):
+                jsol[solute_id[i]][memb_id[0]][memb_id[1]] += fluxTRPM6[i]
+        elif transporter_type == 'NaMgX':
+            solute_id,fluxNaMgX=NaMgX.namgx(cell,memb_id,cell.trans[i].act,cell.area)
+            for i in range(len(solute_id)):
+                jsol[solute_id[i]][memb_id[0]][memb_id[1]] += fluxNaMgX[i]
         else:
             print('What is this?',transporter_type)
             

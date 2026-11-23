@@ -65,10 +65,13 @@ def trpv5(cell,i,ep,memb_id,act,area):
 
     flux_trpv5 = f_trpv5 * ((N_trpv5 * g_trpv5)*1e-9)/(Cref*href) * ( delta_vol - E_nernst)/(2*F_si)
 
-    fluxCa = area[memb_id[0]][memb_id[1]]*flux_trpv5
+    # Luminal [Ca2+] Effect:
+    f_con = 1 + (cell.conc[15, 0] / 1.98) ** 2.37
+
+    fluxCa = area[memb_id[0]][memb_id[1]] * flux_trpv5 * f_con
 
     # at DCT2 and CNT only
-    if (cell.segment == 'DCT') and (i < 2.0/3.0*cell.total):
+    if (cell.segment == 'DCT' and i < 2.0/3.0*cell.total):
         fluxCa = 0
 
 

@@ -18,27 +18,38 @@ celln = membrane()
 count=0
 
 CA = 15      # solute index of Ca2+ (calcium model)
+MG = 16      # solute index of Mg2+
+DIVALENT = ([CA] if CALCIUM else []) + ([MG] if MAGNESIUM else [])
 
 def ca_held(seg, i, total):
-    """Calcium compartments without transcellular Ca2+ transport do not take part in the Newton solve: their Ca2+ concentration is
-    pinned to its initial value (the calcium model deletes these unknowns; pinning gives the same solution and keeps one uniform
-    unknown vector).  Returns (x indices, equation indices); they coincide for the 5-compartment layout, not for the 3-compartment one.
-    PT/S3/SDL solve all three compartments; the early DCT (first 2/3), TAL, LDL/LAL/MD, IMCD hold the cell; CNT holds the
-    intercalated cells; CCD/OMCD hold the cell and both intercalated cells."""
-    if not CALCIUM:
-        return [], []
-    if seg in ('PT','S3','SDL'):
-        return [], []
-    if seg == 'CNT':
-        ix = [5*CA+2, 5*CA+3]
-        return ix, ix
-    elif seg in ('CCD','OMCD'):
-        ix = [5*CA+1, 5*CA+2, 5*CA+3]
-        return ix, ix
-    elif seg == 'DCT' and i >= 2.0/3.0*total:
-        return [], []
-    else:
-        return [NS+CA], [3*CA+1]     # x holds the cell block at NS..2*NS-1; the equation is the cell row S[1+3*CA]
+    """Ca2+ / Mg2+ compartments without transcellular transport do not take part in the Newton solve: their concentration is pinned to
+    its initial value (the Ca/Mg model deletes these unknowns; pinning gives the same solution and keeps one uniform unknown vector).
+    Returns (x indices, equation indices); they coincide for the 5-compartment layout, not for the 3-compartment one.
+    Ca2+: PT/S3/SDL solve all three compartments; the early DCT (first 2/3), TAL, LDL/LAL/MD, IMCD hold the cell; CNT holds the
+    intercalated cells; CCD/OMCD hold the cell and both intercalated cells.
+    Mg2+ (Hakimi et al. 2024): only the DCT has transcellular Mg2+ transport (TRPM6); the cell of PT/S3/SDL, TAL, LDL/LAL/MD, IMCD
+    and the cell and intercalated cells of CNT/CCD/OMCD are held."""
+    xs, es = [], []
+    for sol in DIVALENT:
+        if sol == CA:
+            if seg in ('PT','S3','SDL'):
+                continue
+            if seg == 'CNT':
+                ix = [5*sol+2, 5*sol+3]; xs += ix; es += ix
+            elif seg in ('CCD','OMCD'):
+                ix = [5*sol+1, 5*sol+2, 5*sol+3]; xs += ix; es += ix
+            elif seg == 'DCT' and i >= 2.0/3.0*total:
+                continue
+            else:
+                xs.append(NS+sol); es.append(3*sol+1)     # x holds the cell block at NS..2*NS-1; the equation is the cell row S[1+3*sol]
+        else:
+            if seg in ('CNT','CCD','OMCD'):
+                ix = [5*sol+1, 5*sol+2, 5*sol+3]; xs += ix; es += ix
+            elif seg == 'DCT':
+                continue                                   # TRPM6 in the whole DCT: cell Mg2+ is solved
+            else:
+                xs.append(NS+sol); es.append(3*sol+1)
+    return xs, es
 
 def conservation_init (my_cell0, my_cell1,my_celln, my_dx):
 
@@ -47,12 +58,12 @@ def conservation_init (my_cell0, my_cell1,my_celln, my_dx):
     global cell0,cell1,cellm,celln
     global ca_hold
     ca_hold = {}
-    if CALCIUM:
+    for sol in DIVALENT:
         if my_cell1.segment in ('CNT','CCD','OMCD'):
             for c in (1,2,3):
-                ca_hold[5*CA+c] = my_cell1.conc[CA,c]
+                ca_hold[5*sol+c] = my_cell1.conc[sol,c]
         else:
-            ca_hold[NS+CA] = my_cell1.conc[CA,1]
+            ca_hold[NS+sol] = my_cell1.conc[sol,1]
 
     cell0  = copy.deepcopy(my_cell0)
     cell1  = copy.deepcopy(my_cell1)
@@ -333,10 +344,11 @@ def conservation_eqs (x,i):
     #    For volume
     #---------------------------------------------------------------------
 
-        if CALCIUM:
-            fvec[3*CA] = S[3*CA]
-            fvec[3*CA+1] = S[3*CA+1]
-            fvec[3*CA+2] = S[3*CA+2]
+        if DIVALENT:
+            for sol in DIVALENT:
+                fvec[3*sol] = S[3*sol]
+                fvec[3*sol+1] = S[3*sol+1]
+                fvec[3*sol+2] = S[3*sol+2]
             _xi, _ei = ca_held(cell1.segment, i, cell1.total)
             for xi, ei in zip(_xi, _ei):
                 fvec[ei] = x[xi] - ca_hold[xi]
@@ -674,9 +686,10 @@ def conservation_eqs (x,i):
     #---------------------------------------------------------------------
     #    For Volume
     #---------------------------------------------------------------------
-        if CALCIUM:
-            for c in range(5):
-                fvec[5*CA+c] = S[5*CA+c]
+        if DIVALENT:
+            for sol in DIVALENT:
+                for c in range(5):
+                    fvec[5*sol+c] = S[5*sol+c]
             _xi, _ei = ca_held(cell1.segment, i, cell1.total)
             for xi, ei in zip(_xi, _ei):
                 fvec[ei] = x[xi] - ca_hold[xi]

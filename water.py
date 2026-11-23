@@ -33,6 +33,9 @@ def compute_water_fluxes (cell):
         alpha_imcd = -3/8
         EC_50_Ca = 1.25
         cell.dLPV[0,1] = base_apical_perm*(1+alpha_imcd*(cell.conc[15,0]**4)/(cell.conc[15,0]**4+EC_50_Ca**4))
+        if MAGNESIUM:
+            EC_50_Mg = 2.5
+            cell.dLPV[0,1] = cell.dLPV[0,1]*(1+0.6*alpha_imcd*(cell.conc[16,0]**4)/(cell.conc[16,0]**4+EC_50_Mg**4))
         cell.dLPV[1,0] = cell.dLPV[0,1]
   
     

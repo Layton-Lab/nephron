@@ -98,8 +98,8 @@ def hatpase(cell,ep,memb_id,act,area):
         fluxHATPase=area[memb_id[0]][memb_id[1]]*act/DactH
     else:
         fluxHATPase=-area[memb_id[0]][memb_id[1]]*act/DactH
-    if CALCIUM and memb_id[0]==0 and memb_id[1]==2 and cell.segment == 'OMCD':
-        # CaSR effect on the OMCD apical H-ATPase (calcium model, Hakimi et al. 2023)
+    if CASR_OMCD_HATPASE and CALCIUM and memb_id[0]==0 and memb_id[1]==2 and cell.segment == 'OMCD':
+        # CaSR effect on the OMCD apical H-ATPase (calcium model, Hakimi et al. 2023).  Off by default, see values.py
         alpha_omcd = +2
         EC_50 = 1.25
         fluxHATPase = fluxHATPase*(1+alpha_omcd*(cell.conc[15,0]**4)/(cell.conc[15,0]**4+EC_50**4))

@@ -2,11 +2,13 @@ import numpy as np
 import collections
 import os, sys
 
-# Calcium (solute 15) is part of the model for the rat only (the Ca parameters exist for the rat).  NEPH_CALCIUM=1/0 forces it on/off;
-# when unset it is on iff 'rat' is one of the command-line arguments (e.g. '--species rat' or 'Male rat Moderate') and the run is not a
-# pregnancy run (the pregnancy parameter reader / Newton_preg are not extended to calcium).
+# Calcium (solute 15) and magnesium (solute 16) are part of the model for the rat only (the Ca/Mg parameters exist for the rat; Hakimi et al.
+# 2023/2024, including the mid/late-pregnant models).  NEPH_CALCIUM=1/0 and NEPH_MAGNESIUM=1/0 force them on/off; when unset both are on iff
+# 'rat' is one of the command-line arguments (e.g. '--species rat' or 'Male rat Moderate').  Mg needs Ca (the CaSR terms use both).
 _ca = os.environ.get('NEPH_CALCIUM')
-CALCIUM = (_ca == '1') if _ca in ('0','1') else ('rat' in sys.argv and not ('mid' in sys.argv or 'late' in sys.argv))
+CALCIUM = (_ca == '1') if _ca in ('0','1') else ('rat' in sys.argv)
+_mg = os.environ.get('NEPH_MAGNESIUM')
+MAGNESIUM = CALCIUM and ((_mg == '1') if _mg in ('0','1') else True)
 
 solute_id = {
     'Na'    : 0,
@@ -27,6 +29,8 @@ solute_id = {
     }
 if CALCIUM:
     solute_id['Ca'] = 15
+if MAGNESIUM:
+    solute_id['Mg'] = 16
 
 # valence
 solute_val = collections.OrderedDict()
@@ -47,6 +51,8 @@ solute_val['H2CO2'] = 0
 solute_val['glucose'] = 0
 if CALCIUM:
     solute_val['Ca'] = 2
+if MAGNESIUM:
+    solute_val['Mg'] = 2
 
 # extract valence values only as an array for convenience
 zval = np.asarray(list(solute_val.values()))
@@ -100,6 +106,9 @@ class membrane:
         self.HT = 'N'
         # pregnancy status
         self.preg = 'non'
+        # hypocalcemia / hypomagnesemia status ('Y' = 10% lower interstitial and PT-inlet Ca / Mg, Hakimi et al. 2024)
+        self.hypoCa = 'N'
+        self.hypoMg = 'N'
         # tubule length
         self.len = 0.0
         # luminal diameter
@@ -172,4 +181,4 @@ class membrane:
         
 
 # solute names used for output file names ('glu' for glucose)
-SOLUTE_NAMES = ['Na','K','Cl','HCO3','H2CO3','CO2','HPO4','H2PO4','urea','NH3','NH4','H','HCO2','H2CO2','glu'] + (['Ca'] if CALCIUM else [])
+SOLUTE_NAMES = ['Na','K','Cl','HCO3','H2CO3','CO2','HPO4','H2PO4','urea','NH3','NH4','H','HCO2','H2CO2','glu'] + (['Ca'] if CALCIUM else []) + (['Mg'] if MAGNESIUM else [])

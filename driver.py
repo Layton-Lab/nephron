@@ -15,7 +15,7 @@ import boundaryBath
 import time
 import os
 
-def compute(N,filename,method,sup_or_jux=None,diabete='Non',species = 'human',sup_or_multi = 'superficial',inhibition=None,unx = 'N',preg='non', HT='N'):
+def compute(N,filename,method,sup_or_jux=None,diabete='Non',species = 'human',sup_or_multi = 'superficial',inhibition=None,unx = 'N',preg='non', HT='N', hypoCa='N', hypoMg='N'):
 
     start=timeit.default_timer()
 
@@ -40,6 +40,10 @@ def compute(N,filename,method,sup_or_jux=None,diabete='Non',species = 'human',su
     if HT != 'N':
         for i in range(N):
             cell[i].HT = HT
+    # hypocalcemia / hypomagnesemia (Hakimi et al. 2024)
+    for i in range(N):
+        cell[i].hypoCa = hypoCa
+        cell[i].hypoMg = hypoMg
     # pregnancy status of cell
     if preg != 'non':
         for i in range(N):
@@ -392,10 +396,13 @@ def compute(N,filename,method,sup_or_jux=None,diabete='Non',species = 'human',su
         #print(x)
         #input('pausing...')
         if CALCIUM:
-            # pinned Ca2+ compartments start (and stay) at the next cell's initial value
+            # pinned Ca2+ / Mg2+ compartments start (and stay) at the next cell's initial value
             _xi, _ei = equations.ca_held(cell[0].segment, i, cell[0].total)
             for ix in _xi:
-                x[ix] = cell[i+1].conc[15, (ix-5*15) if len(x) == 5*NS+11 else 1]
+                if len(x) == 5*NS+11:
+                    x[ix] = cell[i+1].conc[ix//5, ix%5]
+                else:
+                    x[ix] = cell[i+1].conc[ix-NS, 1]
         # set up nonlinear system
         equations.conservation_init (cell[i],cell[i+1],celln,dx)
         fvec = equations.conservation_eqs (x,i)
@@ -405,7 +412,8 @@ def compute(N,filename,method,sup_or_jux=None,diabete='Non',species = 'human',su
             if species == 'human':
                 sol = Newton.newton_human(equations.conservation_eqs,x,i,cell[i])
             elif species == 'rat':
-                if cell[0].preg != 'non':
+                if cell[0].preg != 'non' and Newton.SOLVER != 'adaptive':
+                    # NEPH_SOLVER=tables: the original hand-tuned pregnancy damping (tuned for the model without Ca2+/Mg2+)
                     sol = Newton_preg.newton_preg_rat(equations.conservation_eqs,x,i,cell[i])
                 else:
                     sol = Newton.newton_rat(equations.conservation_eqs,x,i,cell[i])

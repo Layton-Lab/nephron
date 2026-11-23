@@ -196,8 +196,9 @@ def read_params(cell,filename,j):
         terms = line.split(' ')
         if line[0][0]!='#':
             id = terms[0] #re.findall(r'[A-Za-z_]+', line)
-            if (not CALCIUM) and ('_Ca_' in id or id == 'conc_Ca' or id.endswith(('_TRPV5','_CaATPase','_NCX1'))):
-                line = file.readline()      # calcium parameters are ignored when the model runs without Ca
+            if ((not CALCIUM) and ('_Ca_' in id or id == 'conc_Ca' or id.endswith(('_TRPV5','_CaATPase','_NCX1')))) or \
+               ((not MAGNESIUM) and ('_Mg_' in id or id == 'conc_Mg' or id.endswith(('_TRPM6','_NaMgX')))):
+                line = file.readline()      # Ca / Mg parameters are ignored when the model runs without them
                 continue
             sex = id.split('_')[-1].lower()
             if compare_sex(sex, cell):
@@ -939,18 +940,30 @@ def read_params(cell,filename,j):
                     if cell.inhib == 'NCX1-99' and newTransp.type == 'NCX1':
                         newTransp.act = value/(href*Cref)*(1-0.999)
 
-                    # CaSR inhibits NKCC2 and activates NCC (Edwards 2014; Hakimi et al. 2023)
-                    EC_50_Ca = 1.25
-                    if newTransp.type == 'NKCC2A' or newTransp.type == 'NKCC2B' or newTransp.type == 'NKCC2F':
-                        alpha_nkcc2 = -0.5
-                        newTransp.act = newTransp.act*(1+alpha_nkcc2*(cell.conc[15,5]**4)/(cell.conc[15,5]**4+EC_50_Ca**4))
-                    if newTransp.type == 'NCC':
-                        alpha_ncc = 0.5
-                        newTransp.act = newTransp.act*(1+alpha_ncc*(cell.conc[15,0]**4)/(cell.conc[15,0]**4+EC_50_Ca**4))
+                    # (the CaSR effects on NKCC2 and NCC are applied at run time in NKCC.py / NCC.py)
+
+                    if cell.inhib == 'TRPV5-70' and cell.segment == 'DCT' and newTransp.type in ('TRPV5','NCX1','CaATPase'):
+                        newTransp.act = value/(href*Cref)*(1-0.7)
+
+                    # hypocalcemia / hypomagnesemia (Hakimi et al. 2024): PTH upregulates TRPV5/NCX1 (and TRPM6/NaMgX) by 5%
+                    if (cell.hypoCa == 'Y' or cell.hypoMg == 'Y') and cell.segment in ('DCT','CNT') and newTransp.type in ('TRPV5','NCX1'):
+                        newTransp.act = 1.05*newTransp.act
+                    if cell.hypoMg == 'Y' and cell.segment == 'DCT' and newTransp.type in ('TRPM6','NaMgX'):
+                        newTransp.act = 1.05*newTransp.act
 
                     # no transcellular Ca2+ transport in the early DCT (DCT1)
                     if (cell.segment == 'DCT') and (j<2.0/3.0*cell.total) and newTransp.type in ('TRPV5','NCX1','CaATPase'):
                         newTransp.act = 0
+
+                if MAGNESIUM:
+                    if cell.inhib == 'TRPM6-70' and newTransp.type == 'TRPM6':
+                        newTransp.act = value/(href*Cref)*(1-0.7)
+                    if cell.inhib == 'TRPM6-99':
+                        if newTransp.type in ('TRPM6','NaMgX'):
+                            newTransp.act = value/(href*Cref)*(1-0.999)
+                    # juxtamedullary DCT: Mg2+ transporters upregulated
+                    if cell.type != 'sup' and cell.segment == 'DCT' and newTransp.type in ('TRPM6','NaMgX'):
+                        newTransp.act = newTransp.act*1.75
 
                 cell.trans.append(newTransp)
 
@@ -967,6 +980,11 @@ def read_params(cell,filename,j):
                         cell.conc[solute_id[tmp[1]]][3] = float(num[5])
                 if (cell.diabete != 'Non' or _os.environ.get('NEPH_GLU_ND','0') != '0') and cell.segment == 'PT':
                     cell.conc[14,0] = diab_plasma_glucose(cell)   # filtrate glucose = plasma (bath) glucose
+                if cell.segment == 'PT':
+                    if CALCIUM and cell.hypoCa == 'Y':
+                        cell.conc[15,0] = 1.125      # hypocalcemia: 10% lower PT-inlet Ca2+
+                    if MAGNESIUM and cell.hypoMg == 'Y':
+                        cell.conc[16,0] = 0.432      # hypomagnesemia: 10% lower PT-inlet Mg2+
 
             # Reference impermeat concentration (for cell)
             # or oncotic pressure for lumen/LIS/bath

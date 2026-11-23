@@ -213,10 +213,10 @@ TotHCO3Pap_noinhib = 25.0
 TotHCO3Pap_MP = 25.0*0.95
 TotHCO3Pap_LP = 25.0*0.9645
 
-# Ca2+ (interstitial concentrations at the corticomedullary border / outer-inner medulla / papilla, mM; from the calcium model)
+# Ca2+ and Mg2+ (interstitial concentrations at the corticomedullary border / outer-inner medulla / papilla, mM; from the Hakimi et al. 2024 code)
 TotcaOI_noinhib = 2.5
-TotcaOI_70NKCCinhib = 1.875
-TotcaOI_100NKCCinhib = 1.25
+TotcaOI_70NKCCinhib = 2.45
+TotcaOI_100NKCCinhib = 1.5
 
 TotcaPap_noinhib = 4.0
 TotcaPap_70NKCCinhib = 2.625
@@ -227,3 +227,23 @@ TotcaPap_50inhib = 3.0
 
 TotcaOI_80inhib = TotcaOI_noinhib
 TotcaPap_80inhib = 3.0
+
+TotmgOI_noinhib = 0.96
+TotmgOI_70NKCCinhib = 0.905
+TotmgOI_100NKCCinhib = 0.58
+
+TotmgPap_noinhib = 1.54
+TotmgPap_70NKCCinhib = 1.01
+TotmgPap_100NKCCinhib = 0.48
+
+TotmgOI_50inhib = TotmgOI_noinhib
+TotmgPap_50inhib = 1.155
+
+TotmgOI_80inhib = TotmgOI_noinhib
+TotmgPap_80inhib = 1.155
+
+# CaSR stimulation of the OMCD apical H-ATPase (alpha = +2, luminal Ca2+).  It is present in the Ca-only code (Hakimi et al. 2023) but in the
+# Ca/Mg/pregnancy code (Hakimi et al. 2024) the corresponding branch tests the wrong membrane ([0,3]; the OMCD has an H-ATPase only on [0,2]), so
+# it never fires there and the published 2024 results are without it.  Default follows the 2024 code; NEPH_CASR_OMCD_HATPASE=1 switches it on.
+import os as _os_v
+CASR_OMCD_HATPASE = _os_v.environ.get('NEPH_CASR_OMCD_HATPASE','0') == '1'

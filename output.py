@@ -13,6 +13,8 @@ import Pendrin
 import AE1
 import NHE1
 import NCX1
+import TRPM6
+import NaMgX
 import TRPV5
 
 solute = SOLUTE_NAMES
@@ -270,7 +272,7 @@ def output_segment_results(cell,sup_or_jux,Scaletorq,file_to_save,N):
                     for k in range(len(solute_id)):
                         file = open('./'+file_to_save+'/'+sex_or_preg+'_'+cell[0].species+'_'+cell[j].segment+'_'+transporter_type+'_'+solute[solute_id[k]]+sup_or_jux+'.txt','a')
                         file.write(str(fluxs[k]*Scaletorq[j])+'\n')
-                elif transporter_type in ('CaATPase','NCX1','TRPV5'):
+                elif transporter_type in ('CaATPase','NCX1','TRPV5','TRPM6','NaMgX'):
                     if transporter_type == 'CaATPase':
                         if cell[0].segment == 'PT' or cell[0].segment == 'S3':
                             solute_id,fluxs=ATPase.calatapse(cell[j],cell[j].ep,memb_id,cell[j].trans[i].act,cell[j].area)
@@ -278,6 +280,10 @@ def output_segment_results(cell,sup_or_jux,Scaletorq,file_to_save,N):
                             solute_id,fluxs=ATPase.calatapse_mtal(cell[j],j,cell[j].ep,memb_id,cell[j].trans[i].act,cell[j].area)
                     elif transporter_type == 'NCX1':
                         solute_id,fluxs=NCX1.ncx1(cell[j],j,cell[j].ep,memb_id,cell[j].trans[i].act,cell[j].area)
+                    elif transporter_type == 'TRPM6':
+                        solute_id,fluxs=TRPM6.trpm6(cell[j],cell[j].ep,memb_id,cell[j].trans[i].act,cell[j].area)
+                    elif transporter_type == 'NaMgX':
+                        solute_id,fluxs=NaMgX.namgx(cell[j],memb_id,cell[j].trans[i].act,cell[j].area)
                     else:
                         solute_id,fluxs=TRPV5.trpv5(cell[j],j,cell[j].ep,memb_id,cell[j].trans[i].act,cell[j].area)
                     for k in range(len(solute_id)):

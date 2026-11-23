@@ -1,6 +1,16 @@
+from defs import *
 from values import *
 
 def NCC(cell,i,memb_id,xNCC,area):
+
+	if CALCIUM:
+		# CaSR activates NCC (Hakimi et al. 2024: luminal Ca2+ and, with 0.4 weight, Mg2+)
+		alpha_ncc = 0.5
+		EC_50_Ca = 1.25
+		xNCC = xNCC * (1 + alpha_ncc * (cell.conc[15, 0] ** 4) / (cell.conc[15, 0] ** 4 + EC_50_Ca ** 4))
+		if MAGNESIUM:
+			EC_50_Mg = 2.5
+			xNCC = xNCC * (1 + 0.4 * alpha_ncc * (cell.conc[16, 0] ** 4) / (cell.conc[16, 0] ** 4 + EC_50_Mg ** 4))
 
 	if cell.segment == 'DCT':
 		LzD=i-1

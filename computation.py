@@ -41,6 +41,8 @@ parser.add_argument('--unx',choices=['N','Y'],default = 'N',type = str,help = 'u
 # pregnancy option
 parser.add_argument('--pregnant', choices=['mid','late'], default='non', type=str, help='pregnant female? (mid/late)')
 parser.add_argument('--HT',choices=['N','Y'],default = 'N',type = str,help = 'hypertension?')
+parser.add_argument('--hypoCa',choices=['N','Y'],default = 'N',type = str,help = 'hypocalcemia (rat, Ca on)?')
+parser.add_argument('--hypoMg',choices=['N','Y'],default = 'N',type = str,help = 'hypomagnesemia (rat, Mg on)?')
 
 args=parser.parse_args()
 
@@ -68,6 +70,8 @@ unx = args.unx
 HT = args.HT
 
 preg = args.pregnant
+hypoCa = args.hypoCa
+hypoMg = args.hypoMg
 
 file_to_save = args.savefile
 if os.path.isdir(file_to_save) == False:
@@ -105,7 +109,7 @@ method = 'Newton'
 
 print(sup_or_jux + ' ' + segment + ' start')
 
-cell=compute(N,filename,method,sup_or_jux,diabete=diabete,species=species,sup_or_multi = sup_or_multi,inhibition=inhib,unx = unx, preg=preg, HT=HT)
+cell=compute(N,filename,method,sup_or_jux,diabete=diabete,species=species,sup_or_multi = sup_or_multi,inhibition=inhib,unx = unx, preg=preg, HT=HT, hypoCa=hypoCa, hypoMg=hypoMg)
 if sup_or_jux != '':
 	sup_or_jux = '_' + sup_or_jux
 

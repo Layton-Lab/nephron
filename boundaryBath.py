@@ -53,6 +53,35 @@ def female_conc(cell, i):
             cell.conc[3,5] = cell.conc[3,0]
     
 
+def casr_tal(cell):
+    """CaSR effects in the thick ascending limb (Edwards, Am J Physiol Renal 2014; Hakimi et al. 2023, 2024): interstitial Ca2+ (and, with weight 0.6,
+    Mg2+) lowers the paracellular Ca2+ (and Mg2+) permeability and the apical K+ (ROMK) permeability.  Uses the bath concentrations of the cell."""
+    base_value_par_Ca = 12e3*1.0e-5/href   # TAL permeability in the absence of Ca2+ & Mg2+
+    alpha_tal = -4/7
+    EC_50_Ca = 1.25
+    EC_50_Mg = 2.5
+    fCa_tal = 1+alpha_tal*(cell.conc[15,5]**4)/(cell.conc[15,5]**4 + EC_50_Ca**4)
+    alpha_romk = -0.8
+    fCa_romk = 1+alpha_romk*(cell.conc[15,5]**4)/(cell.conc[15,5]**4 + EC_50_Ca**4)
+    if MAGNESIUM:
+        fMg_tal = 1+0.6*alpha_tal*(cell.conc[16,5]**4)/(cell.conc[16,5]**4 + EC_50_Mg**4)
+        fMg_romk = 1+0.6*alpha_romk*(cell.conc[16,5]**4)/(cell.conc[16,5]**4 + EC_50_Mg**4)
+    else:
+        fMg_tal = fMg_romk = 1.0
+    cell.h[15][0,4] = base_value_par_Ca*fCa_tal*fMg_tal
+    cell.h[15][4,0] = cell.h[15][0,4]
+    if MAGNESIUM and cell.segment == 'cTAL':
+        # paracellular Mg2+ permeability of the cTAL in the absence of Ca2+ & Mg2+ (the mTAL is impermeable to Mg2+)
+        if cell.sex == 'male':
+            base_value_par_Mg = 91e3*1.0e-5/href
+        else:
+            base_value_par_Mg = 98e3*1.0e-5/href
+        cell.h[16][0,4] = base_value_par_Mg*fCa_tal*fMg_tal
+        cell.h[16][4,0] = cell.h[16][0,4]
+    cell.h[1][0,1] = cell.h[1][0,1]*fCa_romk*fMg_romk
+    cell.h[1][1,0] = cell.h[1][0,1]
+
+
 def boundaryBath(cell,i):
     if cell.species == 'rat':
         if cell.inhib == 'NHE3-50':
@@ -61,22 +90,26 @@ def boundaryBath(cell,i):
             cell.oi[2] = TotCloOI_noinhib
             cell.oi[8] = TotureaOI_50inhib
             if CALCIUM: cell.oi[15] = TotcaOI_50inhib
+            if MAGNESIUM: cell.oi[16] = TotmgOI_50inhib
             cell.pap[0] = TotSodPap_50inhib
             cell.pap[1] = TotPotPap_noinhib
             cell.pap[2] = TotCloPap_50inhib
             cell.pap[8] = TotureaPap_50inhib
             if CALCIUM: cell.pap[15] = TotcaPap_50inhib
+            if MAGNESIUM: cell.pap[16] = TotmgPap_50inhib
         elif cell.inhib == 'NHE3-80':
             cell.oi[0] = TotSodOI_noinhib
             cell.oi[1] = TotPotOI_noinhib
             cell.oi[2] = TotCloOI_noinhib		
             cell.oi[8] = TotureaOI_80inhib
             if CALCIUM: cell.oi[15] = TotcaOI_80inhib
+            if MAGNESIUM: cell.oi[16] = TotmgOI_80inhib
             cell.pap[0] = TotSodPap_80inhib
             cell.pap[1] = TotPotPap_80inhib
             cell.pap[2] = TotCloPap_80inhib
             cell.pap[8] = TotureaPap_80inhib
             if CALCIUM: cell.pap[15] = TotcaPap_80inhib
+            if MAGNESIUM: cell.pap[16] = TotmgPap_80inhib
         elif cell.inhib == 'NKCC2-70':
             if cell.preg == 'non':
                 cell.oi[0] = TotSodOI_70NKCCinhib
@@ -84,11 +117,13 @@ def boundaryBath(cell,i):
                 cell.oi[2] = TotCloOI_70NKCCinhib		
                 cell.oi[8] = TotureaOI_70NKCCinhib
                 if CALCIUM: cell.oi[15] = TotcaOI_70NKCCinhib
+                if MAGNESIUM: cell.oi[16] = TotmgOI_70NKCCinhib
                 cell.pap[0] = TotSodPap_70NKCCinhib
                 cell.pap[1] = TotPotPap_70NKCCinhib
                 cell.pap[2] = TotCloPap_70NKCCinhib
                 cell.pap[8] = TotureaPap_70NKCCinhib
                 if CALCIUM: cell.pap[15] = TotcaPap_70NKCCinhib
+                if MAGNESIUM: cell.pap[16] = TotmgPap_70NKCCinhib
             elif cell.preg == 'mid':
                 cell.oi[0] = TotSodOI_MP_70NKCCinhib
                 cell.oi[1] = TotPotOI_MP_70NKCCinhib
@@ -114,11 +149,13 @@ def boundaryBath(cell,i):
                 cell.oi[2] = TotCloOI_100NKCCinhib		
                 cell.oi[8] = TotureaOI_100NKCCinhib
                 if CALCIUM: cell.oi[15] = TotcaOI_100NKCCinhib
+                if MAGNESIUM: cell.oi[16] = TotmgOI_100NKCCinhib
                 cell.pap[0] = TotSodPap_100NKCCinhib
                 cell.pap[1] = TotPotPap_100NKCCinhib
                 cell.pap[2] = TotCloPap_100NKCCinhib
                 cell.pap[8] = TotureaPap_100NKCCinhib
                 if CALCIUM: cell.pap[15] = TotcaPap_100NKCCinhib
+                if MAGNESIUM: cell.pap[16] = TotmgPap_100NKCCinhib
             elif cell.preg == 'mid':
                 cell.oi[0] = TotSodOI_MP_100NKCCinhib
                 cell.oi[1] = TotPotOI_MP_100NKCCinhib
@@ -183,6 +220,16 @@ def boundaryBath(cell,i):
             cell.pap[1] = TotPotPap_LP
             cell.pap[2] = TotCloPap_LP
             cell.pap[3] = TotHCO3Pap_LP
+
+    # hypocalcemia / hypomagnesemia: 10% lower interstitial Ca2+ / Mg2+ (Hakimi et al. 2024)
+    if CALCIUM and cell.hypoCa == 'Y':
+        cell.cm[15] = 1.125
+        cell.oi[15] = 2.25
+        cell.pap[15] = 3.6
+    if MAGNESIUM and cell.hypoMg == 'Y':
+        cell.cm[16] = 0.432
+        cell.oi[16] = 0.864
+        cell.pap[16] = 1.386
             
 
             
@@ -280,17 +327,9 @@ def boundaryBath(cell,i):
         if cell.diabete != 'Non' or GLU_ND:
             cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
         if CALCIUM: cell.conc[15,5] = cell.cm[15]
+        if MAGNESIUM: cell.conc[16,5] = cell.cm[16]
         if CALCIUM and cell.segment in ('cTAL','mTAL'):
-                # CaSR effect on TAL paracellular Ca permeability and ROMK activity (Edwards, Am J Physiol Renal 2014; Hakimi et al. 2023)
-                base_value_par_Ca = 12e3*1.0e-5/href   # TAL permeability in the absence of Ca2+
-                alpha_tal = -4/7
-                EC_50_Ca = 1.25
-                cell.h[15][0,4] = base_value_par_Ca*(1+alpha_tal*(cell.conc[15,5]**4)/(cell.conc[15,5]**4 + EC_50_Ca**4))
-                cell.h[15][4,0] = cell.h[15][0,4]
-                alpha_romk = -0.8
-                cell.h[1][0,1] = cell.h[1][0,1]*(1+alpha_romk*(cell.conc[15,5]**4)/(cell.conc[15,5]**4 + EC_50_Ca**4))
-                cell.h[1][1,0] = cell.h[1][0,1]
-
+            casr_tal(cell)
 
         for k in [0,4,5]:
             elecS = 0
@@ -367,18 +406,10 @@ def boundaryBath(cell,i):
         if cell.diabete != 'Non' or GLU_ND:
             cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
         if CALCIUM: cell.conc[15,5] = cell.cm[15]+(cell.oi[15]-cell.cm[15])*pos
+        if MAGNESIUM: cell.conc[16,5] = cell.cm[16]+(cell.oi[16]-cell.cm[16])*pos
         if CALCIUM and cell.segment in ('cTAL','mTAL'):
-                # CaSR effect on TAL paracellular Ca permeability and ROMK activity (Edwards, Am J Physiol Renal 2014; Hakimi et al. 2023)
-                base_value_par_Ca = 12e3*1.0e-5/href   # TAL permeability in the absence of Ca2+
-                alpha_tal = -4/7
-                EC_50_Ca = 1.25
-                cell.h[15][0,4] = base_value_par_Ca*(1+alpha_tal*(cell.conc[15,5]**4)/(cell.conc[15,5]**4 + EC_50_Ca**4))
-                cell.h[15][4,0] = cell.h[15][0,4]
-                alpha_romk = -0.8
-                cell.h[1][0,1] = cell.h[1][0,1]*(1+alpha_romk*(cell.conc[15,5]**4)/(cell.conc[15,5]**4 + EC_50_Ca**4))
-                cell.h[1][1,0] = cell.h[1][0,1]
-            
-        
+            casr_tal(cell)
+
         for k in [0,4,5]:
             elecS = 0
             for j in range(NS):
@@ -451,6 +482,7 @@ def boundaryBath(cell,i):
             if cell.diabete != 'Non' or GLU_ND:
                 cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
             if CALCIUM: cell.conc[15,5] = cell.cm[15]+(cell.oi[15]-cell.cm[15])*(0.3*(i))/(1*cell.total-NPT)
+            if MAGNESIUM: cell.conc[16,5] = cell.cm[16]+(cell.oi[16]-cell.cm[16])*(0.3*(i))/(1*cell.total-NPT)
 
 
             for k in [0,4,5]:
@@ -526,6 +558,7 @@ def boundaryBath(cell,i):
             if cell.diabete != 'Non' or GLU_ND:
                 cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
             if CALCIUM: cell.conc[15,5] = cell.cm[15]+(cell.oi[15]-cell.cm[15])*(0.3*(i))/(1*cell.total-NPT)
+            if MAGNESIUM: cell.conc[16,5] = cell.cm[16]+(cell.oi[16]-cell.cm[16])*(0.3*(i))/(1*cell.total-NPT)
 
             for k in [0,4,5]:
                 elecS = 0
@@ -614,6 +647,7 @@ def boundaryBath(cell,i):
         if cell.diabete != 'Non' or GLU_ND:
                 cell.conc[14,5] = cell.conc[14,5]*diab_plasma_glucose(cell)/5.0  # healthy plasma glucose = 5 mM
         if CALCIUM: cell.conc[15,5] = cell.oi[15]+(cell.pap[15]-cell.oi[15])*pos
+        if MAGNESIUM: cell.conc[16,5] = cell.oi[16]+(cell.pap[16]-cell.oi[16])*pos
 
         for k in [0,4,5]:
             elecS = 0

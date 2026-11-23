@@ -4,6 +4,32 @@ import re
 from defs import *
 from values import *
 import time
+import os as _os
+
+# Ratios of Table 1 of Stadt & Layton 2022 (AJP Renal 322:F121) / Hakimi et al. 2024 (AJP Renal 327:F77): (mid pregnant, late pregnant) to virgin.
+# The default ratios of this file are those of the code and differ from the tables in several places (see docs/PREGNANCY_CHECK.md);
+# NEPH_PREG_TABLE1=1 replaces the activities listed here (transporters) and the K+ channel permeabilities by the published table values.
+PREG_TABLE1 = _os.environ.get('NEPH_PREG_TABLE1', '0') == '1'
+TABLE1_TRANSPORT = {
+    ('PT','NHE3'): (1.3, 1.18), ('S3','NHE3'): (1.3, 1.18),
+    ('PT','NaKATPase'): (0.73, 0.65), ('S3','NaKATPase'): (0.73, 0.65),
+    ('mTAL','NKCC2A'): (1.15, 1.5), ('mTAL','NKCC2F'): (1.15, 1.5), ('cTAL','NKCC2A'): (1.15, 1.5), ('cTAL','NKCC2B'): (1.15, 1.5),
+    ('mTAL','NHE3'): (1.3, 1.18), ('cTAL','NHE3'): (1.3, 1.18), ('DCT','NHE3'): (1.3, 1.18),
+    ('mTAL','KCC4'): (1.4, 1.35), ('cTAL','KCC4'): (1.4, 1.35),
+    ('mTAL','NaKATPase'): (1.15, 1.0), ('cTAL','NaKATPase'): (0.73, 0.65),
+    ('DCT','NaKATPase'): (0.75, 0.75), ('CNT','NaKATPase'): (0.75, 0.75), ('CCD','NaKATPase'): (0.75, 0.7),
+    ('OMCD','NaKATPase'): (1.13, 1.0), ('IMCD','NaKATPase'): (1.13, 1.0),
+    ('DCT','NCC'): (1.0, 0.9),
+    ('DCT','ENaC'): (1.85, 2.15), ('CNT','ENaC'): (1.85, 2.15), ('CCD','ENaC'): (1.85, 2.15), ('OMCD','ENaC'): (1.85, 2.15),
+    ('CNT','HKATPase'): (2.5, 2.75), ('CCD','HKATPase'): (2.5, 2.75), ('OMCD','HKATPase'): (2.5, 2.75), ('IMCD','HKATPase'): (2.5, 2.75),
+    ('CNT','Pendrin'): (1.65, 1.7), ('CCD','Pendrin'): (1.65, 1.7),
+}
+# apical K+ permeability (ROMK in DCT2 and CNT, BK in CCD and OMCD)
+def _kpreg(cell, default):
+    if PREG_TABLE1 and cell.segment in TABLE1_KPERM:
+        return TABLE1_KPERM[cell.segment][0 if cell.preg == 'mid' else 1]
+    return default
+TABLE1_KPERM = {'DCT': (0.5, 0.45), 'CNT': (0.5, 0.45), 'CCD': (0.75, 0.7), 'OMCD': (0.75, 0.7)}
 
 # pick out compartment IDs. E.g. given label=Area_Lumen_Cell, it would return
 # (0,1) for (lumen, cell)
@@ -68,7 +94,8 @@ def read_params_preg(cell,filename,j):
         terms = line.split(' ')
         if line[0][0]!='#':
             id = terms[0] #re.findall(r'[A-Za-z_]+', line)
-            if (not CALCIUM) and ('_Ca_' in id or id == 'conc_Ca' or id.endswith(('_TRPV5','_CaATPase','_NCX1'))):
+            if ((not CALCIUM) and ('_Ca_' in id or id == 'conc_Ca' or id.endswith(('_TRPV5','_CaATPase','_NCX1')))) or \
+               ((not MAGNESIUM) and ('_Mg_' in id or id == 'conc_Mg' or id.endswith(('_TRPM6','_NaMgX')))):
                 line = file.readline()      # calcium parameters are ignored when the model runs without Ca
                 continue
             sex = id.split('_')[-1].lower()
@@ -385,46 +412,55 @@ def read_params_preg(cell,filename,j):
                     if j>0.66*cell.total:
                         #DCT2
                         if cell.preg == 'late':
-                            preg_rat = 0.55
+                            preg_rat = _kpreg(cell, 0.55)
                             if cell.HT != 'N':
                                 HT_rat = 0.3
                                 preg_rat = preg_rat*HT_rat
                             cell.h[1,0,1] = 0.6*preg_rat
                         elif cell.preg == 'mid':
-                            preg_rat = 0.65
+                            preg_rat = _kpreg(cell, 0.65)
                             if cell.HT != 'N':
                                 HT_rat = 0.3
                                 preg_rat = preg_rat*HT_rat
                             cell.h[1,0,1] = 0.6*preg_rat
                 elif cell.segment == 'CNT':
                     if cell.preg == 'late':
-                        preg_rat = 0.55
+                        preg_rat = _kpreg(cell, 0.55)
                         if cell.HT != 'N':
                             HT_rat = 0.3
                             preg_rat = preg_rat*HT_rat
                         cell.h[1,0,1] = 8.0*preg_rat
                     elif cell.preg == 'mid':
-                        preg_rat = 0.65
+                        preg_rat = _kpreg(cell, 0.65)
                         if cell.HT != 'N':
                             HT_rat = 0.3
                             preg_rat = preg_rat*HT_rat
                         cell.h[1,0,1] = 8.0*preg_rat
                 elif cell.segment == 'CCD':
                     if cell.preg == 'late':
-                        preg_rat = 0.75
+                        preg_rat = _kpreg(cell, 0.75)
                         cell.h[1,0,1] = 1.4*preg_rat
                     elif cell.preg == 'mid':
-                        preg_rat = 0.775
+                        preg_rat = _kpreg(cell, 0.775)
                         cell.h[1,0,1] = 1.4*preg_rat
                 elif cell.segment == 'OMCD':
                     if cell.preg == 'late':
-                        preg_rat = 0.85
+                        preg_rat = _kpreg(cell, 0.85)
                         cell.h[1,0,1] = 2.4*preg_rat
                     elif cell.preg == 'mid':
                         preg_rat = 0.875 
                         cell.h[1,0,1] = 2.4*preg_rat
                     
                             
+                # Ca2+: apical Ca2+ permeability of the PT and S3 (estradiol; Han et al. 2000) up by 40% (MP) / 20% (LP), Hakimi et al. 2024
+                if CALCIUM and (cell.segment == 'PT' or cell.segment == 'S3') and sid == 15 and ind1 == 0 and ind2 == 1:
+                    if cell.preg == 'mid':
+                        preg_rat = 1.4
+                    elif cell.preg == 'late':
+                        preg_rat = 1.2
+                    cell.h[sid,ind1,ind2] = cell.h[sid,ind1,ind2]*preg_rat
+                    cell.h[sid,ind2,ind1] = cell.h[sid,ind1,ind2]
+
             # Coupled transporters:
             elif compare_string_prefix(id,"coupled"):
                 # retrieve interface and solute id
@@ -665,9 +701,49 @@ def read_params_preg(cell,filename,j):
                         preg_rat = 1.0 
                     elif cell.preg == 'late':
                         preg_rat = 1.0
+                # Ca2+ and Mg2+ transporters (Hakimi et al. 2024, Table 1; ratios to the virgin value).  Superficial / juxtamedullary nephrons.
+                elif newTransp.type == 'CaATPase':                    # PMCA
+                    if cell.segment in ('PT','S3','DCT','CNT'):
+                        if cell.preg == 'mid':
+                            preg_rat = 1.4
+                        elif cell.preg == 'late':
+                            preg_rat = 1.3
+                elif newTransp.type == 'NCX1':
+                    if cell.segment in ('DCT','CNT'):
+                        if cell.preg == 'mid':
+                            preg_rat = 1.4
+                        elif cell.preg == 'late':
+                            preg_rat = 1.3
+                elif newTransp.type == 'TRPV5':
+                    if cell.segment in ('DCT','CNT'):
+                        if cell.type == 'sup':
+                            preg_rat = 1.9 if cell.preg == 'mid' else 1.3
+                        else:
+                            preg_rat = 1.1
+                elif newTransp.type == 'TRPM6':
+                    if cell.segment == 'DCT':
+                        if cell.type == 'sup':
+                            preg_rat = 1.7 if cell.preg == 'mid' else 1.3
+                        else:
+                            preg_rat = 2.4 if cell.preg == 'mid' else 1.8
+                elif newTransp.type == 'NaMgX':                        # Na+/Mg2+ exchanger (in lieu of the Mg2+-ATPase)
+                    if cell.segment == 'DCT':
+                        if cell.type == 'sup':
+                            preg_rat = 1.7 if cell.preg == 'mid' else 1.3
+                        else:
+                            preg_rat = 1.3
                 else:
                     preg_rat = 1.0
+                if PREG_TABLE1 and (cell.segment, newTransp.type) in TABLE1_TRANSPORT:
+                    preg_rat = TABLE1_TRANSPORT[(cell.segment, newTransp.type)][0 if cell.preg == 'mid' else 1]
                 newTransp.act = preg_rat*newTransp.act
+                # hypocalcemia / hypomagnesemia: PTH upregulates TRPV5 / NCX1 (and, in hypomagnesemia, TRPM6 / NaMgX) by 5%
+                if (cell.hypoCa == 'Y' or cell.hypoMg == 'Y') and cell.segment in ('DCT','CNT') and newTransp.type in ('TRPV5','NCX1'):
+                    newTransp.act = 1.05*newTransp.act
+                if cell.hypoMg == 'Y' and cell.segment == 'DCT' and newTransp.type in ('TRPM6','NaMgX'):
+                    newTransp.act = 1.05*newTransp.act
+                if CALCIUM and cell.segment == 'DCT' and newTransp.type in ('TRPV5','NCX1','CaATPase') and j < 2.0/3.0*cell.total:
+                    newTransp.act = 0        # no transcellular Ca2+ transport in the early DCT (DCT1)
                 #print(cell.preg + 'pregnant transporter activity: ' + str(newTransp.act))
                 cell.trans.append(newTransp)
 
